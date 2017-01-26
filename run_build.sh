@@ -42,9 +42,9 @@ function main {
 	# make the target
 	${CC} --std=c99 ${CMD_HELPER_SRC} -o ${CMD_HELPER} 2>/dev/null
 
-	# exit if we didn't read any commands.
+	# exit if we couldn't compile the code
 	if [ $? != "0" ]; then
-		rm ${CMD_HELPER} ${CMD_HELPER_SRC}
+		rm -rf ${CMD_HELPER} ${CMD_HELPER_SRC} ${tdir}
 		exit 1
 	fi
 
@@ -63,7 +63,7 @@ function main {
 
 	# exit if we didn't read any commands.
 	if [ $? != "0" ]; then
-		rm ${CMD_HELPER} ${CMD_HELPER_SRC}
+		rm -rf ${CMD_HELPER} ${CMD_HELPER_SRC} ${tdir}
 		exit 1
 	fi
 
@@ -150,7 +150,7 @@ function main {
 		fi
 	fi
 
-	# check if it was succesfully set, and set it if not
+	# check if it was succesfully set, and set it to the default if not
 	if [ "${release_type}" == "" ]; then
 		release_type="NIGHTLY"
 	fi
@@ -180,6 +180,9 @@ function main {
 	#select the device
 	lunch ${distro}_${device_name}-${build_type}
 
+	# exit if there was an error
+	exit_error $?
+
 	#create the directories
 	mkdir ${tdir}/ -p
 	mkdir ${out_dir}/builds/boot -p
@@ -205,9 +208,6 @@ function exit_error {
 }
 
 function make_targets {
-# exit if there was an error
-exit_error $?
-
 #start building
 make -j${job_num} $target
 #cowardly exit 1 if we fail.
