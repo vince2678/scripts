@@ -712,7 +712,7 @@ sync_vendor_trees
 sync_all_trees
 # apply the patch
 apply_patch
-if [ "${distro}" == " " ] || [ "${distro}" == "" ]; then
+if [ "${distro}" != "" ]; then
 	# run the main function
 	main "$@"
 	# print the build start text
@@ -725,4 +725,6 @@ if [ "${distro}" == " " ] || [ "${distro}" == "" ]; then
 	clean_target
 	# end the build
 	print_end_build
+	# reverse any previously applied patch
+	reverse_patch
 fi
