@@ -29,6 +29,7 @@ release_type=""
 ver=""
 distroTxt=""
 recovery_variant=""
+common_dir=""
 recovery_flavour=""
 
 kernel_name="galaxy"
@@ -37,7 +38,7 @@ vendor=samsung
 # create a temprary working dir
 tdir=$(mktemp -d)
 
-function main {
+function bootstrap {
 
 	# make the target
 	${CC} --std=c99 ${CMD_HELPER_SRC} -o ${CMD_HELPER} 2>/dev/null
@@ -73,6 +74,44 @@ function main {
 
 	build_top=`realpath $android_top`
 
+	# set the common dir
+	if [ "$device_name" == "gtesqltespr" ] || [ "$device_name" == "gtelwifiue" ]; then
+		common_dir="$build_top/device/${vendor}/gtel-common/"
+	else
+		common_dir="$build_top/device/${vendor}/gprimelte-common/"
+	fi
+
+	#setup the path
+	if [ -n ${BUILD_BIN_ROOT} ]; then
+		export PATH=$PATH:${BUILD_BIN_ROOT}
+	fi
+}
+
+function apply_patch {
+	if ! [ -e ${build_top}/.patched ]; then
+		echo -e ${BLUE} "Patching build top..." ${RED}
+		cd ${build_top}
+		cat ${common_dir}/patch/patch.diff | patch -p1
+		exit_error $?
+		touch ${build_top}/.patched
+		cd $OLDPWD
+		echo -e ${BLUE} "Done." ${NC}
+	fi
+}
+
+function reverse_patch {
+	if [ -e ${build_top}/.patched ]; then
+		echo -e ${BLUE} "Unpatching build top..." ${RED}
+		cd ${build_top}
+		cat ${common_dir}/patch/patch.diff | patch -Rp1
+		exit_error $?
+		rm ${build_top}/.patched
+		cd $OLDPWD
+		echo -e ${BLUE} "Done." ${NC}
+	fi
+}
+
+function main {
 	#move into the build dir
 	cd $build_top
 	#get the platform version
@@ -136,18 +175,10 @@ function main {
 	fi
 
 	#set the recovery type
-	if [ "$device_name" == "gtesqltespr" ] || [ "$device_name" == "gtelwifiue" ]; then
-		recovery_variant=$(grep RECOVERY_VARIANT $build_top/device/samsung/gtel-common/BoardConfigCommon.mk | sed s'/ //'g)
-	else
-		recovery_variant=$(grep RECOVERY_VARIANT $build_top/device/samsung/gprimelte-common/BoardConfigCommon.mk | sed s'/ //'g)
-	fi
+	recovery_variant=$(grep RECOVERY_VARIANT ${common_dir}/BoardConfigCommon.mk | sed s'/ //'g)
 	# get the release type
 	if [ "${release_type}" == "" ]; then
-		if [ $device_name == "gtesqltespr" ] || [ $device_name == "gtelwifiue" ]; then
-			release_type=$(grep "CM_BUILDTYPE" $build_top/device/samsung/gtel-common/${distro}.mk | cut -d'=' -f2 | sed s'/ //'g)
-		else
-			release_type=$(grep "CM_BUILDTYPE" $build_top/device/samsung/gprimelte-common/${distro}.mk | cut -d'=' -f2| sed s'/ //'g)
-		fi
+		release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${distro}.mk | cut -d'=' -f2 | sed s'/ //'g)
 	fi
 
 	# check if it was succesfully set, and set it to the default if not
@@ -207,11 +238,30 @@ function exit_error {
 	fi
 }
 
+function sync_vendor_trees {
+	if [ ${sync_vendor} -eq 1 ]; then
+		echo -e ${BLUE} "Syncing vendor trees..." ${NC}
+		cd ${build_top}
+		repo sync */${vendor}/*
+		cd $OLDPWD
+	fi
+}
+
+
+function sync_all_trees {
+	if [ ${sync_all} -eq 1 ]; then
+		echo -e ${BLUE} "Syncing all trees..." ${NC}
+		cd ${build_top}
+		repo sync
+		cd $OLDPWD
+	fi
+}
+
 function make_targets {
-#start building
-make -j${job_num} $target
-#cowardly exit 1 if we fail.
-exit_error $?
+	#start building
+	make -j${job_num} $target
+	#cowardly exit 1 if we fail.
+	exit_error $?
 }
 
 function move_files {
@@ -346,11 +396,7 @@ fi
 	git log --decorate=full \
 		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
-	if [ "$device_name" == "gtesqltespr" ] || [ "$device_name" == "gtelwifiue" ]; then
-		cd ${ANDROID_BUILD_TOP}/device/${vendor}/gtel-common
-	else
-		cd ${ANDROID_BUILD_TOP}/device/${vendor}/gprimelte-common
-	fi
+	cd ${common_dir}
 
 	echo -e "\nDEVICE-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
@@ -440,6 +486,8 @@ cat <<SRC > ${CMD_HELPER_SRC}
 int silent=0;
 int job=0;
 int build=0;
+int sync_vendor=0;
+int sync_all=0;
 int odin=0;
 int clean_flag=0;
 char target[256];
@@ -466,6 +514,8 @@ void parse_commmand_line(int argc, char *argv[]) {
 	static struct option long_options[] = {
 		/* *name ,  has_arg,           *flag,  val */
 		{"silent",	no_argument,       0, 's' },
+		{"sync",	no_argument,       0, 'v' },
+		{"sync_all",	no_argument,       0, 'a' },
 		{"odin",	no_argument,       0, 'c' },
 		{"clean",	no_argument, 0,  'r' },
 		{"target",	required_argument, 0,  't' },
@@ -477,8 +527,14 @@ void parse_commmand_line(int argc, char *argv[]) {
 		{0,         0,                 0,  0 }
 	};
 
-    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scr", long_options, &optind)) != -1 ) {
+    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scrav", long_options, &optind)) != -1 ) {
         switch (opt){
+            case 'a': //sync
+		sync_all=1;
+		break;
+            case 'v': //sync
+		sync_vendor=1;
+		break;
             case 'r': //clean
 		clean_flag=1;
 		break;
@@ -535,12 +591,14 @@ void parse_commmand_line(int argc, char *argv[]) {
                 fprintf (stderr, "  -s, --silent\tdon't publish to Telegram\n");
                 fprintf (stderr, "  -c, --odin\tbuild compressed (ODIN) images\n");
                 fprintf (stderr, "  -r, --clean\tclean build directory on completion\n");
+                fprintf (stderr, "  -a, --sync_all\tSync entire build tree\n");
+                fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
                 fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
                 exit (EXIT_FAILURE);
         }
     }
 
-     if ( argc < 6 ) {
+    if ( (argc < 6) && !(sync_all || sync_vendor)) {
                 fprintf (stderr, "Usage: %s [OPTION]\n",argv[0]);
                 fprintf (stderr, "  -d, --distro\tdistribution name\n" );
                 fprintf (stderr, "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" );
@@ -553,28 +611,32 @@ void parse_commmand_line(int argc, char *argv[]) {
                 fprintf (stderr, "  -s, --silent\tdon't publish to Telegram\n");
                 fprintf (stderr, "  -c, --odin\tbuild compressed (ODIN) images\n");
                 fprintf (stderr, "  -r, --clean\tclean build directory on completion\n");
+                fprintf (stderr, "  -a, --sync_all\tSync entire build tree\n");
+                fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
                 fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
         exit (EXIT_FAILURE);
     }
 
-    if ( dflag == 0 ) {
-        fprintf (stderr, "%s: Missing -d (distro) option. \n", argv[0]);
-        exit (EXIT_FAILURE);
-    }
-    if ( tflag == 0 ) {
-        fprintf (stderr, "%s: Missing -t (target) option. \n", argv[0]);
-        exit (EXIT_FAILURE);
-    }
-    if ( nflag == 0 ) {
-        fprintf (stderr, "%s: Missing -n (device name) option. \n", argv[0]);
-        exit (EXIT_FAILURE);
+    if ( (sync_all == 0) && (sync_vendor == 0) ) {
+	    if ( dflag == 0 ) {
+		fprintf (stderr, "%s: Missing -d (distro) option. \n", argv[0]);
+		exit (EXIT_FAILURE);
+	    }
+	    if ( tflag == 0 ) {
+		fprintf (stderr, "%s: Missing -t (target) option. \n", argv[0]);
+		exit (EXIT_FAILURE);
+	    }
+	    if ( nflag == 0 ) {
+		fprintf (stderr, "%s: Missing -n (device name) option. \n", argv[0]);
+		exit (EXIT_FAILURE);
+	    }
+	    if ( oflag == 0 ) {
+		fprintf (stderr, "%s: Missing -o (output path) option. \n", argv[0]);
+		exit (EXIT_FAILURE);
+	    }
     }
     if ( pflag == 0 ) {
         fprintf (stderr, "%s: Missing -p (build path) option. \n", argv[0]);
-        exit (EXIT_FAILURE);
-    }
-    if ( oflag == 0 ) {
-        fprintf (stderr, "%s: Missing -o (output path) option. \n", argv[0]);
         exit (EXIT_FAILURE);
     }
 }
@@ -607,6 +669,8 @@ void write_src_file() {
 	if (eflag) fprintf ( temp_file, "build_type=%s\n", type );
 	else  fprintf ( temp_file, "build_type=userdebug\n");
 	fprintf ( temp_file, "with_odin=%d\n", odin );
+	fprintf ( temp_file, "sync_all=%d\n", sync_all );
+	fprintf ( temp_file, "sync_vendor=%d\n", sync_vendor );
 	fprintf ( temp_file, "target=%s\n", target );
 	fprintf ( temp_file, "distro=%s\n", distro );
 	fprintf ( temp_file, "device_name=%s\n", device_name );
@@ -639,15 +703,26 @@ SRC
 
 # save the code
 extract_code
-# run the main function
-main "$@"
-# print the build start text
-print_start_build
-# make the targets
-make_targets
-# copy the files
-move_files
-# copy the target
-clean_target
-# end the build
-print_end_build
+# setup env vars
+bootstrap "$@"
+# reverse any previously applied patch
+reverse_patch
+# sync the repos
+sync_vendor_trees
+sync_all_trees
+# apply the patch
+apply_patch
+if [ "${distro}" == " " ] || [ "${distro}" == "" ]; then
+	# run the main function
+	main "$@"
+	# print the build start text
+	print_start_build
+	# make the targets
+	make_targets
+	# copy the files
+	move_files
+	# copy the target
+	clean_target
+	# end the build
+	print_end_build
+fi
