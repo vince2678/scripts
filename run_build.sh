@@ -92,7 +92,7 @@ function apply_patch {
 		echo -e ${BLUE} "Patching build top..." ${RED}
 		cd ${build_top}
 		count=0
-		for diff_file in $(find ${common_dir}/patch/ -type f); do
+		for diff_file in $(find ${common_dir}/patch/ -type f 2>/dev/null); do
 			cat  ${diff_file} | patch -p1
 			count=$(($count+1))
 			exit_error $?
@@ -204,7 +204,7 @@ function main {
 
 	# get the recovery type
 	if [ "$recovery_variant" == "RECOVERY_VARIANT:=twrp" ]; then
-		if [ "$ver" == "7.1"] || [ "$ver" == "6.0" ]; then
+		if [ "$ver" == "7.1" ] || [ "$ver" == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
@@ -214,7 +214,7 @@ function main {
 	elif [ "$distro" == "cm" ]; then
 		recovery_flavour="CyanogenModRecovery"
 	elif [ "$distro" == "omni" ]; then
-		if [ "$ver" == "7.1"] || [ "$ver" == "6.0" ]; then
+		if [ "$ver" == "7.1" ] || [ "$ver" == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
