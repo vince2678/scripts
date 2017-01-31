@@ -296,7 +296,8 @@ if [ "$target" == "recoveryimage" ]; then
 	fi
 
 	echo -e ${BLUE} "Copying recovery image..." ${NC}
-	tar cf ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar recovery.img
+	tar cf ${rec_name}.tar recovery.img
+	rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
 
 elif [ "$target" == "bootimage" ]; then
 
@@ -312,7 +313,8 @@ elif [ "$target" == "bootimage" ]; then
 	fi
 
 	echo -e ${BLUE} "Copying boot image..." ${NC}
-	tar cf ${out_dir}/builds/boot/${device_name}/${rec_name}.tar boot.img
+	tar cf ${rec_name}.tar boot.img
+	rsync -v -P ${rec_name}.tar ${out_dir}/builds/boot/${device_name}/${rec_name}.tar || exit 1
 
 elif [ "$target" == "otapackage" ]; then
 
@@ -335,7 +337,8 @@ elif [ "$target" == "otapackage" ]; then
 	cd $tdir
 
 	echo -e ${BLUE} "Copying recovery image..." ${NC}
-	tar cf ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar recovery.img
+	tar cf ${rec_name}.tar recovery.img
+	rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
 
 	#get the date of the most recent build
 	dates=($(ls ${BUILD_WWW_MOUNT_POINT}/builds/full/${distro}-${ver}-*-${device_name}.zip 2>/dev/null | cut -d '-' -f 3 | sort -r))
