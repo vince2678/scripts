@@ -91,11 +91,19 @@ function apply_patch {
 	if ! [ -e ${build_top}/.patched ]; then
 		echo -e ${BLUE} "Patching build top..." ${RED}
 		cd ${build_top}
-		cat ${common_dir}/patch/patch.diff | patch -p1
-		exit_error $?
-		touch ${build_top}/.patched
+		count=0
+		for diff_file in $(find ${common_dir}/patch/ -type f); do
+			cat  ${diff_file} | patch -p1
+			count=$(($count+1))
+			exit_error $?
+		done
+		if [ ${count} -eq 0 ]; then
+			echo -e ${BLUE} "Nothing to patch." ${NC}
+		else
+			touch ${build_top}/.patched
+			echo -e ${BLUE} "Done." ${NC}
+		fi
 		cd $OLDPWD
-		echo -e ${BLUE} "Done." ${NC}
 	fi
 }
 
@@ -103,11 +111,19 @@ function reverse_patch {
 	if [ -e ${build_top}/.patched ]; then
 		echo -e ${BLUE} "Unpatching build top..." ${RED}
 		cd ${build_top}
-		cat ${common_dir}/patch/patch.diff | patch -Rp1
-		exit_error $?
-		rm ${build_top}/.patched
+		count=0
+		for diff_file in $(find ${common_dir}/patch/ -type f); do
+			cat  ${diff_file} | patch -Rp1
+			count=$(($count+1))
+			exit_error $?
+		done
+		if [ ${count} -eq 0 ]; then
+			echo -e ${BLUE} "Nothing to patch." ${NC}
+		else
+			rm ${build_top}/.patched
+			echo -e ${BLUE} "Done." ${NC}
+		fi
 		cd $OLDPWD
-		echo -e ${BLUE} "Done." ${NC}
 	fi
 }
 
