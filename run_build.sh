@@ -283,152 +283,156 @@ function make_targets {
 
 function move_files {
 
-if [ "$target" == "recoveryimage" ]; then
+	if [ "$target" == "recoveryimage" ]; then
 
-	#copy the recovery image
-	cp ${ANDROID_PRODUCT_OUT}/recovery.img $tdir
-	cd $tdir
-	#archive the image
-	#define some variables
-	if [ -z ${build_num} ]; then
-		rec_name=${recovery_flavour}-${distro}-${ver}-$(date +%Y%m%d)-${device_name}
-	else
-		rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
+		#copy the recovery image
+		cp ${ANDROID_PRODUCT_OUT}/recovery.img $tdir
+		cd $tdir
+		#archive the image
+		#define some variables
+		if [ -z ${build_num} ]; then
+			rec_name=${recovery_flavour}-${distro}-${ver}-$(date +%Y%m%d)-${device_name}
+		else
+			rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
+		fi
+
+		echo -e ${BLUE} "Copying recovery image..." ${NC}
+		tar cf ${rec_name}.tar recovery.img
+		rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
+
+	elif [ "$target" == "bootimage" ]; then
+
+		#copy the boot image
+		cp ${ANDROID_PRODUCT_OUT}/boot.img $tdir
+		cd $tdir
+		#archive the image
+		#define some variables
+		if [ -z ${build_num} ]; then
+			rec_name=bootimage-${distro}-${ver}-$(date +%Y%m%d)-${device_name}
+		else
+			rec_name=bootimage-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
+		fi
+
+		echo -e ${BLUE} "Copying boot image..." ${NC}
+		tar cf ${rec_name}.tar boot.img
+		rsync -v -P ${rec_name}.tar ${out_dir}/builds/boot/${device_name}/${rec_name}.tar || exit 1
+
+	elif [ "$target" == "otapackage" ]; then
+
+		#define some variables
+		if [ -z ${build_num} ]; then
+			rec_name=${recovery_flavour}-${distro}-${ver}-${device_name}
+			arc_name=${distro}-${ver}-$(date +%Y%m%d)-${release_type}-${device_name}
+		else
+			rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
+			arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
+		fi
+
+		echo -e ${BLUE} "Copying files..." ${NC}
+		#move into the build dir
+		#copy the recovery image
+		cp ${ANDROID_PRODUCT_OUT}/boot.img $tdir
+		cp ${ANDROID_PRODUCT_OUT}/recovery.img $tdir
+		cp ${ANDROID_PRODUCT_OUT}/system.img $tdir/system.img.ext4
+
+		cd $tdir
+
+		echo -e ${BLUE} "Copying recovery image..." ${NC}
+		tar cf ${rec_name}.tar recovery.img
+		rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
+
+		ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
+
+		#check if our correct binary exists
+		echo -e ${BLUE} "Locating update binary..." ${NC}
+		if [ -e ${build_top}/META-INF ]; then
+			ota_bin="META-INF/com/google/android/update-binary"
+
+			echo -e ${BLUE} "Found update binary..." ${NC}
+			cp -dpR ${build_top}/META-INF $tdir/META-INF
+			cp -ndpR ${build_top}/META-INF ./
+			#delete the old binary
+			echo -e ${BLUE} "Patching zip file unconditionally..." ${NC}
+			zip -d ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
+			zip -ur ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
+		fi
+
+		#copy the zip in the background
+		echo -e ${BLUE} "Copying zip image..." ${NC}
+
+		# don't copy in the backgroud if we're not making the ODIN archive as well.
+		if [ ${with_odin} -eq 1 ]; then
+			rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${out_dir}/builds/full/${arc_name}.zip || exit 1 &
+		else
+			rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${out_dir}/builds/full/${arc_name}.zip || exit 1
+		fi
+
+			#calculate md5sums
+			md5sums=$(md5sum ${ANDROID_PRODUCT_OUT}/${ota_out} | cut -d " " -f 1)
+
+			echo "${md5sums} ${arc_name}.zip" > ${out_dir}/builds/full/${arc_name}.zip.md5  || exit 1 &
+
+			exit_error $?
+
+###########ODIN PARTS################
+		if [ ${with_odin} -eq 1 ]; then
+			cd $tdir
+			#pack the image
+			tar -H ustar -c boot.img recovery.img system.img.ext4 -f ${arc_name}.tar
+			#calculate the md5sum
+			md5sum -t ${arc_name}.tar >> ${arc_name}.tar
+			mv ${arc_name}.tar ${arc_name}.tar.md5
+			echo -e ${BLUE} "Compressing ODIN-flashable image..." ${NC}
+			#compress the image
+			7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
+
+			# exit if there was an error
+			exit_error $?
+
+			echo -e ${BLUE} "Copying ODIN-flashable compressed image..." ${NC}
+			#copy it to the output dir
+			rsync -v -P  ${arc_name}.tar.md5.7z ${out_dir}/builds/odin/
+
+			# exit if there was an error
+			exit_error $?
+		fi
+########END ODIN PARTS##############
+
 	fi
 
-	echo -e ${BLUE} "Copying recovery image..." ${NC}
-	tar cf ${rec_name}.tar recovery.img
-	rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
-
-elif [ "$target" == "bootimage" ]; then
-
-	#copy the boot image
-	cp ${ANDROID_PRODUCT_OUT}/boot.img $tdir
-	cd $tdir
-	#archive the image
-	#define some variables
-	if [ -z ${build_num} ]; then
-		rec_name=bootimage-${distro}-${ver}-$(date +%Y%m%d)-${device_name}
-	else
-		rec_name=bootimage-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
-	fi
-
-	echo -e ${BLUE} "Copying boot image..." ${NC}
-	tar cf ${rec_name}.tar boot.img
-	rsync -v -P ${rec_name}.tar ${out_dir}/builds/boot/${device_name}/${rec_name}.tar || exit 1
-
-elif [ "$target" == "otapackage" ]; then
-
-	#define some variables
-	if [ -z ${build_num} ]; then
-		rec_name=${recovery_flavour}-${distro}-${ver}-${device_name}
-		arc_name=${distro}-${ver}-$(date +%Y%m%d)-${release_type}-${device_name}
-	else
-		rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
-		arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
-	fi
-
-	echo -e ${BLUE} "Copying files..." ${NC}
-	#move into the build dir
-	#copy the recovery image
-	cp ${ANDROID_PRODUCT_OUT}/boot.img $tdir
-	cp ${ANDROID_PRODUCT_OUT}/recovery.img $tdir
-	cp ${ANDROID_PRODUCT_OUT}/system.img $tdir/system.img.ext4
-
-	cd $tdir
-
-	echo -e ${BLUE} "Copying recovery image..." ${NC}
-	tar cf ${rec_name}.tar recovery.img
-	rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
+	echo -e ${BLUE} "Generating changes..." ${NC}
 
 	#get the date of the most recent build
 	dates=($(ls ${BUILD_WWW_MOUNT_POINT}/builds/full/${distro}-${ver}-*-${device_name}.zip 2>/dev/null | cut -d '-' -f 3 | sort -r))
-
-	ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
-
-	#check if our correct binary exists
-	echo -e ${BLUE} "Locating update binary..." ${NC}
-	if [ -e ${build_top}/META-INF ]; then
-		ota_bin="META-INF/com/google/android/update-binary"
-
-		echo -e ${BLUE} "Found update binary..." ${NC}
-		cp -dpR ${build_top}/META-INF $tdir/META-INF
-		cp -ndpR ${build_top}/META-INF ./
-		#delete the old binary
-		echo -e ${BLUE} "Patching zip file unconditionally..." ${NC}
-		zip -d ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
-		zip -ur ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
-	fi
-
-	#copy the zip in the background
-	echo -e ${BLUE} "Copying zip image..." ${NC}
-
-# don't copy in the backgroud if we're not making the ODIN archive as well.
-if [ ${with_odin} -eq 1 ]; then
-	rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${out_dir}/builds/full/${arc_name}.zip || exit 1 &
-else
-	rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${out_dir}/builds/full/${arc_name}.zip || exit 1
-fi
-
-	#calculate md5sums
-	md5sums=$(md5sum ${ANDROID_PRODUCT_OUT}/${ota_out} | cut -d " " -f 1)
-
-	echo "${md5sums} ${arc_name}.zip" > ${out_dir}/builds/full/${arc_name}.zip.md5  || exit 1 &
-
-	exit_error $?
-
-########ODIN PARTS#####################
-if [ ${with_odin} -eq 1 ]; then
-	cd $tdir
-	#pack the image
-	tar -H ustar -c boot.img recovery.img system.img.ext4 -f ${arc_name}.tar
-	#calculate the md5sum
-	md5sum -t ${arc_name}.tar >> ${arc_name}.tar
-	mv ${arc_name}.tar ${arc_name}.tar.md5
-	echo -e ${BLUE} "Compressing ODIN-flashable image..." ${NC}
-	#compress the image
-	7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
-
-	# exit if there was an error
-	exit_error $?
-
-	echo -e ${BLUE} "Copying ODIN-flashable compressed image..." ${NC}
-	#copy it to the output dir
-	rsync -v -P  ${arc_name}.tar.md5.7z ${out_dir}/builds/odin/
-
-	# exit if there was an error
-	exit_error $?
-fi
-########END ODIN PARTS#####################
-
-	echo -e ${BLUE} "Generating changes..." ${NC}
 
 	# use file modified time if we couldn't get the archive times.
 	if [ -z $dates ]; then
 		dates=$(stat $0 | grep "Modify" | cut -d' ' -f 2 | sed s'/\-//'g)
 	fi
 
-	#generate the changes
-	cd ${ANDROID_BUILD_TOP}/device/${vendor}/${device_name}
+	if [ "$target" == "otapackage" ]; then
+		#generate the changes
+		cd ${ANDROID_BUILD_TOP}/device/${vendor}/${device_name}
 
-	echo -e "DEVICE\n---------\n" > ${out_dir}/builds/full/${arc_name}.txt
+		echo -e "DEVICE\n---------\n" > ${out_dir}/builds/full/${arc_name}.txt
 
-	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+		git log --decorate=full \
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
-	cd ${common_dir}
+		cd ${common_dir}
 
-	echo -e "\nDEVICE-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+		echo -e "\nDEVICE-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
-	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+		git log --decorate=full \
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
-	cd ${ANDROID_BUILD_TOP}/vendor/${vendor}/${device_name}
+		cd ${ANDROID_BUILD_TOP}/vendor/${vendor}/${device_name}
 
-	echo -e "\nVENDOR\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+		echo -e "\nVENDOR\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
-	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+		git log --decorate=full \
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+	fi
 
 	cd ${ANDROID_BUILD_TOP}/kernel/${vendor}/${kernel_name}
 
@@ -437,24 +441,22 @@ fi
 	git log --decorate=full \
 		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
-fi
-
 }
 
 function clean_target {
-if [ ${clean_target_out} -eq 1 ]; then
-	#start cleaning up
-	echo -e ${BLUE} "Removing temp dir..." ${NC}
-	rm -r $tdir
-	echo -e ${BLUE} "Cleaning build dir..." ${NC}
-	cd ${ANDROID_BUILD_TOP}/
+	if [ ${clean_target_out} -eq 1 ]; then
+		#start cleaning up
+		echo -e ${BLUE} "Removing temp dir..." ${NC}
+		rm -r $tdir
+		echo -e ${BLUE} "Cleaning build dir..." ${NC}
+		cd ${ANDROID_BUILD_TOP}/
 
-	if [ "$target" == "otapackage" ]; then
-		make clean
+		if [ "$target" == "otapackage" ]; then
+			make clean
+		fi
+		# exit if there was an error
+		exit_error $?
 	fi
-	# exit if there was an error
-	exit_error $?
-fi
 }
 
 function print_start_build {
