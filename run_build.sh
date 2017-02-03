@@ -32,7 +32,7 @@ recovery_variant=""
 common_dir=""
 recovery_flavour=""
 
-kernel_name="galaxy"
+kernel_name="msm8916"
 vendor=samsung
 
 # create a temprary working dir
