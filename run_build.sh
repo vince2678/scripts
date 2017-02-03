@@ -259,7 +259,7 @@ function sync_vendor_trees {
 	if [ ${sync_vendor} -eq 1 ]; then
 		echo -e ${BLUE} "Syncing vendor trees..." ${NC}
 		cd ${build_top}
-		repo sync */${vendor}/*
+		repo sync */${vendor}/* --force-sync
 		cd $OLDPWD
 	fi
 }
@@ -269,7 +269,7 @@ function sync_all_trees {
 	if [ ${sync_all} -eq 1 ]; then
 		echo -e ${BLUE} "Syncing all trees..." ${NC}
 		cd ${build_top}
-		repo sync
+		repo sync --force-sync
 		cd $OLDPWD
 	fi
 }
