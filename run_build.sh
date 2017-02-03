@@ -76,7 +76,7 @@ function bootstrap {
 
 	# set the common dir
 	if [ "$device_name" == "gtesqltespr" ] || [ "$device_name" == "gtelwifiue" ]; then
-		common_dir="$build_top/device/${vendor}/gtel-common/"
+		common_dir="$build_top/device/${vendor}/gte-common/"
 	else
 		common_dir="$build_top/device/${vendor}/gprimelte-common/"
 	fi
