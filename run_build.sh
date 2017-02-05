@@ -34,9 +34,36 @@ recovery_flavour=""
 
 kernel_name="msm8916"
 vendor=samsung
-
+lock_name=".lock"
+lock=
 # create a temprary working dir
 tdir=$(mktemp -d)
+
+function check_if_build_running {
+
+	lock="${build_top}/${lock_name}"
+
+	exec 200>${lock}
+
+	echo -e ${RED} "Attempting to acquire lock..." ${BLUE}
+
+	# loop if we can't get the lock
+	while true; do
+		flock -n 200
+		if [ $? -eq 0 ]; then
+			break
+		else
+			printf "%c" "."
+			sleep 10
+		fi
+	done
+
+	# set the pid
+	pid=$$
+	echo ${pid} 1>&200
+
+	echo -e ${RED} "Lock acquired. PID is ${pid}" ${NC}
+}
 
 function bootstrap {
 
@@ -251,6 +278,8 @@ function exit_error {
 		# remove the temp dir
 		echo -e ${RED} "Removing temp dir..." ${NC}
 		rm -rf $tdir
+		echo -e ${RED} "Removing lock..." ${NC}
+		rm ${lock}
 		exit 1
 	fi
 }
@@ -444,18 +473,18 @@ function move_files {
 }
 
 function clean_target {
-	if [ ${clean_target_out} -eq 1 ]; then
-		#start cleaning up
-		echo -e ${BLUE} "Removing temp dir..." ${NC}
-		rm -r $tdir
-		echo -e ${BLUE} "Cleaning build dir..." ${NC}
-		cd ${ANDROID_BUILD_TOP}/
+	#start cleaning up
+	echo -e ${BLUE} "Removing temp dir..." ${NC}
+	rm -r $tdir
+	echo -e ${BLUE} "Cleaning build dir..." ${NC}
+	cd ${ANDROID_BUILD_TOP}/
+	echo -e ${BLUE} "Removing lock..." ${NC}
+	rm ${lock}
 
+	if [ ${clean_target_out} -eq 1 ]; then
 		if [ "$target" == "otapackage" ]; then
 			make clean
 		fi
-		# exit if there was an error
-		exit_error $?
 	fi
 }
 
@@ -727,6 +756,8 @@ SRC
 extract_code
 # setup env vars
 bootstrap "$@"
+# check if any other builds are running
+check_if_build_running
 # reverse any previously applied patch
 reverse_patch
 # sync the repos
