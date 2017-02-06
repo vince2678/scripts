@@ -29,6 +29,7 @@ release_type=""
 ver=""
 distroTxt=""
 recovery_variant=""
+platform_common_dir=""
 common_dir=""
 recovery_flavour=""
 
@@ -102,6 +103,7 @@ function bootstrap {
 	build_top=`realpath $android_top`
 
 	# set the common dir
+	platform_common_dir="$build_top/device/${vendor}/msm8916-common/"
 	if [ "$device_name" == "gtesqltespr" ] || [ "$device_name" == "gtelwifiue" ]; then
 		common_dir="$build_top/device/${vendor}/gte-common/"
 	else
@@ -218,7 +220,7 @@ function main {
 	fi
 
 	#set the recovery type
-	recovery_variant=$(grep RECOVERY_VARIANT ${common_dir}/BoardConfigCommon.mk | sed s'/ //'g)
+	recovery_variant=$(grep RECOVERY_VARIANT ${platform_common_dir}/BoardConfigCommon.mk | sed s'/ //'g)
 	# get the release type
 	if [ "${release_type}" == "" ]; then
 		release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${distro}.mk | cut -d'=' -f2 | sed s'/ //'g)
@@ -444,6 +446,13 @@ function move_files {
 		cd ${ANDROID_BUILD_TOP}/device/${vendor}/${device_name}
 
 		echo -e "DEVICE\n---------\n" > ${out_dir}/builds/full/${arc_name}.txt
+
+		git log --decorate=full \
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+
+		cd ${platform_common_dir}
+
+		echo -e "\nMSM8916-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
 		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
