@@ -161,7 +161,7 @@ function main {
 	cd $build_top
 	#get the platform version
 	platorm_version=$(grep 'PLATFORM_VERSION :' build/core/version_defaults.mk  | cut -d '=' -f 2)
-	export WITH_SU=true
+	export WITH_SU
 	if [ $platorm_version == "7.1.1" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 		if [ "$distro" == "lineage" ]; then
@@ -546,6 +546,7 @@ cat <<SRC > ${CMD_HELPER_SRC}
 int silent=0;
 int job=0;
 int build=0;
+int with_su=0;
 int sync_vendor=0;
 int sync_all=0;
 int odin=0;
@@ -576,6 +577,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 		{"silent",	no_argument,       0, 's' },
 		{"sync",	no_argument,       0, 'v' },
 		{"sync_all",	no_argument,       0, 'a' },
+		{"su",	no_argument,       0, 'u' },
 		{"odin",	no_argument,       0, 'c' },
 		{"clean",	no_argument, 0,  'r' },
 		{"target",	required_argument, 0,  't' },
@@ -587,8 +589,11 @@ void parse_commmand_line(int argc, char *argv[]) {
 		{0,         0,                 0,  0 }
 	};
 
-    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scrav", long_options, &optind)) != -1 ) {
+    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scravu", long_options, &optind)) != -1 ) {
         switch (opt){
+            case 'u': //sync
+		with_su=1;
+		break;
             case 'a': //sync
 		sync_all=1;
 		break;
@@ -653,6 +658,7 @@ void parse_commmand_line(int argc, char *argv[]) {
                 fprintf (stderr, "  -r, --clean\tclean build directory on completion\n");
                 fprintf (stderr, "  -a, --sync_all\tSync entire build tree\n");
                 fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
+                fprintf (stderr, "  -u, --su\tAdd SU to build\n");
                 fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
                 exit (EXIT_FAILURE);
         }
@@ -672,6 +678,7 @@ void parse_commmand_line(int argc, char *argv[]) {
                 fprintf (stderr, "  -c, --odin\tbuild compressed (ODIN) images\n");
                 fprintf (stderr, "  -r, --clean\tclean build directory on completion\n");
                 fprintf (stderr, "  -a, --sync_all\tSync entire build tree\n");
+                fprintf (stderr, "  -u, --su\tAdd SU to build\n");
                 fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
                 fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
         exit (EXIT_FAILURE);
@@ -724,10 +731,18 @@ void write_src_file() {
 	fprintf ( temp_file, "silent=%d\n", silent );
 	fprintf ( temp_file, "build_num=%d\n", build );
 	fprintf ( temp_file, "clean_target_out=%d\n", clean_flag );
+
+	// set the su property
+	if (with_su) fprintf ( temp_file, "WITH_SU=true\n");
+		else fprintf ( temp_file, "WITH_SU=false\n");
+
+	// set the job number
 	if (job) fprintf ( temp_file, "job_num=%d\n", job );
+
 	// set the build type
 	if (eflag) fprintf ( temp_file, "build_type=%s\n", type );
-	else  fprintf ( temp_file, "build_type=userdebug\n");
+		else  fprintf ( temp_file, "build_type=userdebug\n");
+
 	fprintf ( temp_file, "with_odin=%d\n", odin );
 	fprintf ( temp_file, "sync_all=%d\n", sync_all );
 	fprintf ( temp_file, "sync_vendor=%d\n", sync_vendor );
