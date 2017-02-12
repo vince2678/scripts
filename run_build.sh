@@ -302,8 +302,8 @@ function sync_vendor_trees {
 		cd ${build_top}
 		for vendor in ${vendors[*]}; do
 			repo sync */${vendor}/* --force-sync
-			cd $OLDPWD
 		done
+		cd $OLDPWD
 	fi
 }
 
