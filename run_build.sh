@@ -34,7 +34,9 @@ common_dir=""
 recovery_flavour=""
 
 kernel_name="msm8916"
-vendors="samsung qcom"
+vendors[0]="samsung"
+vendors[1]="qcom"
+
 lock_name=".lock"
 lock=
 # create a temprary working dir
@@ -103,11 +105,11 @@ function bootstrap {
 	build_top=`realpath $android_top`
 
 	# set the common dir
-	platform_common_dir="$build_top/device/${vendor}/msm8916-common/"
+	platform_common_dir="$build_top/device/${vendors[0]}/msm8916-common/"
 	if [ "$device_name" == "gtesqltespr" ] || [ "$device_name" == "gtelwifiue" ]; then
-		common_dir="$build_top/device/${vendor}/gte-common/"
+		common_dir="$build_top/device/${vendors[0]}/gte-common/"
 	else
-		common_dir="$build_top/device/${vendor}/gprimelte-common/"
+		common_dir="$build_top/device/${vendors[0]}/gprimelte-common/"
 	fi
 
 	#setup the path
@@ -298,7 +300,7 @@ function sync_vendor_trees {
 	if [ ${sync_vendor} -eq 1 ]; then
 		echo -e ${BLUE} "Syncing vendor trees..." ${NC}
 		cd ${build_top}
-		for vendor in ${vendors}; do
+		for vendor in ${vendors[*]}; do
 			repo sync */${vendor}/* --force-sync
 			cd $OLDPWD
 		done
