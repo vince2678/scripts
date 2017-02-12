@@ -274,7 +274,7 @@ function exit_error {
 		echo -e ${RED} "Error, aborting..." ${NC}
 		if [ $silent -eq 0 ]; then
 			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
-			textStr="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} for ${device_name} device on ${USER}@${HOSTNAME} aborted due to error."
+			textStr="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} for ${device_name} device on ${USER}@${HOSTNAME} aborted."
 			wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 		fi
 		# remove the temp dir
@@ -510,7 +510,7 @@ function print_start_build {
 
 		if [ $silent -eq 0 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
-		textStr="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} started for ${device_name} device via Jenkins, running on ${USER}@${HOSTNAME}."
+		textStr="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} started for device ${device_name} via Jenkins, running on ${USER}@${HOSTNAME}."
 
 		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 	   fi
