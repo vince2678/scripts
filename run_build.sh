@@ -34,7 +34,7 @@ common_dir=""
 recovery_flavour=""
 
 kernel_name="msm8916"
-vendor=samsung
+vendors="samsung qcom"
 lock_name=".lock"
 lock=
 # create a temprary working dir
@@ -298,8 +298,10 @@ function sync_vendor_trees {
 	if [ ${sync_vendor} -eq 1 ]; then
 		echo -e ${BLUE} "Syncing vendor trees..." ${NC}
 		cd ${build_top}
-		repo sync */${vendor}/* --force-sync
-		cd $OLDPWD
+		for vendor in ${vendors}; do
+			repo sync */${vendor}/* --force-sync
+			cd $OLDPWD
+		done
 	fi
 }
 
