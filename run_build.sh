@@ -444,9 +444,9 @@ function move_files {
 	#get the date of the most recent build
 	dates=($(ls ${BUILD_WWW_MOUNT_POINT}/builds/full/${distro}-${ver}-*-${device_name}.zip 2>/dev/null | cut -d '-' -f 3 | sort -r))
 
-	# use file modified time if we couldn't get the archive times.
+	# use a preset time if we couldn't get the archive times.
 	if [ -z $dates ]; then
-		dates=$(stat $0 | grep "Modify" | cut -d' ' -f 2 | sed s'/\-//'g)
+		dates=20170201
 	fi
 
 	if [ "$target" == "otapackage" ]; then
