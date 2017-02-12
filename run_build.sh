@@ -156,6 +156,17 @@ function reverse_patch {
 	fi
 }
 
+function sync_script {
+
+	if [ -n ${BUILD_SCRIPT_PATH} ]; then
+		echo -e ${BLUE} "Updating build script..." ${RED}
+		cd ${BUILD_SCRIPT_PATH}
+		git pull
+		echo -e ${BLUE} "Done." ${NC}
+	fi
+}
+
+
 function main {
 	#move into the build dir
 	cd $build_top
@@ -804,4 +815,6 @@ if [ "${distro}" != "" ]; then
 	print_end_build
 	# reverse any previously applied patch
 	reverse_patch
+	# sync the build script
+	sync_script
 fi
