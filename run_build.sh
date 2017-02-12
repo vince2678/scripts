@@ -455,7 +455,7 @@ function move_files {
 
 	if [ "$target" == "otapackage" ]; then
 		#generate the changes
-		cd ${ANDROID_BUILD_TOP}/device/${vendor}/${device_name}
+		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${device_name}
 
 		echo -e "DEVICE\n---------\n" > ${out_dir}/builds/full/${arc_name}.txt
 
@@ -476,15 +476,22 @@ function move_files {
 		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
-		cd ${ANDROID_BUILD_TOP}/vendor/${vendor}/${device_name}
+		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[0]}/${device_name}
 
 		echo -e "\nVENDOR\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
 		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+
+		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[1]}/binaries
+
+		echo -e "\nVENDOR BINARIES\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+
+		git log --decorate=full \
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 	fi
 
-	cd ${ANDROID_BUILD_TOP}/kernel/${vendor}/${kernel_name}
+	cd ${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
 
 	echo -e "\nKERNEL\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
