@@ -157,13 +157,10 @@ function reverse_patch {
 }
 
 function sync_script {
-
-	if [ -n ${BUILD_SCRIPT_PATH} ]; then
-		echo -e ${BLUE} "Updating build script..." ${RED}
-		cd ${BUILD_SCRIPT_PATH}
-		git pull
-		echo -e ${BLUE} "Done." ${NC}
-	fi
+	echo -e ${BLUE} "Updating build script..." ${RED}
+	url="https://raw.githubusercontent.com/Galaxy-MSM8916/build_script/master/run_build.sh"
+	curl ${url} | tee $0 > /dev/null
+	echo -e ${BLUE} "Done." ${NC}
 }
 
 
@@ -816,5 +813,5 @@ if [ "${distro}" != "" ]; then
 	# reverse any previously applied patch
 	reverse_patch
 	# sync the build script
-	sync_script
+	sync_script "$@"
 fi
