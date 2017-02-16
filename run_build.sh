@@ -277,6 +277,9 @@ function main {
 	mkdir ${out_dir}/builds/odin -p
 	mkdir ${out_dir}/builds/recovery -p
 	mkdir ${out_dir}/builds/recovery/${device_name} -p
+
+	#remove duplicate cryptfs
+	rm -r ${build_top}/device/qcom-common/cryptfs_hw
 }
 
 function exit_error {
