@@ -134,6 +134,12 @@ function apply_patch {
 			touch ${build_top}/.patched
 			echo -e ${BLUE} "Done." ${NC}
 		fi
+		echo -e ${BLUE} "Replacing ld.gold ..." ${RED}
+		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.1*/x86_64-linux/bin/ld); do
+			cp ${ld_bin} ${ld_bin}.old
+			cp $(which ld.gold) $ld_bin
+		done
+		echo -e ${BLUE} "Done." ${NC}
 		cd $OLDPWD
 	fi
 }
@@ -154,6 +160,12 @@ function reverse_patch {
 			rm ${build_top}/.patched
 			echo -e ${BLUE} "Done." ${NC}
 		fi
+		echo -e ${BLUE} "Replacing ld.gold ..." ${RED}
+		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.1*/x86_64-linux/bin/ld); do
+			cp ${ld_bin}.old ${ld_bin}
+			rm ${ld_bin}.old -f
+		done
+		echo -e ${BLUE} "Done." ${NC}
 		cd $OLDPWD
 	fi
 }
