@@ -838,6 +838,6 @@ if [ "${distro}" != "" ]; then
 	print_end_build
 	# reverse any previously applied patch
 	reverse_patch
-	# sync the build script
-	sync_script "$@"
 fi
+# sync the build script
+sync_script "$@"
