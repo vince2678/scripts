@@ -331,7 +331,7 @@ function sync_all_trees {
 
 function make_targets {
 	#start building
-	make -j${job_num} $target
+	make -j${job_num} $target CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
 	#cowardly exit 1 if we fail.
 	exit_error $?
 }
