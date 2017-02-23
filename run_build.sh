@@ -275,6 +275,11 @@ function main {
 	#set up the environment
 	. build/envsetup.sh
 
+	# remove duplicate crypt_fs.
+	if [ -d ${build_top}/device/qcom-common/cryptfs_hw ] && [ -d ${build_top}/vendor/qcom/opensource/cryptfs_hw ]; then
+		rm -r ${build_top}/vendor/qcom/opensource/cryptfs_hw
+	fi
+
 	#select the device
 	lunch ${distro}_${device_name}-${build_type}
 
