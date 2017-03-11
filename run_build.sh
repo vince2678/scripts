@@ -255,7 +255,9 @@ function main {
 
 	# get the recovery type
 	if [ "$recovery_variant" == "RECOVERY_VARIANT:=twrp" ]; then
-		if [ "$ver" == "7.1" ] || [ "$ver" == "6.0" ]; then
+		if [ "$ver" == "7.1" ]; then
+			recovery_flavour="TWRP-3.1.x"
+		elif [ "$ver" == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
@@ -265,7 +267,9 @@ function main {
 	elif [ "$distro" == "cm" ]; then
 		recovery_flavour="CyanogenModRecovery"
 	elif [ "$distro" == "omni" ]; then
-		if [ "$ver" == "7.1" ] || [ "$ver" == "6.0" ]; then
+		if [ "$ver" == "7.1" ]; then
+			recovery_flavour="TWRP-3.1.x"
+		elif [ "$ver" == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
