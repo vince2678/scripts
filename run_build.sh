@@ -413,8 +413,10 @@ function move_files {
 		tar cf ${rec_name}.tar recovery.img
 		rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
 
-		echo -e ${BLUE} "Copying su image..." ${NC}
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}_.zip || exit 1
+		if [ $ver == "13.0" ]; then
+			echo -e ${BLUE} "Copying su image..." ${NC}
+			rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}_.zip || exit 1
+		fi
 
 		ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
 		#check if our correct binary exists
