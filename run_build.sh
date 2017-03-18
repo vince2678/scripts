@@ -298,6 +298,7 @@ function main {
 	mkdir ${out_dir}/builds/odin -p
 	mkdir ${out_dir}/builds/recovery -p
 	mkdir ${out_dir}/builds/recovery/${device_name} -p
+	mkdir ${out_dir}/builds/su -p
 }
 
 function exit_error {
@@ -343,6 +344,13 @@ function make_targets {
 	make -j${job_num} $target CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
 	#cowardly exit 1 if we fail.
 	exit_error $?
+
+	#build su
+	if [ $ver == "13.0" ]; then
+		make -j${job_num} addonsu
+		#cowardly exit 1 if we fail.
+		exit_error $?
+	fi
 }
 
 function move_files {
@@ -394,7 +402,7 @@ function move_files {
 
 		echo -e ${BLUE} "Copying files..." ${NC}
 		#move into the build dir
-		#copy the recovery image
+		#copy the images
 		cp ${ANDROID_PRODUCT_OUT}/boot.img $tdir
 		cp ${ANDROID_PRODUCT_OUT}/recovery.img $tdir
 		cp ${ANDROID_PRODUCT_OUT}/system.img $tdir/system.img.ext4
@@ -405,8 +413,10 @@ function move_files {
 		tar cf ${rec_name}.tar recovery.img
 		rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
 
-		ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
+		echo -e ${BLUE} "Copying su image..." ${NC}
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_${BUILD_NUMBER}.zip || exit 1
 
+		ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
 		#check if our correct binary exists
 		echo -e ${BLUE} "Locating update binary..." ${NC}
 		if [ -e ${build_top}/META-INF ]; then
