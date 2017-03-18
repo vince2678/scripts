@@ -414,7 +414,7 @@ function move_files {
 		rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
 
 		echo -e ${BLUE} "Copying su image..." ${NC}
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_${BUILD_NUMBER}.zip || exit 1
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}_.zip || exit 1
 
 		ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
 		#check if our correct binary exists
