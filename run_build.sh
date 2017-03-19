@@ -415,7 +415,7 @@ function move_files {
 
 		if [ $ver == "13.0" ]; then
 			echo -e ${BLUE} "Copying su image..." ${NC}
-			rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}_.zip || exit 1
+			rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}.zip
 		fi
 
 		ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
