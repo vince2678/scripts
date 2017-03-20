@@ -323,7 +323,8 @@ function sync_vendor_trees {
 		echo -e ${BLUE} "Syncing vendor trees..." ${NC}
 		cd ${build_top}
 		for vendor in ${vendors[*]}; do
-			for dir in "device vendor kernel"; do
+			targets="device vendor kernel"
+			for dir in ${targets}; do
 				cd ${dir}/${vendor}/
 				devices=`ls`
 				cd ${build_top}
@@ -334,7 +335,6 @@ function sync_vendor_trees {
 		done
 	fi
 }
-
 
 function sync_all_trees {
 	if [ ${sync_all} -eq 1 ]; then
