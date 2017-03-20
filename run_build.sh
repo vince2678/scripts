@@ -325,6 +325,7 @@ function sync_vendor_trees {
 		for vendor in ${vendors[*]}; do
 			targets="device vendor kernel"
 			for dir in ${targets}; do
+				if ! [ -d ${dir}/${vendor} ]; then continue; fi
 				cd ${dir}/${vendor}/
 				devices=`ls`
 				cd ${build_top}
@@ -350,7 +351,6 @@ function make_targets {
 	make -j${job_num} $target CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
 	#cowardly exit 1 if we fail.
 	exit_error $?
-
 	#build su
 	if [ $ver == "13.0" ]; then
 		make -j${job_num} addonsu
