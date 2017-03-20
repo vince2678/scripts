@@ -323,9 +323,15 @@ function sync_vendor_trees {
 		echo -e ${BLUE} "Syncing vendor trees..." ${NC}
 		cd ${build_top}
 		for vendor in ${vendors[*]}; do
-			repo sync */${vendor}/* --force-sync
+			for dir in "device vendor kernel"; do
+				cd ${dir}/${vendor}/
+				devices=`ls`
+				cd ${build_top}
+				for i in ${devices}; do
+					repo sync ${dir}/${vendor}/${i} --force-sync
+				done
+			done
 		done
-		cd $OLDPWD
 	fi
 }
 
