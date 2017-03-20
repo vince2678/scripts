@@ -172,7 +172,7 @@ function reverse_patch {
 
 function sync_script {
 	echo -e ${BLUE} "Updating build script..." ${RED}
-	url="https://raw.githubusercontent.com/Galaxy-MSM8916/build_script/master/run_build.sh"
+	url="https://raw.githubusercontent.com/vince2678/build_script/master/run_build.sh"
 	curl ${url} | tee $0 > /dev/null
 	echo -e ${BLUE} "Done." ${NC}
 }
