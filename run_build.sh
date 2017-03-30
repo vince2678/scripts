@@ -558,7 +558,7 @@ function clean_target {
 function print_start_build {
 	if [ ${build_num} -ge 1 ]; then
 		echo -e ${BLUE} "\n==================================================" ${NC}
-		echo -e ${BLUE} "Build started on Jenkins.\n" ${NC}
+		echo -e ${BLUE} "Build started on Jenkins on ${ROUTEID}.\n" ${NC}
 		echo -e ${BLUE} "BUILDING #${build_num} FROM ${USER}@${HOSTNAME}\n" ${NC}
 		echo -e ${BLUE} "Release type: ${release_type} \n" ${NC}
 		arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
@@ -568,7 +568,12 @@ function print_start_build {
 
 		if [ $silent -eq 0 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
-		textStr="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} started for device ${device_name} via Jenkins, running on ${USER}@${HOSTNAME}."
+
+		link="http://grandprime.ddns.net/jenkins?ROUTEID=${ROUTEID}"
+
+		str_main="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} started for device ${device_name} via Jenkins, running on ${USER}@${HOSTNAME}."
+		str_blurb="%0A This build is running on Jenkins instance ${ROUTEID}, accessible at ${link}"
+		textStr="${str_main}${str_blurb}"
 
 		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 	   fi
@@ -579,7 +584,28 @@ function print_end_build {
 	echo -e ${BLUE} "Done." ${NC}
 	if [ $silent -eq 0 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
-		textStr="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} for ${device_name} device on ${USER}@${HOSTNAME} completed successfully."
+		target_str_len=$(echo ${BUILD_JENKINS_MOUNT_POINT} | wc -c)
+		r_dir=$(echo $out_dir | cut -c ${target_str_len}-)
+		link="http://grandprime.ddns.net${r_dir}"
+
+		arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
+		rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
+		bimg_name=bootimage-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
+
+		if [ "$target" == "recoveryimage" ]; then
+			str_rec="%0A Recovery: ${link}${r_dir}/builds/recovery/${device_name}/${rec_name}.tar"
+		elif [ "$target" == "bootimage" ]; then
+			str_boot="%0A Boot image: ${link}${r_dir}/builds/boot/${device_name}/${bimg_name}.tar"
+		elif [ "$target" == "otapackage" ]; then
+			str_rom="%0A ROM: ${link}${r_dir}/builds/full/${arc_name}.zip"
+			str_su="%0A SU: ${link}${r_dir}/builds/su/addonsu-arm_j${build_num}.zip"
+			str_rec="%0A Recovery: ${link}${r_dir}/builds/recovery/${device_name}/${rec_name}.tar"
+		fi
+		str_main="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} for device ${device_name} on ${USER}@${HOSTNAME} completed successfully. "
+		str_blurb="%0A%0A You can flash boot/recovery images using ODIN or you can extract them using 7zip/tar and flash using TWRP."
+		str_changelog="%0A Changelog: ${link}${r_dir}/builds/full/${arc_name}.txt"
+		textStr="${str_main}${str_rom}${str_su}${str_rec}${str_boot}${str_changelog}${str_blurb}"
+
 		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 	fi
 }
