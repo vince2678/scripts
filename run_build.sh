@@ -598,7 +598,9 @@ function print_end_build {
 			str_boot="%0ABoot image: ${link}/builds/boot/${device_name}/${bimg_name}.tar"
 		elif [ "$target" == "otapackage" ]; then
 			str_rom="%0A ROM: ${link}/builds/full/${arc_name}.zip"
-			str_su="%0A SU: ${link}/builds/su/addonsu-arm_j${build_num}.zip"
+			if [ $ver == "13.0" ]; then
+				str_su="%0A SU: ${link}/builds/su/addonsu-arm_j${build_num}.zip"
+			fi
 			str_rec="%0A Recovery: ${link}/builds/recovery/${device_name}/${rec_name}.tar"
 		fi
 		str_main="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} for device ${device_name} on ${USER}@${HOSTNAME} completed successfully."
