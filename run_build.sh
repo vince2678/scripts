@@ -106,8 +106,10 @@ function bootstrap {
 
 	# set the common dir
 	platform_common_dir="$build_top/device/${vendors[0]}/msm8916-common/"
-	if [ "$device_name" == "gtesqltespr" ] || [ "$device_name" == "gtelwifiue" ]; then
+	if [ $(echo $device_name | cut -c -3) == "gte" ]; then
 		common_dir="$build_top/device/${vendors[0]}/gte-common/"
+	elif [ $(echo $device_name | cut -c -2) == "j5" ]; then
+		common_dir="$build_top/device/${vendors[0]}/j5-common/"
 	else
 		common_dir="$build_top/device/${vendors[0]}/gprimelte-common/"
 	fi
@@ -123,7 +125,7 @@ function apply_patch {
 		echo -e ${BLUE} "Patching build top..." ${RED}
 		cd ${build_top}
 		count=0
-		for diff_file in $(find ${common_dir}/patch/ -type f 2>/dev/null); do
+		for diff_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null); do
 			cat  ${diff_file} | patch -p1
 			count=$(($count+1))
 			exit_error $?
@@ -149,7 +151,7 @@ function reverse_patch {
 		echo -e ${BLUE} "Unpatching build top..." ${RED}
 		cd ${build_top}
 		count=0
-		for diff_file in $(find ${common_dir}/patch/ -type f); do
+		for diff_file in $(find ${platform_common_dir}/patch/ -type f); do
 			cat  ${diff_file} | patch -Rp1
 			count=$(($count+1))
 			exit_error $?
