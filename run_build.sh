@@ -186,7 +186,7 @@ function main {
 	#get the platform version
 	platorm_version=$(grep 'PLATFORM_VERSION :' build/core/version_defaults.mk  | cut -d '=' -f 2)
 	export WITH_SU
-	if [ $platorm_version == "7.1.1" ]; then
+	if [ $platorm_version == "7.1.1" ] || [ $platorm_version == "7.1.2" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 		if [ "$distro" == "lineage" ]; then
 			ver="14.1"
