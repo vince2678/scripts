@@ -32,15 +32,27 @@ function apply_patch {
 		count=0
 
 		for patch_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null); do
-			cat  ${patch_file} | patch -p1
-			count=$(($count+1))
-			exit_error $?
+			# test applying the patch
+			cat ${patch_file} | patch -p1 --dry-run
+
+			if [ $? -eq 0 ]; then
+				cat  ${patch_file} | patch -p1
+				count=$(($count+1))
+			else
+				logr "Failed to apply patch ${patch_file}! Fix this."
+			fi
 		done
 
 		for patch_file in $(find ${PATCH_DIR} -type f 2>/dev/null); do
-			cat  ${patch_file} | patch -p1
-			count=$(($count+1))
-			exit_error $?
+			# test applying the patch
+			cat ${patch_file} | patch -p1 --dry-run
+
+			if [ $? -eq 0 ]; then
+				cat ${patch_file} | patch -p1
+				count=$(($count+1))
+			else
+				logr "Failed to apply patch ${patch_file}! Fix this."
+			fi
 		done
 
 		if [ ${count} -eq 0 ]; then
@@ -67,16 +79,28 @@ function reverse_patch {
 		cd ${build_top}
 		count=0
 
-		for patch_file in $(find ${platform_common_dir}/patch/ -type f); do
-			cat  ${patch_file} | patch -Rp1
-			count=$(($count+1))
-			exit_error $?
+		for patch_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null); do
+			# test applying the patch
+			cat ${patch_file} | patch -Rp1 --dry-run
+
+			if [ $? -eq 0 ]; then
+				cat ${patch_file} | patch -Rp1
+				count=$(($count+1))
+			else
+				logr "Failed to apply patch ${patch_file}! Fix this."
+			fi
 		done
 
 		for patch_file in $(find ${PATCH_DIR} -type f 2>/dev/null); do
-			cat  ${patch_file} | patch -Rp1
-			count=$(($count+1))
-			exit_error $?
+			# test applying the patch
+			cat  ${patch_file} | patch -Rp1 --dry-run
+
+			if [ $? -eq 0 ]; then
+				cat ${patch_file} | patch -Rp1
+				count=$(($count+1))
+			else
+				logr "Failed to apply patch ${patch_file}! Fix this."
+			fi
 		done
 
 		if [ ${count} -eq 0 ]; then
