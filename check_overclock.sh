@@ -4,7 +4,7 @@ function check_oc_enabled {
 ARG="--oc"
 for i in `seq 0 ${#}`; do
 	if [ "${!i}" == "$ARG" ]; then
-		logr "Overclocking is enabled"
+		logb "Overclocking is enabled"
 		OVERCLOCKED=y
 	fi
 done
