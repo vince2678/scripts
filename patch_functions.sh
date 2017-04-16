@@ -36,7 +36,7 @@ function apply_patch {
 			cat ${patch_file} | patch -p1 --dry-run -f
 
 			if [ $? -eq 0 ]; then
-				cat  ${patch_file} | patch -p1 -f
+				cat  ${patch_file} | patch -p1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
 				logr "Failed to apply patch ${patch_file}! Fix this."
@@ -48,7 +48,7 @@ function apply_patch {
 			cat ${patch_file} | patch -p1 -f --dry-run
 
 			if [ $? -eq 0 ]; then
-				cat ${patch_file} | patch -p1 -f
+				cat ${patch_file} | patch -p1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
 				logr "Failed to apply patch ${patch_file}! Fix this."
@@ -84,7 +84,7 @@ function reverse_patch {
 			cat ${patch_file} | patch -Rp1 --dry-run -f
 
 			if [ $? -eq 0 ]; then
-				cat ${patch_file} | patch -Rp1 -f
+				cat ${patch_file} | patch -Rp1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
 				logr "Failed to apply patch ${patch_file}! Fix this."
@@ -96,7 +96,7 @@ function reverse_patch {
 			cat  ${patch_file} | patch -Rp1 --dry-run -f
 
 			if [ $? -eq 0 ]; then
-				cat ${patch_file} | patch -Rp1 -f
+				cat ${patch_file} | patch -Rp1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
 				logr "Failed to apply patch ${patch_file}! Fix this."
