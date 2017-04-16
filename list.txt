@@ -1,6 +1,9 @@
 code.sh
 patch_functions.sh
-overclock.sh
+check_overclock.sh
+cpu_overclock_patch.sh
+governor_patch.sh
+gpu_overclock_patch.sh
 sync_functions.sh
 misc_functions.sh
 bootstrap_core.sh
