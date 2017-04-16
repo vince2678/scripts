@@ -70,6 +70,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 		{"sync_all",	no_argument,       0, 'a' },
 		{"su",	no_argument,       0, 'u' },
 		{"odin",	no_argument,       0, 'c' },
+		{"help",	no_argument, 0,  'h' },
 		{"clean",	no_argument, 0,  'r' },
 		{"target",	required_argument, 0,  't' },
 		{"device",	required_argument, 0,  'n' },
@@ -80,7 +81,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 		{0,         0,                 0,  0 }
 	};
 
-    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scravu", long_options, &optind)) != -1 ) {
+    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scravuh", long_options, &optind)) != -1 ) {
         switch (opt){
             case 'u': //sync
 		with_su=1;
@@ -132,9 +133,9 @@ void parse_commmand_line(int argc, char *argv[]) {
 		strcpy(distro, optarg);
 		dflag = 1;
                 break;
-            case '?': // case in which the argument is not recognised.
+            case 'h': // case in which the argument is not recognised.
             //No break statement == the case 'falls thru' to the next one.
-            default: // if an invalid argument is found.
+            //default: // if an invalid argument is found.
                 fprintf (stderr, "Usage: %s [OPTION]\n",argv[0]);
                 fprintf (stderr, "  -d, --distro\tdistribution name\n" );
                 fprintf (stderr, "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" );
