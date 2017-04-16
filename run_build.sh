@@ -59,7 +59,7 @@ for source_file in ${file_list}; do
 
 	if [ $? -eq 0 ]; then
 		. ${script_dir}/${source_file}
-		mv ${script_dir}/${source_file} $(dirname $0)/${source_file}
+		mv -f ${script_dir}/${source_file} $(dirname $0)/${source_file}
 	else
 		. $(dirname $0)/${source_file}
 	fi

@@ -259,7 +259,7 @@ function move_files {
 			tar -H ustar -c boot.img recovery.img system.img.ext4 -f ${arc_name}.tar
 			#calculate the md5sum
 			md5sum -t ${arc_name}.tar >> ${arc_name}.tar
-			mv ${arc_name}.tar ${arc_name}.tar.md5
+			mv -f ${arc_name}.tar ${arc_name}.tar.md5
 			logb "Compressing ODIN-flashable image..."
 			#compress the image
 			7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
