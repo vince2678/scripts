@@ -68,9 +68,9 @@ function bootstrap {
 
 	# set the common dir
 	platform_common_dir="$build_top/device/${vendors[0]}/msm8916-common/"
-	if [ $(echo $device_name | cut -c -3) == "gte" ]; then
+	if [ "$(echo $device_name | cut -c -3)" == "gte" ]; then
 		common_dir="$build_top/device/${vendors[0]}/gte-common/"
-	elif [ $(echo $device_name | cut -c -2) == "j5" ]; then
+	elif [ "$(echo $device_name | cut -c -2)" == "j5" ]; then
 		common_dir="$build_top/device/${vendors[0]}/j5-common/"
 	else
 		common_dir="$build_top/device/${vendors[0]}/gprimelte-common/"
