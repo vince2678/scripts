@@ -76,9 +76,9 @@ reverse_patch
 # sync the repos
 sync_vendor_trees
 sync_all_trees
-# apply the patch
-apply_patch
 if [ "${distro}" != "" ]; then
+	# apply the patch
+	apply_patch
 	# run the main function
 	main "$@"
 	# print the build start text
