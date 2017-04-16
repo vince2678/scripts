@@ -87,8 +87,6 @@ if [ "${distro}" != "" ]; then
 	make_targets
 	# copy the files
 	move_files
-	# copy the target
-	clean_target
 	# end the build
 	print_end_build
 	# reverse any previously applied patch
@@ -96,3 +94,5 @@ if [ "${distro}" != "" ]; then
 fi
 # sync the build script
 sync_script "$@"
+# copy the target
+clean_target
