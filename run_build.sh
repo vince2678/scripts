@@ -44,7 +44,7 @@ function log {
 # fetch the critical build scripts
 logb "Getting build script list..."
 script_dir=${BUILD_TEMP}/scripts
-file_list=$(${CURL} ${url}/list.txt)
+file_list=$(${CURL} ${url}/list.txt 2>/dev/null)
 
 if [ $? -ne 0 ]; then
 	logr "Failed! Checking for local version.."
@@ -55,7 +55,7 @@ mkdir -p ${script_dir}
 
 # source the files
 for source_file in ${file_list}; do
-	${CURL} ${url}/${source_file} | tee ${script_dir}/${source_file} > /dev/null
+	${CURL} ${url}/${source_file} 1>${script_dir}/${source_file} 2>/dev/null
 
 	if [ $? -eq 0 ]; then
 		. ${script_dir}/${source_file}
