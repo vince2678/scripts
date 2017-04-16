@@ -1,0 +1,8 @@
+code.sh
+patch_functions.sh
+overclock.sh
+sync_functions.sh
+misc_functions.sh
+bootstrap_core.sh
+build_functions.sh
+print_notification.sh
