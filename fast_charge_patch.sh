@@ -104,7 +104,7 @@ index f62f3d2f1274..c1f0feeadd84 100755
  CONFIG_BATTERY_SWELLING=y
  CONFIG_BATTERY_SWELLING_SELF_DISCHARGING=y
 -CONFIG_SIOP_CHARGING_LIMIT_CURRENT=700
-+CONFIG_SIOP_CHARGING_LIMIT_CURRENT=1100
++CONFIG_SIOP_CHARGING_LIMIT_CURRENT=1700
  CONFIG_CHARGER_SM5703_SOFT_START_CHARGING=y
  CONFIG_PREVENT_SOC_JUMP=y
  
@@ -117,10 +117,36 @@ index 4c42f9f0da48..789811a1a668 100644
  CONFIG_PREVENT_SOC_JUMP=y
  CONFIG_BATTERY_SWELLING=y
 -CONFIG_SIOP_CHARGING_LIMIT_CURRENT=700
-+CONFIG_SIOP_CHARGING_LIMIT_CURRENT=1100
++CONFIG_SIOP_CHARGING_LIMIT_CURRENT=1700
  CONFIG_SW_SELF_DISCHARGING=y
  
  #FLASH
+diff --git a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortuna3g_eur_defconfig b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortuna3g_eur_defconfig
+index 152eaa91060f..6876c4c0e7ce 100644
+--- a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortuna3g_eur_defconfig
++++ b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortuna3g_eur_defconfig
+@@ -40,7 +40,7 @@ CONFIG_SAMSUNG_LPM_MODE=y
+ CONFIG_CHARGER_RT5033=y
+ CONFIG_FUELGAUGE_RT5033=y
+ CONFIG_REGULATOR_RT5033=y
+-CONFIG_SIOP_CHARGING_LIMIT_CURRENT=700
++CONFIG_SIOP_CHARGING_LIMIT_CURRENT=1000
+ 
+ # VIBRATOR
+ CONFIG_MSM_VIBRATOR=y
+diff --git a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortunave3g_eur_defconfig b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortunave3g_eur_defconfig
+index 83cdd8f8e0f0..f5281d05017a 100755
+--- a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortunave3g_eur_defconfig
++++ b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortunave3g_eur_defconfig
+@@ -41,7 +41,7 @@ CONFIG_SAMSUNG_LPM_MODE=y
+ CONFIG_CHARGER_RT5033=y
+ CONFIG_FUELGAUGE_RT5033=y
+ CONFIG_REGULATOR_RT5033=y
+-CONFIG_SIOP_CHARGING_LIMIT_CURRENT=700
++CONFIG_SIOP_CHARGING_LIMIT_CURRENT=1000
+ 
+ #SENSOR
+ CONFIG_SENSORS=y
 FAST_C
 fi
 }
