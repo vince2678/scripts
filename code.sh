@@ -18,7 +18,7 @@ CMD_HELPER_SRC="${CMD_HELPER}.c"
 
 function extract_code {
 # save the source code to a temp file
-logb "Extracting code..."
+logb "\t\tExtracting code..."
 cat <<SRC > ${CMD_HELPER_SRC}
 #define _XOPEN_SOURCE 600
 #include <stdio.h>

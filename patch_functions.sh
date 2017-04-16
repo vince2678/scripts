@@ -19,7 +19,7 @@ function extract_patches {
 	mkdir -p ${PATCH_DIR}
 
 	for ix in `seq 0 $((${#PATCHES[@]}-1))`; do
-		logr "Running function ${PATCHES[$ix]}"
+		logr "\tRunning function ${PATCHES[$ix]}"
 		${PATCHES[$ix]} $@
 	done
 }
