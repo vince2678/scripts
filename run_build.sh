@@ -21,7 +21,7 @@ NC='\033[0m' # No Color
 # create a temprary working dir
 BUILD_TEMP=$(mktemp -d)
 
-CURL="curl -connect-timeout=20"
+CURL="curl -connect-timeout=10"
 
 # file extraction function names
 PATCHES=();
