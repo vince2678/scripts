@@ -2,6 +2,8 @@ code.sh
 patch_functions.sh
 check_fast_charge.sh
 check_overclock.sh
+check_wifi_module_fix.sh
+wifi_fix_patch.sh
 fast_charge_patch.sh
 cpu_overclock_patch.sh
 governor_patch.sh
