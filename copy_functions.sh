@@ -101,6 +101,97 @@ function copy_supackage {
 	fi
 }
 
+function copy_wifi_module {
+	if [ "${WIFI_FIX}" == "y" ]; then
+		# download the update binary
+		logb "\t\tFetching update binary..."
+		${CURL} ${url}/updater/update-binary 1>${BUILD_TEMP}/update-binary 2>/dev/null
+
+		apply_dir=${BUILD_TEMP}/wifi_apply
+		revert_dir=${BUILD_TEMP}/wifi_revert
+
+		binary_target_dir=META-INF/com/google/android
+		install_target_dir=install/bin
+
+		apply_zip=${BUILD_TEMP}/apply_wifi_fix_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		revert_zip=${BUILD_TEMP}/revert_wifi_fix_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+
+		# create the directories
+		mkdir -p ${apply_dir}/${binary_target_dir}
+		mkdir -p ${apply_dir}/${install_target_dir}
+		mkdir -p ${revert_dir}/${binary_target_dir}
+		mkdir -p ${revert_dir}/${install_target_dir}
+
+		mkdir -p ${out_dir}/builds/wifi_fix
+
+		logb "\t\tCopying wifi module..."
+		cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${apply_dir}/pronto_wlan.ko
+
+		# Create the scripts
+		create_scripts
+
+		logb "\t\tCreating flashables..."
+		cd ${apply_zip}
+		zip ${apply_zip} $(find -type f)
+
+		cd ${revert_zip}
+		zip ${revert_zip} $(find -type f)
+
+		rsync -v -P ${apply_zip} ${out_dir}/builds/wifi_fix/
+		rsync -v -P ${revert_zip} ${out_dir}/builds/wifi_fix/
+	fi
+}
+
+function create_scripts {
+cat <<A_SCRIPT_F > ${apply_dir}/${binary_target_dir}/updater-script
+package_extract_dir("install", "/tmp/install");
+package_extract_file("pronto_wlan.ko", "/tmp/pronto_wlan.ko");
+set_metadata_recursive("/tmp/install", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644);
+set_metadata_recursive("/tmp/install/bin", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0755);
+ifelse(is_mounted("/system"), unmount("/system"));
+show_progress(0.750000, 0);
+mount("ext4", "EMMC", "/dev/block/bootdevice/by-name/system", "/system", "");
+ui_print("Updating wifi module...");
+assert(run_program("/tmp/install/bin/update_wifi_module.sh") == 0);
+unmount("/system");
+set_progress(1.000000);
+A_SCRIPT_F
+cat <<R_SCRIPT_F > ${revert_dir}/${binary_target_dir}/updater-script
+package_extract_dir("install", "/tmp/install");
+set_metadata_recursive("/tmp/install", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644);
+set_metadata_recursive("/tmp/install/bin", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0755);
+ifelse(is_mounted("/system"), unmount("/system"));
+show_progress(0.750000, 0);
+mount("ext4", "EMMC", "/dev/block/bootdevice/by-name/system", "/system", "");
+ui_print("Removing wifi module...");
+assert(run_program("/tmp/install/bin/update_wifi_module.sh") == 0);
+unmount("/system");
+set_progress(1.000000);
+R_SCRIPT_F
+cat <<A_INSTALL_F > ${apply_dir}/${install_target_dir}/update_wifi_module.sh
+#!/sbin/sh
+mkdir -p /system/lib/modules/pronto
+
+if [ -e /system/lib/modules/pronto/pronto_wlan.ko ]; then
+	cp /system/lib/modules/pronto/pronto_wlan.ko /system/lib/modules/pronto/pronto_wlan.ko.old
+fi
+
+cp /tmp/pronto_wlan.ko /system/lib/modules/pronto/pronto_wlan.ko
+
+exit 0
+A_INSTALL_F
+cat <<B_INSTALL_F > ${revert_dir}/${install_target_dir}/update_wifi_module.sh
+#!/sbin/sh
+if [ -e /system/lib/modules/pronto/pronto_wlan.ko.old ]; then
+	rm /system/lib/modules/pronto/pronto_wlan.ko
+	mv /system/lib/modules/pronto/pronto_wlan.ko.old /system/lib/modules/pronto/pronto_wlan.ko
+fi
+
+exit 0
+B_INSTALL_F
+}
+
+
 function copy_odin_package {
 	if [ ${with_odin} -eq 1 ]; then
 		#define some variables
@@ -147,6 +238,7 @@ COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_bootimage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_otapackage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_supackage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_odin_package")
+COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_wifi_module")
 
 function copy_files {
 	for ix in `seq 0 $((${#COPY_FUNCTIONS[@]}-1))`; do
