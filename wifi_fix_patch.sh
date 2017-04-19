@@ -3,10 +3,10 @@
 function extract_wifi_fix_patch {
 if [ "${WIFI_FIX}" == "y" ]; then
 cat <<WIFI_F > ${PATCH_DIR}/wifi_fix.patch
-diff --git a/arch/arm/configs/msm8916_sec_defconfig b/arch/arm/configs/msm8916_sec_defconfig
+diff --git a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig
 index 04ad01c474e3..285afd1a4c9e 100644
---- a/arch/arm/configs/msm8916_sec_defconfig
-+++ b/arch/arm/configs/msm8916_sec_defconfig
+--- a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig
++++ b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig
 @@ -718,7 +718,7 @@ CONFIG_SECCOMP=y
  # Qualcomm Atheros Prima WLAN module
  #
