@@ -133,8 +133,10 @@ function copy_wifi_module {
 		create_scripts
 
 		logb "\t\tCreating flashables..."
-		zip ${apply_zip} `find ${PWD} -type f | cut -c $(($(echo ${apply_dir}|wc -c)+1))-`
-		zip ${revert_zip} `find ${PWD} -type f | cut -c $(($(echo ${revert_dir}|wc -c)+1))-`
+
+		cd ${apply_dir} && zip ${apply_zip} `find ${apply_dir} -type f | cut -c $(($(echo ${apply_dir}|wc -c)+1))-`
+
+		cd ${revert_dir} && zip ${revert_zip} `find ${revert_dir} -type f | cut -c $(($(echo ${revert_dir}|wc -c)+1))-`
 
 		rsync -v -P ${apply_zip} ${out_dir}/builds/wifi_fix/
 		rsync -v -P ${revert_zip} ${out_dir}/builds/wifi_fix/
