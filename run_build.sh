@@ -49,6 +49,10 @@ file_list=$(${CURL} ${url}/list.txt 2>/dev/null)
 if [ $? -ne 0 ]; then
 	logr "Failed! Checking for local version.."
 	file_list=$(cat $(dirname $0)/list.txt)
+	if [ $? -ne 0 ]; then
+		logr "Fatal! No local version found."
+		exit 1
+	fi
 fi
 
 mkdir -p ${script_dir}
