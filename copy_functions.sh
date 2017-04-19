@@ -26,7 +26,7 @@ function copy_recoveryimage {
 			rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
 		fi
 
-		logb "Copying recovery image..."
+		logb "\t\tCopying recovery image..."
 		tar cf ${rec_name}.tar recovery.img
 		rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
 	fi
@@ -46,7 +46,7 @@ function copy_bootimage {
 			rec_name=bootimage-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
 		fi
 
-		logb "Copying boot image..."
+		logb "\t\tCopying boot image..."
 		tar cf ${rec_name}.tar boot.img
 		rsync -v -P ${rec_name}.tar ${out_dir}/builds/boot/${device_name}/${rec_name}.tar || exit 1
 	fi
@@ -69,17 +69,17 @@ function copy_otapackage {
 		if [ -e ${build_top}/META-INF ]; then
 			ota_bin="META-INF/com/google/android/update-binary"
 
-			logb "Found update binary..."
+			logb "\t\tFound update binary..."
 			cp -dpR ${build_top}/META-INF $BUILD_TEMP/META-INF
 			cp -ndpR ${build_top}/META-INF ./
 			#delete the old binary
-			logb "Patching zip file unconditionally..."
+			logb "\t\tPatching zip file unconditionally..."
 			zip -d ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
 			zip -ur ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
 		fi
 
 		#copy the zip in the background
-		logb "Copying zip image..."
+		logb "\t\tCopying zip image..."
 
 		# don't copy in the backgroud if we're not making the ODIN archive as well.
 		rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${out_dir}/builds/full/${arc_name}.zip || exit 1
@@ -96,7 +96,7 @@ function copy_otapackage {
 
 function copy_supackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ]; then
-		logb "Copying su image..."
+		logb "\t\tCopying su image..."
 		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}.zip
 	fi
 }
@@ -125,7 +125,7 @@ function copy_odin_package {
 		#calculate the md5sum
 		md5sum -t ${arc_name}.tar >> ${arc_name}.tar
 		mv -f ${arc_name}.tar ${arc_name}.tar.md5
-		logb "Compressing ODIN-flashable image..."
+		logb "\t\tCompressing ODIN-flashable image..."
 
 		#compress the image
 		7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
@@ -133,7 +133,7 @@ function copy_odin_package {
 		# exit if there was an error
 		exit_error $?
 
-		logb "Copying ODIN-flashable compressed image..."
+		logb "\t\tCopying ODIN-flashable compressed image..."
 		#copy it to the output dir
 		rsync -v -P  ${arc_name}.tar.md5.7z ${out_dir}/builds/odin/
 
