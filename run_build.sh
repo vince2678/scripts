@@ -91,6 +91,8 @@ if [ "${distro}" != "" ]; then
 	make_targets
 	# copy the files
 	move_files
+	# generate the changes
+	generate_changes
 	# end the build
 	print_end_build
 	# reverse any previously applied patch
