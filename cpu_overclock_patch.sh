@@ -3,6 +3,7 @@
 function extract_cpu_oc_patch {
 # save the source code to a temp file
 if [ "$OVERCLOCKED" == "y" ]; then
+logb "\t\tExtracting cpu overclock patch..."
 cat <<CPUOC > ${PATCH_DIR}/cpu.patch
 diff --git a/kernel/samsung/msm8916/arch/arm/boot/dts/samsung/msm8916/msm8916-regulator.dtsi b/kernel/samsung/msm8916/arch/arm/boot/dts/samsung/msm8916/msm8916-regulator.dtsi
 index b293ca44a982..a678de488ba3 100644

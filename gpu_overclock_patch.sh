@@ -2,6 +2,7 @@
 
 function extract_gpu_oc_patch {
 if [ "$OVERCLOCKED" == "y" ]; then
+logb "\t\tExtracting gpu overclock patch..."
 cat <<GPUOC > ${PATCH_DIR}/gpu.patch
 diff --git a/kernel/samsung/msm8916/arch/arm/boot/dts/samsung/msm8916/msm8916-gpu.dtsi b/kernel/samsung/msm8916/arch/arm/boot/dts/samsung/msm8916/msm8916-gpu.dtsi
 index 089b3c2..4985125 100644

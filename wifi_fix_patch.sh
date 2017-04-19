@@ -2,7 +2,7 @@
 
 function extract_wifi_fix_patch {
 if [ "${WIFI_FIX}" == "y" ]; then
-logb "\t\t\tExtracting Wifi fix patch"
+logb "\t\tExtracting Wifi fix patch..."
 cat <<WIFI_F > ${PATCH_DIR}/wifi_fix.patch
 diff --git a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig
 index 04ad01c474e3..285afd1a4c9e 100644

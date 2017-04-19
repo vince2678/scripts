@@ -3,6 +3,7 @@
 
 function extract_fast_charge_config_patch {
 if [ "${FAST_CHARGING}" == "y" ]; then
+logb "\t\tExtracting fast charging patch..."
 cat <<FAST_C > ${PATCH_DIR}/fast_charge_config.patch
 diff --git a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_gtelwifi_usa_defconfig b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_gtelwifi_usa_defconfig
 index f62f3d2f1274..c1f0feeadd84 100755

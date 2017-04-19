@@ -1,6 +1,7 @@
 function extract_governor_patch {
 # save the source code to a temp file
 if [ "$OVERCLOCKED" == "y" ]; then
+logb "\t\tExtracting governor tunables patch..."
 cat <<GOVERNOR_P > ${PATCH_DIR}/governor.patch
 diff --git a/device/samsung/msm8916-common/rootdir/etc/init.qcom.post_boot.sh b/device/samsung/msm8916-common/rootdir/etc/init.qcom.post_boot.sh
 index 289ced5..7a3fd44 100644
