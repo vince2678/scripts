@@ -12,5 +12,6 @@ sync_functions.sh
 misc_functions.sh
 bootstrap_core.sh
 build_functions.sh
+copy_functions.sh
 print_notification.sh
 list.txt
