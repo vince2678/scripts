@@ -56,6 +56,8 @@ if [ $? -ne 0 ]; then
 		logr "Fatal! No local version found."
 		exit 1
 	fi
+else
+	${CURL} ${url}/list.txt 1>${script_dir}/list.txt 2>/dev/null
 fi
 
 mkdir -p ${script_dir}
