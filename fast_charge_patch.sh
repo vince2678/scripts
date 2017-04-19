@@ -1,9 +1,9 @@
 
 #!/bin/bash
 
-function extract_fast_charge_patch {
+function extract_fast_charge_config_patch {
 if [ "${FAST_CHARGING}" == "y" ]; then
-cat <<FAST_C > ${PATCH_DIR}/fast_charge.patch
+cat <<FAST_C > ${PATCH_DIR}/fast_charge_config.patch
 diff --git a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortuna_can_defconfig b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortuna_can_defconfig
 index d93863e2ebad..bd332878c2ff 100755
 --- a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_fortuna_can_defconfig
@@ -151,4 +151,35 @@ FAST_C
 fi
 }
 
-PATCHES=("${PATCHES[@]}" "extract_fast_charge_patch")
+
+function extract_fast_charge_sm5703_patch {
+if [ "${FAST_CHARGING}" == "y" ]; then
+cat <<FAST_C_S > ${PATCH_DIR}/fast_charge_sm5703.patch
+diff --git a/kernel/samsung/msm8916/include/linux/battery/charger/sm5703_charger.h b/kernel/samsung/msm8916/include/linux/battery/charger/sm5703_charger.h
+index dddf29c7f9a0..c4f02381c4ae 100755
+--- a/kernel/samsung/msm8916/include/linux/battery/charger/sm5703_charger.h
++++ b/kernel/samsung/msm8916/include/linux/battery/charger/sm5703_charger.h
+@@ -117,7 +117,7 @@ enum {
+ #define START_VBUSLIMIT_DELAY			1200
+ #define VBUSLIMIT_DELAY					200
+ #define REDUCE_CURRENT_STEP				50
+-#define MINIMUM_INPUT_CURRENT			300
++#define MINIMUM_INPUT_CURRENT			500
+ 
+ #if defined(CONFIG_MACH_GTEL_USA_VZW) || defined(CONFIG_MACH_GTELWIFI_USA_OPEN)
+ #define SLOW_CHARGING_CURRENT_STANDARD	1050
+@@ -133,7 +133,7 @@ enum {
+ #if defined(CONFIG_MACH_XCOVER3_DCM)
+ #define SIOP_INPUT_LIMIT_CURRENT		1000
+ #else
+-#define SIOP_INPUT_LIMIT_CURRENT		1200
++#define SIOP_INPUT_LIMIT_CURRENT		1700
+ #endif
+ 
+ extern sec_battery_platform_data_t sec_battery_pdata;
+FAST_C_S
+fi
+}
+
+PATCHES=("${PATCHES[@]}" "extract_fast_charge_config_patch")
+PATCHES=("${PATCHES[@]}" "extract_fast_charge_sm5703_patch")
