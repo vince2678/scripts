@@ -18,9 +18,14 @@ PATCH_DIR=$BUILD_TEMP/patches
 function extract_patches {
 	mkdir -p ${PATCH_DIR}
 
-	for ix in `seq 0 $((${#PATCHES[@]}-1))`; do
-		logr "\tRunning function ${PATCHES[$ix]}"
-		${PATCHES[$ix]} $@
+	for ix in `seq 0 $((${#PRE_PATCH_FUNCTIONS[@]}-1))`; do
+		logr "\tRunning function ${PRE_PATCH_FUNCTIONS[$ix]}"
+		${PATCH_FUNCTIONS[$ix]} $@
+	done
+
+	for ix in `seq 0 $((${#PATCH_FUNCTIONS[@]}-1))`; do
+		logr "\tRunning function ${PATCH_FUNCTIONS[$ix]}"
+		${PATCH_FUNCTIONS[$ix]} $@
 	done
 }
 

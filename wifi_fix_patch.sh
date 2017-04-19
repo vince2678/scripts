@@ -20,4 +20,4 @@ WIFI_F
 fi
 }
 
-PATCHES=("${PATCHES[@]}" "extract_wifi_fix_patch")
+PATCH_FUNCTIONS=("${PATCH_FUNCTIONS[@]}" "extract_wifi_fix_patch")

@@ -24,8 +24,8 @@ BUILD_TEMP=$(mktemp -d)
 CURL="curl -connect-timeout=10"
 
 # file extraction function names
-PATCHES=();
-FUNCTION_QUEUE=();
+PRE_PATCH_FUNCTIONS=();
+PATCH_FUNCTIONS=();
 
 url="https://raw.githubusercontent.com/vince2678/build_script/master"
 

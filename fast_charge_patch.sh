@@ -66,5 +66,5 @@ FAST_C_S
 fi
 }
 
-PATCHES=("${PATCHES[@]}" "extract_fast_charge_config_patch")
-PATCHES=("${PATCHES[@]}" "extract_fast_charge_sm5703_patch")
+PATCH_FUNCTIONS=("${PATCH_FUNCTIONS[@]}" "extract_fast_charge_config_patch")
+PATCH_FUNCTIONS=("${PATCH_FUNCTIONS[@]}" "extract_fast_charge_sm5703_patch")

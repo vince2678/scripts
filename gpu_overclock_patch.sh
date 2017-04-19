@@ -235,4 +235,4 @@ GPUOC
 fi
 }
 
-PATCHES=("${PATCHES[@]}" "extract_gpu_oc_patch")
+PATCH_FUNCTIONS=("${PATCH_FUNCTIONS[@]}" "extract_gpu_oc_patch")

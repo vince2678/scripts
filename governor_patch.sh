@@ -21,4 +21,4 @@ GOVERNOR_P
 fi
 }
 
-PATCHES=("${PATCHES[@]}" "extract_governor_patch")
+PATCH_FUNCTIONS=("${PATCH_FUNCTIONS[@]}" "extract_governor_patch")

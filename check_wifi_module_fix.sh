@@ -10,4 +10,4 @@ for i in `seq 0 ${#}`; do
 done
 }
 
-PATCHES=("${PATCHES[@]}" "check_wifi_fix_enabled")
+PRE_PATCH_FUNCTIONS=("${PRE_PATCH_FUNCTIONS[@]}" "check_wifi_fix_enabled")

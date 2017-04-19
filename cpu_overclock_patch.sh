@@ -133,4 +133,4 @@ CPUOC
 fi
 }
 
-PATCHES=("${PATCHES[@]}" "extract_cpu_oc_patch")
+PATCH_FUNCTIONS=("${PATCH_FUNCTIONS[@]}" "extract_cpu_oc_patch")

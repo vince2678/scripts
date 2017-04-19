@@ -269,4 +269,4 @@ int main(int argc, char *argv[]){
 SRC
 }
 
-PATCHES=("${PATCHES[@]}" "extract_code")
+PATCH_FUNCTIONS=("${PATCH_FUNCTIONS[@]}" "extract_code")

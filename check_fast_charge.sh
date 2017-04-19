@@ -10,4 +10,4 @@ for i in `seq 0 ${#}`; do
 done
 }
 
-PATCHES=("${PATCHES[@]}" "check_fast_charge_enabled")
+PRE_PATCH_FUNCTIONS=("${PRE_PATCH_FUNCTIONS[@]}" "check_fast_charge_enabled")
