@@ -78,11 +78,18 @@ void parse_commmand_line(int argc, char *argv[]) {
 		{"output",	required_argument, 0, 'o'  },
 		{"distro",	required_argument, 0,  'd' },
 		{"type",	required_argument, 0,  'e' },
+		{"fast-charge", no_argument, 0,  'f' },
+		{"wifi-fix",    no_argument, 0,  'w' },
+		{"oc",          no_argument, 0,  'z' },
 		{0,         0,                 0,  0 }
 	};
 
-    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scravuh", long_options, &optind)) != -1 ) {
+    while ( (opt = getopt_long (argc, argv, "t:n:j:p:o:b:d:e:scravuhfwz", long_options, &optind)) != -1 ) {
         switch (opt){
+            case 'f': //fast-charge
+            case 'w': //wifi fix
+            case 'z': //oc
+		break;
             case 'u': //sync
 		with_su=1;
 		break;
@@ -169,6 +176,7 @@ void parse_commmand_line(int argc, char *argv[]) {
                 fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
                 fprintf (stderr, "  -u, --su\tAdd SU to build\n");
                 fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
+		exit (EXIT_FAILURE);
 	}
     }
 
