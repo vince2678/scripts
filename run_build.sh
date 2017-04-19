@@ -27,6 +27,9 @@ CURL="curl -connect-timeout=10"
 PRE_PATCH_FUNCTIONS=();
 PATCH_FUNCTIONS=();
 
+COPY_FUNCTIONS=();
+POST_COPY_FUNCTIONS=();
+
 url="https://raw.githubusercontent.com/vince2678/build_script/master"
 
 function logr {
@@ -90,7 +93,7 @@ if [ "${distro}" != "" ]; then
 	# make the targets
 	make_targets
 	# copy the files
-	move_files
+	copy_files
 	# generate the changes
 	generate_changes
 	# end the build
