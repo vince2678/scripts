@@ -154,6 +154,21 @@ void parse_commmand_line(int argc, char *argv[]) {
                 exit (EXIT_FAILURE);
             default: // if an invalid argument is found.
                 fprintf (stderr, "Usage: %s [OPTION]\n",argv[0]);
+                fprintf (stderr, "  -d, --distro\tdistribution name\n" );
+                fprintf (stderr, "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" );
+                fprintf (stderr, "  -e, --type\twhere type is one of user|userdebug|eng\n" );
+                fprintf (stderr, "  -n, --device\tdevice name\n" );
+                fprintf (stderr, "  -p, --path\tbuild top path\n" );
+                fprintf (stderr, "  -o, --output\toutput path (path to jenkins archive dir)\n");
+                fprintf (stderr, "\nOptional commands:\n");
+                fprintf (stderr, "  -b\tbuild number\n");
+                fprintf (stderr, "  -s, --silent\tdon't publish to Telegram\n");
+                fprintf (stderr, "  -c, --odin\tbuild compressed (ODIN) images\n");
+                fprintf (stderr, "  -r, --clean\tclean build directory on completion\n");
+                fprintf (stderr, "  -a, --sync_all\tSync entire build tree\n");
+                fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
+                fprintf (stderr, "  -u, --su\tAdd SU to build\n");
+                fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
 	}
     }
 
