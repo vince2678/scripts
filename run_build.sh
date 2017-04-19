@@ -57,7 +57,7 @@ if [ $? -ne 0 ]; then
 		exit 1
 	fi
 else
-	${CURL} ${url}/list.txt 1>${script_dir}/list.txt 2>/dev/null
+	${CURL} ${url}/list.txt 1>${dirname $0}/list.txt 2>/dev/null
 fi
 
 mkdir -p ${script_dir}
