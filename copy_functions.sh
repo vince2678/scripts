@@ -126,16 +126,15 @@ function copy_wifi_module {
 
 		logb "\t\tCopying wifi module..."
 		cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${apply_dir}/pronto_wlan.ko
+		cp ${BUILD_TEMP}/update-binary ${apply_dir}/${binary_target_dir}
+		cp ${BUILD_TEMP}/update-binary ${revert_dir}/${binary_target_dir}
 
 		# Create the scripts
 		create_scripts
 
 		logb "\t\tCreating flashables..."
-		cd ${apply_zip}
-		zip ${apply_zip} $(find -type f)
-
-		cd ${revert_zip}
-		zip ${revert_zip} $(find -type f)
+		zip ${apply_zip} `find ${PWD} -type f | cut -c $(($(echo ${apply_dir}|wc -c)+1))-`
+		zip ${revert_zip} `find ${PWD} -type f | cut -c $(($(echo ${revert_dir}|wc -c)+1))-`
 
 		rsync -v -P ${apply_zip} ${out_dir}/builds/wifi_fix/
 		rsync -v -P ${revert_zip} ${out_dir}/builds/wifi_fix/
