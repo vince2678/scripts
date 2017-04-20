@@ -173,11 +173,15 @@ cat <<A_INSTALL_F > ${apply_dir}/${install_target_dir}/update_wifi_module.sh
 #!/sbin/sh
 mkdir -p /system/lib/modules/pronto
 
-if [ -e /system/lib/modules/pronto/pronto_wlan.ko ]; then
-	cp /system/lib/modules/pronto/pronto_wlan.ko /system/lib/modules/pronto/pronto_wlan.ko.old
+if [ -e /system/lib/modules/pronto/pronto_wlan.ko.old ]; then
+	rm /system/lib/modules/pronto/pronto_wlan.ko
+	mv /system/lib/modules/pronto/pronto_wlan.ko.old /system/lib/modules/pronto/pronto_wlan.ko
 fi
-
-cp /tmp/pronto_wlan.ko /system/lib/modules/pronto/pronto_wlan.ko
+if [ -e /system/lib/modules/wlan.ko ]; then
+	mv /system/lib/modules/wlan.ko /system/lib/modules/pronto/wlan.ko.old
+fi
+cp /tmp/pronto_wlan.ko /system/lib/modules/wlan.ko
+chmod 0644 /system/lib/modules/wlan.ko
 
 exit 0
 A_INSTALL_F
@@ -187,7 +191,10 @@ if [ -e /system/lib/modules/pronto/pronto_wlan.ko.old ]; then
 	rm /system/lib/modules/pronto/pronto_wlan.ko
 	mv /system/lib/modules/pronto/pronto_wlan.ko.old /system/lib/modules/pronto/pronto_wlan.ko
 fi
-
+if [ -e /system/lib/modules/wlan.ko.old ]; then
+	rm /system/lib/modules/wlan.ko
+	mv /system/lib/modules/wlan.ko.old /system/lib/modules/wlan.ko
+fi
 exit 0
 B_INSTALL_F
 }
