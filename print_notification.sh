@@ -27,11 +27,10 @@ function print_start_build {
 		if [ $silent -eq 0 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
-		link="http://grandprime.ddns.net/jenkins/"#?ROUTEID=${ROUTEID}"
+		link="http://grandprime.ddns.net/jenkins/"
 
 		str_main="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} started for device ${device_name} via Jenkins, running on ${USER}@${HOSTNAME}."
-		#str_blurb="%0A%0A This build is running on Jenkins instance ${ROUTEID}, accessible at ${link}"
-		textStr="${str_main}${str_blurb}"
+		textStr="${str_main}"
 
 		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 	   fi
