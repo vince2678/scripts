@@ -27,10 +27,10 @@ function print_start_build {
 		if [ $silent -eq 0 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
-		link="http://grandprime.ddns.net/jenkins/?ROUTEID=${ROUTEID}"
+		link="http://grandprime.ddns.net/jenkins/"#?ROUTEID=${ROUTEID}"
 
 		str_main="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} started for device ${device_name} via Jenkins, running on ${USER}@${HOSTNAME}."
-		str_blurb="%0A%0A This build is running on Jenkins instance ${ROUTEID}, accessible at ${link}"
+		#str_blurb="%0A%0A This build is running on Jenkins instance ${ROUTEID}, accessible at ${link}"
 		textStr="${str_main}${str_blurb}"
 
 		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
@@ -43,8 +43,7 @@ function print_end_build {
 	if [ $silent -eq 0 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 		target_str_len=$(echo ${BUILD_JENKINS_MOUNT_POINT} | wc -c)
-		r_dir=$(echo $out_dir | cut -c ${target_str_len}-)
-		link="http://grandprime.ddns.net${r_dir}"
+		link="http://grandprime.ddns.net/jenkins/job/Omni_Builds/job/${JOB_BASE_NAME}/${build_num}/artifact"
 
 		arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
 		rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
