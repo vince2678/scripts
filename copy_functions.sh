@@ -113,8 +113,8 @@ function copy_wifi_module {
 		binary_target_dir=META-INF/com/google/android
 		install_target_dir=install/bin
 
-		apply_zip=${BUILD_TEMP}/apply_wifi_fix_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
-		revert_zip=${BUILD_TEMP}/revert_wifi_fix_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		apply_zip=${BUILD_TEMP}/apply_wifi_module_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		revert_zip=${BUILD_TEMP}/revert_wifi_module_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
 
 		# create the directories
 		mkdir -p ${apply_dir}/${binary_target_dir}
@@ -122,7 +122,7 @@ function copy_wifi_module {
 		mkdir -p ${revert_dir}/${binary_target_dir}
 		mkdir -p ${revert_dir}/${install_target_dir}
 
-		mkdir -p ${out_dir}/builds/wifi_fix
+		mkdir -p ${out_dir}/builds/wifi_module
 
 		logb "\t\tCopying wifi module..."
 		cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${apply_dir}/pronto_wlan.ko
@@ -138,8 +138,8 @@ function copy_wifi_module {
 
 		cd ${revert_dir} && zip ${revert_zip} `find ${revert_dir} -type f | cut -c $(($(echo ${revert_dir}|wc -c)+1))-`
 
-		rsync -v -P ${apply_zip} ${out_dir}/builds/wifi_fix/
-		rsync -v -P ${revert_zip} ${out_dir}/builds/wifi_fix/
+		rsync -v -P ${apply_zip} ${out_dir}/builds/wifi_module/
+		rsync -v -P ${revert_zip} ${out_dir}/builds/wifi_module/
 	fi
 }
 
