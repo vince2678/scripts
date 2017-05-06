@@ -42,7 +42,7 @@ function print_end_build {
 	if [ $silent -eq 0 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 		target_str_len=$(echo ${BUILD_JENKINS_MOUNT_POINT} | wc -c)
-		link="http://grandprime.ddns.net/jenkins/job/Omni_Builds/job/${JOB_BASE_NAME}/${build_num}/artifact"
+		link="${BUILD_URL}/artifact"
 
 		arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
 		rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
