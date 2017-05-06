@@ -98,6 +98,9 @@ function copy_supackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ]; then
 		logb "\t\tCopying su image..."
 		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}.zip
+	elif [ -e ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ]; then
+		logb "\t\tCopying su image..."
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${out_dir}/builds/su/addonsu-${ver}-arm_j${build_num}.zip
 	fi
 }
 
