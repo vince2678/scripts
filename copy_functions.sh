@@ -247,7 +247,7 @@ function copy_odin_package {
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_recoveryimage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_bootimage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_otapackage")
-COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_supackage")
+#COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_supackage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_odin_package")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_wifi_module")
 

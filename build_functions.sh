@@ -148,11 +148,11 @@ function make_targets {
 	#cowardly exit 1 if we fail.
 	exit_error $?
 	#build su
-	if [ $ver == "13.0" ] && [ "$target" != "recoveryimage" ] && [ "$target" != "bootimage" ]; then
-		make -j${job_num} addonsu
+	#if [ $ver == "13.0" ] && [ "$target" != "recoveryimage" ] && [ "$target" != "bootimage" ]; then
+		#make -j${job_num} addonsu
 		#cowardly exit 1 if we fail.
-		exit_error $?
-	fi
+		#exit_error $?
+	#fi
 }
 
 function generate_changes {
