@@ -14,7 +14,9 @@ index dddf29c7f9a0..c4f02381c4ae 100755
  #define REDUCE_CURRENT_STEP				50
 +#if defined(CONFIG_MACH_GTEL_USA_VZW) || defined(CONFIG_MACH_GTELWIFI_USA_OPEN)
 +#define MINIMUM_INPUT_CURRENT			800
-+else
++#elif defined(CONFIG_SEC_J5_PROJECT) || defined(CONFIG_SEC_J5X_PROJECT) || defined(CONFIG_SEC_J5N_PROJECT)
++#define MINIMUM_INPUT_CURRENT			700
++#else
  #define MINIMUM_INPUT_CURRENT			300
 +#endif
  
