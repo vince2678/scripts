@@ -172,28 +172,28 @@ function generate_changes {
 
 		echo -e "DEVICE\n---------\n" > ${out_dir}/builds/full/${arc_name}.txt
 
-		git log --stat --decorate=full \
+		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
 		cd ${common_dir}
 
 		echo -e "\nDEVICE-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
-		git log --stat --decorate=full \
+		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
 		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[0]}/${device_name}
 
 		echo -e "\nVENDOR\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
-		git log --stat --decorate=full \
+		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
 		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[1]}/binaries
 
 		echo -e "\nVENDOR BINARIES\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
-		git log --stat --decorate=full \
+		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 	fi
 
@@ -201,14 +201,14 @@ function generate_changes {
 
 	echo -e "\nMSM8916-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
-	git log --stat --decorate=full \
+	git log --decorate=full \
 		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 
 	cd ${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
 
 	echo -e "\nKERNEL\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
 
-	git log --stat --decorate=full \
+	git log --decorate=full \
 		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
 }
 
