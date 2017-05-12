@@ -85,8 +85,8 @@ check_if_build_running
 # reverse any previously applied patch
 reverse_patch
 # sync the repos
-sync_vendor_trees
-sync_all_trees
+sync_vendor_trees "$@"
+sync_all_trees "$@"
 if [ "${distro}" != "" ]; then
 	# apply the patch
 	apply_patch
