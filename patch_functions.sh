@@ -60,6 +60,20 @@ function apply_patch {
 			fi
 		done
 
+		# change the kernel branch if necessary
+		logb "Reverting kernel..."
+		repo sync ${kernel_dir} -d
+		if [ "$OVERCLOCKED" == "y" ]; then
+			cd $kernel_dir
+			logb "Checking out kernel branch ${OC_BRANCH}."
+			git checkout ${OC_BRANCH}
+			logb "Updating kernel remotes..."
+			git remote update
+			logb "Rebasing kernel..."
+			git rebase github/${OC_BRANCH}
+			cd ${build_top}
+		fi
+
 		if [ ${count} -eq 0 ]; then
 			logb "Nothing to patch."
 		else
@@ -107,6 +121,16 @@ function reverse_patch {
 				logr "Failed to apply patch ${patch_file}! Fix this."
 			fi
 		done
+
+		# change the kernel branch if necessary
+		logb "Reverting kernel..."
+		repo sync ${kernel_dir} -d
+		if [ "$OVERCLOCKED" == "y" ]; then
+			cd $kernel_dir
+			logb "Deleting kernel branch ${OC_BRANCH}."
+			git branch -D ${OC_BRANCH}
+			cd ${build_top}
+		fi
 
 		if [ ${count} -eq 0 ]; then
 			logb "Nothing to patch."

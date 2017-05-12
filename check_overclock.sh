@@ -6,6 +6,7 @@ for i in `seq 0 ${#}`; do
 	if [ "${!i}" == "$ARG" ]; then
 		logb "\t\tOverclocking is enabled"
 		OVERCLOCKED=y
+		OC_BRANCH="cm-14.1-experimental"
 	fi
 done
 }

@@ -32,6 +32,8 @@ POST_COPY_FUNCTIONS=();
 
 url="https://raw.githubusercontent.com/vince2678/build_script/master"
 
+kernel_dir=kernel/samsung/msm8916
+
 function logr {
 	echo -e ${RED} "$@" ${NC}
 }
