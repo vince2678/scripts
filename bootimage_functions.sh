@@ -158,6 +158,9 @@ if [ \$? != 0 ]; then
     exit 1
 fi
 
+ui_print "Making bootimage SEAndroid enforcing..."
+echo -n "SEANDROIDENFORCE" >> \${file_out}
+
 ui_print "Flashing boot image..."
 dd if=\$file_out of=\$BOOT_PARTITION
 
