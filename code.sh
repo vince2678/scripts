@@ -66,6 +66,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 		/* *name ,  has_arg,           *flag,  val */
 		{"silent",	no_argument,       0, 's' },
 		{"sync",	no_argument,       0, 'v' },
+		{"sync-all",	no_argument,       0, 'a' },
 		{"sync_all",	no_argument,       0, 'a' },
 		{"su",	no_argument,       0, 'u' },
 		{"odin",	no_argument,       0, 'c' },
