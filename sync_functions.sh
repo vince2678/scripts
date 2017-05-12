@@ -26,7 +26,7 @@ for i in `seq 0 ${#}`; do
 				devices=`ls`
 				cd ${build_top}
 				for i in ${devices}; do
-					repo sync ${dir}/${vendor}/${i} --force-sync
+					repo sync ${dir}/${vendor}/${i} --force-sync --prune
 				done
 			done
 		done
@@ -39,7 +39,7 @@ for i in `seq 0 ${#}`; do
 	if [ "${!i}" == "--sync_all" ] || [ "${!i}" == "-a" ] || [ "${!i}" == "--sync-all" ]; then
 		logb "Syncing all trees..."
 		cd ${build_top}
-		repo sync --force-sync
+		repo sync --force-sync --prune
 		cd $OLDPWD
 	fi
 done
