@@ -35,7 +35,7 @@ cat <<SRC > ${CMD_HELPER_SRC}
 #define SCRIPT_TEMPLATE "RB_"
 // global variables for keeping parsed cmd line arguments.
 int silent=0;
-int sync=0;
+int sync_trees=0;
 int job=0;
 int build=0;
 int with_su=0;
@@ -91,7 +91,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 		break;
             case 'a': //sync
             case 'v': //sync
-		sync=1;
+		sync_trees=1;
 		break;
             case 'u':
 		with_su=1;
@@ -177,7 +177,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 	}
     }
 
-    if ( (argc < 6) && !sync) {
+    if ( (argc < 6) && !sync_trees) {
                 fprintf (stderr, "Usage: %s [OPTION]\n",argv[0]);
                 fprintf (stderr, "  -d, --distro\tdistribution name\n" );
                 fprintf (stderr, "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" );
@@ -197,7 +197,7 @@ void parse_commmand_line(int argc, char *argv[]) {
         exit (EXIT_FAILURE);
     }
 
-    if (!sync) {
+    if (!sync_trees) {
 	    if ( dflag == 0 ) {
 		fprintf (stderr, "%s: Missing -d (distro) option. \n", argv[0]);
 		exit (EXIT_FAILURE);
