@@ -34,7 +34,7 @@ function apply_patch {
 	# change the kernel branch if necessary
 	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
 	cd ${build_top} && repo sync ${kernel_dir} -d
-	if ! [ -z ${OC_BRANCH} ]; then
+	if [ "${OVERCLOCKED}" == "y" ]; then
 		cd ${build_top}/${kernel_dir}
 		logb "Checking out kernel branch ${OC_BRANCH}."
 		git checkout ${OC_BRANCH}
@@ -98,10 +98,10 @@ function reverse_patch {
 	# change the kernel branch if necessary
 	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
 	cd ${build_top} && repo sync ${kernel_dir} -d
-	if ! [ -z ${OC_BRANCH} ]; then
+	if [ "${OVERCLOCKED}" == "y" ]; then
 		cd ${build_top}/${kernel_dir}
 		logb "Deleting kernel branch ${OC_BRANCH}."
-		git branch -D ${OC_BRANCH}
+		git branch -D ${OC_BRANCH} 2>/dev/null
 		cd ${build_top}
 	fi
 
