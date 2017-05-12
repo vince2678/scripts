@@ -44,6 +44,7 @@ function copy_bootimage {
 		# download the update binary
 		logb "\t\tFetching update binary..."
 		${CURL} ${url}/updater/update-binary 1>${BUILD_TEMP}/update-binary 2>/dev/null
+		cp ${BUILD_TEMP}/update-binary ${revert_pkg_dir}/${binary_target_dir}
 
 		logb "\t\tFetching mkbootimg..."
 		${CURL} ${url}/bootimg-tools/mkbootimg 1>${BUILD_TEMP}/mkbootimg 2>/dev/null
@@ -54,7 +55,6 @@ function copy_bootimage {
 		if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
 			logb "\t\tCopying wifi module..."
 			cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${boot_pkg_dir}/${blob_dir}/wlan.ko
-			cp ${BUILD_TEMP}/update-binary ${revert_pkg_dir}/${binary_target_dir}
 		fi
 
 		cp ${ANDROID_PRODUCT_OUT}/boot.img ${boot_pkg_dir}/${blob_dir}
@@ -68,19 +68,16 @@ function copy_bootimage {
 		#archive the image
 		logb "\t\tCreating flashables..."
 		cd ${boot_pkg_dir} && zip ${boot_pkg_zip} `find ${boot_pkg_dir} -type f | cut -c $(($(echo ${boot_pkg_dir}|wc -c)+1))-`
+		cd ${revert_pkg_dir} && zip ${revert_zip} `find ${revert_pkg_dir} -type f | cut -c $(($(echo ${revert_pkg_dir}|wc -c)+1))-`
 		logb "\t\tCopying boot image..."
 		rsync -v -P ${boot_pkg_zip} ${out_dir}/builds/boot/
 		# exit if there was an error
 		exit_error $?
 
-		if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
-			logb "\t\tCreating flashables..."
-			cd ${revert_pkg_dir} && zip ${revert_zip} `find ${revert_pkg_dir} -type f | cut -c $(($(echo ${revert_pkg_dir}|wc -c)+1))-`
-			logb "\t\tCopying reversion zip..."
-			rsync -v -P ${revert_zip} ${out_dir}/builds/boot/
-			# exit if there was an error
-			exit_error $?
-		fi
+		logb "\t\tCopying reversion zip..."
+		rsync -v -P ${revert_zip} ${out_dir}/builds/boot/
+		# exit if there was an error
+		exit_error $?
 	fi
 }
 
