@@ -29,12 +29,16 @@ function copy_bootimage {
 		# create the directories
 		mkdir -p ${boot_pkg_dir}/${binary_target_dir}
 		mkdir -p ${boot_pkg_dir}/${blob_dir}
+		mkdir -p ${boot_pkg_dir}/${proprietary_dir}
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installbegin
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installend
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/postvalidate
 		mkdir -p ${revert_dir}/${binary_target_dir}
 		mkdir -p ${revert_dir}/${blob_dir}
+		mkdir -p ${revert_dir}/${proprietary_dir}
 		mkdir -p ${revert_dir}/${install_target_dir}/installbegin
+		mkdir -p ${revert_dir}/${install_target_dir}/installend
+		mkdir -p ${revert_dir}/${install_target_dir}/postvalidate
 
 
 		# download the update binary
@@ -224,6 +228,34 @@ fi
 umount_fs system
 B_INSTALL_F
 
+cat <<CP_VARIANT_F > ${boot_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh
+#!/sbin/sh
+
+BLOBBASE=/tmp/proprietary
+
+# Mount /system
+mount_fs system
+
+if [ -d \$BLOBBASE ]; then
+
+	cd \$BLOBBASE
+
+	# copy all the blobs
+	for FILE in \`find . -type f | cut -c 3-\` ; do
+		mkdir -p \`dirname /system/\$FILE\`
+		ui_print "Copying \$FILE to /system/\$FILE ..."
+		cp \$FILE /system/\$FILE
+	done
+
+	# set permissions on binary files
+	for FILE in bin/* ; do
+		ui_print "Setting /system/\$FILE executable ..."
+		chmod 755 /system/\$FILE
+	done
+umount_fs system
+fi
+CP_VARIANT_F
+
 logb "\t\tFetching scripts..."
 common_url="https://raw.githubusercontent.com/Galaxy-MSM8916/android_device_samsung_msm8916-common/cm-14.1"
 
@@ -231,6 +263,7 @@ ${CURL} ${common_url}/releasetools/functions.sh 1>${boot_pkg_dir}/${install_targ
 ${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_target_dir}/run_scripts.sh 2>/dev/null
 
 cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_dir}/${install_target_dir}/run_scripts.sh
+cp ${boot_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh ${revert_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh
 cp ${boot_pkg_dir}/${install_target_dir}/functions.sh ${revert_dir}/${install_target_dir}/functions.sh
 cp ${boot_pkg_dir}/${binary_target_dir}/updater-script ${revert_dir}/${binary_target_dir}/updater-script
 }
