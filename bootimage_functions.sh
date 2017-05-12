@@ -33,6 +33,7 @@ function copy_bootimage {
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installend
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/postvalidate
 		mkdir -p ${revert_dir}/${binary_target_dir}
+		mkdir -p ${revert_dir}/${blob_dir}
 		mkdir -p ${revert_dir}/${install_target_dir}/installbegin
 
 
