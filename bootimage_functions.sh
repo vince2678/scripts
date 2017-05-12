@@ -111,13 +111,13 @@ BOOT_PARTITION_TMPDIR=\$(mktemp -d)
 BOOT_IMG_TMPDIR=\$(mktemp -d)
 
 ui_print "==============================="
-ui_print "Kernel swapper running."
+ui_print "Kernel swapper v1.0"
 ui_print ""
-ui_print "14.1 kernel only guaranteed to"
+ui_print "AOSP 7.1 kernel only guaranteed to"
 ui_print "boot on AOSP 7.1 based systems."
 sleep 1
 ui_print ""
-ui_print "Likewise for LOS 13.0 images."
+ui_print "Likewise for AOSP 6.0 images."
 ui_print ""
 ui_print "==============================="
 
