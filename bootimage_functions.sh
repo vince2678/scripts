@@ -89,27 +89,6 @@ run_program("/tmp/install/bin/run_scripts.sh", "installend");
 run_program("/tmp/install/bin/run_scripts.sh", "postvalidate");
 A_SCRIPT_F
 
-cat <<RUN_SCRIPTS_F > ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh
-#!/sbin/sh
-
-# Source the functions 
-. /tmp/install/bin/functions.sh
-
-# only run if an argument was passed
-if ! [ -z \$1 ]; then
-	SCRIPT_DIR=/tmp/install/bin/\${1}
-
-	if [ -d \$SCRIPT_DIR ]; then
-		# run all the scripts
-		for script in \`find \${SCRIPT_DIR} -type f\` ; do
-			. \$script
-		done
-	fi
-fi
-
-exit 0
-RUN_SCRIPTS_F
-
 cat <<SWAP_K_F > ${boot_pkg_dir}/${install_target_dir}/installbegin/swap_kernel.sh
 #!/sbin/sh
 
@@ -191,96 +170,6 @@ rm -r \$BOOT_IMG_TMPDIR
 ui_print "Successfully flashed new boot image."
 SWAP_K_F
 
-cat <<FUNCTIONS_F > ${boot_pkg_dir}/${install_target_dir}/functions.sh
-#!/sbin/sh
-
-# Based on Chainfire's work.
-
-# get file descriptor for output
-OUTFD=\$(ps | grep -v "grep" | grep -o -E "update_binary(.*)" | cut -d " " -f 3);
-
-# try looking for a differently named updater binary
-if [ -z \$OUTFD ]; then
-  OUTFD=\$(ps | grep -v "grep" | grep -o -E "updater(.*)" | cut -d " " -f 3);
-fi
-
-# same as progress command in updater-script, for example:
-#
-# progress 0.25 10
-#
-# will update the next 25% of the progress bar over a period of 10 seconds
-progress() {
-  if [ \$OUTFD != "" ]; then
-    echo "progress \${1} \${2} " 1>&\$OUTFD;
-  fi;
-}
-
-# same as set_progress command in updater-script, for example:
-#
-# set_progress 0.25
-#
-# sets progress bar to 25%
-set_progress() {
-  if [ \$OUTFD != "" ]; then
-    echo "set_progress \${1} " 1>&\$OUTFD;
-  fi;
-}
-
-# same as ui_print command in updater_script, for example:
-#
-# ui_print "hello world!"
-#
-# will output "hello world!" to recovery, while
-#
-# ui_print
-#
-# outputs an empty line
-ui_print() {
-  if [ \$OUTFD != "" ]; then
-    echo "ui_print \${1} " 1>&\$OUTFD;
-    echo "ui_print " 1>&\$OUTFD;
-  else
-    echo "\${1}";
-  fi;
-}
-
-# Mounts the dir passed as argument 1, for example:
-#
-# "mount_fs /system" or "mount_fs system"
-#
-# will both mount the system partition on /system
-#
-mount_fs() {
-  if [ -n \${1} ]; then
-    FS_DIR=\$(echo \$1 | sed s'/\///'g)
-    FS_TYPE=\$(mount | grep "on /\${FS_DIR}" | cut -d ' ' -f 5)
-
-    if [ -z \${FS_TYPE} ]; then
-        ui_print "Mounting /\${FS_DIR}..."
-        mount /\${FS_DIR}
-    fi
-  fi
-}
-
-# Unmounts the dir passed as argument 1, for example:
-#
-# "umount_fs /system" or "umount_fs system"
-#
-# will both unmount the system partition on /system
-#
-umount_fs() {
-  if [ -n \${1} ]; then
-    FS_DIR=\$(echo \$1 | sed s'/\///'g)
-    FS_TYPE=\$(mount | grep "on /\${FS_DIR}" | cut -d ' ' -f 5)
-
-    if ! [ -z \${FS_TYPE} ]; then
-        ui_print "Unmounting /\${FS_DIR}..."
-        umount /\${FS_DIR}
-    fi
-  fi
-}
-FUNCTIONS_F
-
 cat <<A_INSTALL_F > ${boot_pkg_dir}/${install_target_dir}/installend/update_wifi_module.sh
 #!/sbin/sh
 if [ -e /tmp/blobs/wlan.ko ]; then
@@ -313,6 +202,12 @@ if [ -e /system/lib/modules/wlan.ko.old ]; then
 fi
 umount_fs system
 B_INSTALL_F
+
+logb "\t\tFetching scripts..."
+common_url="https://raw.githubusercontent.com/Galaxy-MSM8916/android_device_samsung_msm8916-common/cm-14.1"
+
+${CURL} ${common_url}/releasetools/functions.sh 1>${boot_pkg_dir}/${install_target_dir}/functions.sh 2>/dev/null
+${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_target_dir}/run_scripts.sh 2>/dev/null
 
 cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_dir}/${install_target_dir}/run_scripts.sh
 cp ${boot_pkg_dir}/${install_target_dir}/functions.sh ${revert_dir}/${install_target_dir}/functions.sh
