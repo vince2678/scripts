@@ -112,16 +112,18 @@ BOOT_IMG_BASENAME=\$(basename \$BOOT_IMG)
 BOOT_PARTITION_TMPDIR=\$(mktemp -d)
 BOOT_IMG_TMPDIR=\$(mktemp -d)
 
-ui_print "==============================="
+ui_print ""
+ui_print "==========================================="
 ui_print "Kernel swapper v1.0"
 ui_print ""
-ui_print "AOSP 7.1 kernel only guaranteed to"
-ui_print "boot on AOSP 7.1 based systems."
+ui_print "AOSP 7.1 kernel only guaranteed to boot on"
+ui_print "AOSP 7.1 based systems."
 sleep 1
 ui_print ""
 ui_print "Likewise for AOSP 6.0 images."
 ui_print ""
-ui_print "==============================="
+ui_print "=========================================="
+ui_print ""
 
 sleep 1
 
