@@ -173,7 +173,7 @@ void parse_commmand_line(int argc, char *argv[]) {
                 fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
                 fprintf (stderr, "  -u, --su\tAdd SU to build\n");
                 fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
-		//exit (EXIT_FAILURE);
+		exit (EXIT_FAILURE);
 	}
     }
 
