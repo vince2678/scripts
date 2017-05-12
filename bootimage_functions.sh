@@ -18,8 +18,8 @@ function copy_bootimage {
 		boot_pkg_dir=${BUILD_TEMP}/boot_pkg
 		boot_pkg_zip=${BUILD_TEMP}/boot_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
 
-		revert_dir=${BUILD_TEMP}/wifi_revert
-		revert_zip=${BUILD_TEMP}/revert_wifi_fix_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		revert_dir=${BUILD_TEMP}/boot_pkg_revert
+		revert_zip=${BUILD_TEMP}/revert_boot_image_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
 
 		binary_target_dir=META-INF/com/google/android
 		install_target_dir=install/bin
@@ -76,7 +76,7 @@ function copy_bootimage {
 		if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
 			logb "\t\tCreating flashables..."
 			cd ${revert_dir} && zip ${revert_zip} `find ${revert_dir} -type f | cut -c $(($(echo ${revert_dir}|wc -c)+1))-`
-			logb "\t\tCopying wifi module reversion zip..."
+			logb "\t\tCopying reversion zip..."
 			rsync -v -P ${revert_zip} ${out_dir}/builds/boot/
 			# exit if there was an error
 			exit_error $?
@@ -127,6 +127,17 @@ ui_print ""
 ui_print "==============================="
 
 sleep 1
+
+mount_fs system
+
+ui_print "Backing up boot partition to /system/boot.img.bak ..."
+dd if=\$BOOT_PARTITION of=/system/boot.img.bak
+
+if [ \$? != 0 ]; then
+    ui_print "Failed to back up boot image."
+fi
+
+umount_fs system
 
 ui_print "Unpacking \$BOOT_PARTITION..."
 \$BIN_PATH/unpackbootimg -i \$BOOT_PARTITION -o \$BOOT_PARTITION_TMPDIR/
@@ -211,6 +222,25 @@ if [ -e /tmp/blobs/wlan.ko ]; then
 	umount_fs system
 fi
 A_INSTALL_F
+
+cat <<B_INSTALL_F > ${revert_dir}/${install_target_dir}/installbegin/revert_boot_img.sh
+#!/sbin/sh
+mount_fs system
+BOOT_PARTITION=/dev/block/bootdevice/by-name/boot
+if [ -e /system/boot.img.bak ]; then
+	ui_print "Restoring boot image..."
+	dd if=/system/boot.img.bak of=\$BOOT_PARTITION
+
+	if [ \$? != 0 ]; then
+	    ui_print "Failed to restore boot image."
+	    exit 1
+	fi
+	rm /system/boot.img.bak
+else
+	    ui_print "No backup boot image found."
+fi
+umount_fs system
+B_INSTALL_F
 
 cat <<B_INSTALL_F > ${revert_dir}/${install_target_dir}/installbegin/revert_wifi_module.sh
 #!/sbin/sh
