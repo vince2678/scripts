@@ -78,7 +78,20 @@ function apply_patch {
 		if [ ${count} -eq 0 ]; then
 			logb "Nothing to patch."
 		else
+			logb "Removing patch artifacts..."
+			cd ${build_top}/frameworks
+			find -name '*.orig' | xargs rm
+			find -name '*.rej' | xargs rm
+
+			cd ${build_top}/packages
+			find -name '*.orig' | xargs rm
+			find -name '*.rej' | xargs rm
+			cd ${build_top}/system
+
+			find -name '*.orig' | xargs rm
+			find -name '*.rej' | xargs rm
 			touch ${build_top}/.patched
+
 			logb "Done."
 		fi
 
@@ -137,6 +150,19 @@ function reverse_patch {
 		if [ ${count} -eq 0 ]; then
 			logb "Nothing to patch."
 		else
+			logb "Removing patch artifacts..."
+			cd ${build_top}/frameworks
+			find -name '*.orig' | xargs rm
+			find -name '*.rej' | xargs rm
+
+			cd ${build_top}/packages
+			find -name '*.orig' | xargs rm
+			find -name '*.rej' | xargs rm
+
+			cd ${build_top}/system
+			find -name '*.orig' | xargs rm
+			find -name '*.rej' | xargs rm
+
 			rm ${build_top}/.patched
 			logb "Done."
 		fi
