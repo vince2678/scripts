@@ -80,16 +80,16 @@ function apply_patch {
 		else
 			logb "Removing patch artifacts..."
 			cd ${build_top}/frameworks
-			find -name '*.orig' | xargs rm
-			find -name '*.rej' | xargs rm
+			find -name '*.orig' | xargs rm -f
+			find -name '*.rej' | xargs rm -f
 
 			cd ${build_top}/packages
-			find -name '*.orig' | xargs rm
-			find -name '*.rej' | xargs rm
-			cd ${build_top}/system
+			find -name '*.orig' | xargs rm -f
+			find -name '*.rej' | xargs rm -f
 
-			find -name '*.orig' | xargs rm
-			find -name '*.rej' | xargs rm
+			cd ${build_top}/system
+			find -name '*.orig' | xargs rm -f
+			find -name '*.rej' | xargs rm -f
 			touch ${build_top}/.patched
 
 			logb "Done."
@@ -152,16 +152,16 @@ function reverse_patch {
 		else
 			logb "Removing patch artifacts..."
 			cd ${build_top}/frameworks
-			find -name '*.orig' | xargs rm
-			find -name '*.rej' | xargs rm
+			find -name '*.orig' | xargs rm -f
+			find -name '*.rej' | xargs rm -f
 
 			cd ${build_top}/packages
-			find -name '*.orig' | xargs rm
-			find -name '*.rej' | xargs rm
+			find -name '*.orig' | xargs rm -f
+			find -name '*.rej' | xargs rm -f
 
 			cd ${build_top}/system
-			find -name '*.orig' | xargs rm
-			find -name '*.rej' | xargs rm
+			find -name '*.orig' | xargs rm -f
+			find -name '*.rej' | xargs rm -f
 
 			rm ${build_top}/.patched
 			logb "Done."
