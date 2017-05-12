@@ -110,6 +110,19 @@ BOOT_IMG_BASENAME=\$(basename \$BOOT_IMG)
 BOOT_PARTITION_TMPDIR=\$(mktemp -d)
 BOOT_IMG_TMPDIR=\$(mktemp -d)
 
+ui_print "==============================="
+ui_print "Kernel swapper running."
+ui_print ""
+ui_print "14.1 kernel only guaranteed to"
+ui_print "boot on AOSP 7.1 based systems."
+sleep 1
+ui_print ""
+ui_print "Likewise for LOS 13.0 images."
+ui_print ""
+ui_print "==============================="
+
+sleep 1
+
 ui_print "Unpacking \$BOOT_PARTITION..."
 \$BIN_PATH/unpackbootimg -i \$BOOT_PARTITION -o \$BOOT_PARTITION_TMPDIR/
 
