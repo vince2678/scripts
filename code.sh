@@ -35,8 +35,7 @@ cat <<SRC > ${CMD_HELPER_SRC}
 #define SCRIPT_TEMPLATE "RB_"
 // global variables for keeping parsed cmd line arguments.
 int silent=0;
-int sync_all=0;
-int sync_vendor=0;
+int sync=0;
 int job=0;
 int build=0;
 int with_su=0;
@@ -89,8 +88,10 @@ void parse_commmand_line(int argc, char *argv[]) {
             case 'f': //fast-charge
             case 'w': //wifi fix
             case 'z': //oc
+		break;
             case 'a': //sync
             case 'v': //sync
+		sync=1;
 		break;
             case 'u':
 		with_su=1;
@@ -172,11 +173,11 @@ void parse_commmand_line(int argc, char *argv[]) {
                 fprintf (stderr, "  -v, --sync\tSync device/kernel/vendor trees\n");
                 fprintf (stderr, "  -u, --su\tAdd SU to build\n");
                 fprintf (stderr, "  -j\tnumber of parallel make jobs to run\n");
-		exit (EXIT_FAILURE);
+		//exit (EXIT_FAILURE);
 	}
     }
 
-    if ( (argc < 6) && !(sync_all || sync_vendor)) {
+    if ( (argc < 6) && !(sync) {
                 fprintf (stderr, "Usage: %s [OPTION]\n",argv[0]);
                 fprintf (stderr, "  -d, --distro\tdistribution name\n" );
                 fprintf (stderr, "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" );
@@ -196,7 +197,7 @@ void parse_commmand_line(int argc, char *argv[]) {
         exit (EXIT_FAILURE);
     }
 
-    if ( (sync_all == 0) && (sync_vendor == 0) ) {
+    if (sync == 0) {
 	    if ( dflag == 0 ) {
 		fprintf (stderr, "%s: Missing -d (distro) option. \n", argv[0]);
 		exit (EXIT_FAILURE);
