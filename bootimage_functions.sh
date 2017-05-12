@@ -23,14 +23,17 @@ function copy_bootimage {
 
 		binary_target_dir=META-INF/com/google/android
 		install_target_dir=install/bin
+		blob_dir=blobs
+		proprietary_dir=proprietary
 
 		# create the directories
 		mkdir -p ${boot_pkg_dir}/${binary_target_dir}
-		mkdir -p ${revert_dir}/${binary_target_dir}
-		mkdir -p ${revert_dir}/${install_target_dir}/installbegin
+		mkdir -p ${boot_pkg_dir}/${blob_dir}
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installbegin
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installend
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/postvalidate
+		mkdir -p ${revert_dir}/${binary_target_dir}
+		mkdir -p ${revert_dir}/${install_target_dir}/installbegin
 
 
 		# download the update binary
@@ -45,11 +48,11 @@ function copy_bootimage {
 
 		if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
 			logb "\t\tCopying wifi module..."
-			cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${boot_pkg_dir}/wlan.ko
+			cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${boot_pkg_dir}/${blob_dir}/wlan.ko
 			cp ${BUILD_TEMP}/update-binary ${revert_dir}/${binary_target_dir}
 		fi
 
-		cp ${ANDROID_PRODUCT_OUT}/boot.img ${boot_pkg_dir}
+		cp ${ANDROID_PRODUCT_OUT}/boot.img ${boot_pkg_dir}/${blob_dir}
 		cp ${BUILD_TEMP}/update-binary ${boot_pkg_dir}/${binary_target_dir}
 		cp ${BUILD_TEMP}/mkbootimg ${boot_pkg_dir}/${install_target_dir}
 		cp ${BUILD_TEMP}/unpackbootimg ${boot_pkg_dir}/${install_target_dir}
