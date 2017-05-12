@@ -105,13 +105,6 @@ function reverse_patch {
 		cd ${build_top}
 	fi
 
-	if [ ${count} -eq 0 ]; then
-		logb "Nothing to patch."
-	else
-		rm ${build_top}/.patched
-		logb "Done."
-	fi
-
 	if [ -e ${build_top}/.patched ]; then
 		logb "Unpatching build top..."
 		cd ${build_top}
@@ -140,6 +133,13 @@ function reverse_patch {
 				logr "Failed to apply patch ${patch_file}! Fix this."
 			fi
 		done
+
+		if [ ${count} -eq 0 ]; then
+			logb "Nothing to patch."
+		else
+			rm ${build_top}/.patched
+			logb "Done."
+		fi
 
 		logb "Replacing ld.gold ..."
 		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.1*/x86_64-linux/bin/ld); do
