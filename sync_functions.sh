@@ -14,7 +14,8 @@
 # limitations under the License.
 
 function sync_vendor_trees {
-	if [ ${sync_vendor} -eq 1 ]; then
+for i in `seq 0 ${#}`; do
+	if [ "${!i}" == "--sync" ] || [ "${!i}" == "-v" ]; then
 		logb "Syncing vendor trees..."
 		cd ${build_top}
 		for vendor in ${vendors[*]}; do
@@ -30,15 +31,18 @@ function sync_vendor_trees {
 			done
 		done
 	fi
+done
 }
 
 function sync_all_trees {
-	if [ ${sync_all} -eq 1 ]; then
+for i in `seq 0 ${#}`; do
+	if [ "${!i}" == "--sync_all" ] || [ "${!i}" == "-a" ] || [ "${!i}" == "--sync-all" ]; then
 		logb "Syncing all trees..."
 		cd ${build_top}
 		repo sync --force-sync
 		cd $OLDPWD
 	fi
+done
 }
 
 function sync_script {

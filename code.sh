@@ -35,11 +35,11 @@ cat <<SRC > ${CMD_HELPER_SRC}
 #define SCRIPT_TEMPLATE "RB_"
 // global variables for keeping parsed cmd line arguments.
 int silent=0;
+int sync_all=0;
+int sync_vendor=0;
 int job=0;
 int build=0;
 int with_su=0;
-int sync_vendor=0;
-int sync_all=0;
 int odin=0;
 int clean_flag=0;
 char target[256];
@@ -89,15 +89,11 @@ void parse_commmand_line(int argc, char *argv[]) {
             case 'f': //fast-charge
             case 'w': //wifi fix
             case 'z': //oc
-		break;
-            case 'u': //sync
-		with_su=1;
-		break;
             case 'a': //sync
-		sync_all=1;
-		break;
             case 'v': //sync
-		sync_vendor=1;
+		break;
+            case 'u':
+		with_su=1;
 		break;
             case 'r': //clean
 		clean_flag=1;
@@ -260,8 +256,6 @@ void write_src_file() {
 		else  fprintf ( temp_file, "build_type=userdebug\n");
 
 	fprintf ( temp_file, "with_odin=%d\n", odin );
-	fprintf ( temp_file, "sync_all=%d\n", sync_all );
-	fprintf ( temp_file, "sync_vendor=%d\n", sync_vendor );
 	fprintf ( temp_file, "target=%s\n", target );
 	fprintf ( temp_file, "distro=%s\n", distro );
 	fprintf ( temp_file, "device_name=%s\n", device_name );
