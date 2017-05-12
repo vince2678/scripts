@@ -30,6 +30,21 @@ function extract_patches {
 }
 
 function apply_patch {
+
+	# change the kernel branch if necessary
+	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
+	cd ${build_top} && repo sync ${kernel_dir} -d
+	if ! [ -z ${OC_BRANCH} ]; then
+		cd ${build_top}/${kernel_dir}
+		logb "Checking out kernel branch ${OC_BRANCH}."
+		git checkout ${OC_BRANCH}
+		logb "Updating kernel remotes..."
+		git remote update
+		logb "Rebasing kernel..."
+		git rebase github/${OC_BRANCH}
+		cd ${build_top}
+	fi
+
 	if ! [ -e ${build_top}/.patched ]; then
 		logb "Patching build top..."
 		cd ${build_top}
@@ -60,20 +75,6 @@ function apply_patch {
 			fi
 		done
 
-		# change the kernel branch if necessary
-		logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
-		cd ${build_top} && repo sync ${kernel_dir} -d
-		if ! [ -z ${OC_BRANCH} ]; then
-			cd ${build_top}/${kernel_dir}
-			logb "Checking out kernel branch ${OC_BRANCH}."
-			git checkout ${OC_BRANCH}
-			logb "Updating kernel remotes..."
-			git remote update
-			logb "Rebasing kernel..."
-			git rebase github/${OC_BRANCH}
-			cd ${build_top}
-		fi
-
 		if [ ${count} -eq 0 ]; then
 			logb "Nothing to patch."
 		else
@@ -93,6 +94,24 @@ function apply_patch {
 }
 
 function reverse_patch {
+
+	# change the kernel branch if necessary
+	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
+	cd ${build_top} && repo sync ${kernel_dir} -d
+	if ! [ -z ${OC_BRANCH} ]; then
+		cd ${build_top}/${kernel_dir}
+		logb "Deleting kernel branch ${OC_BRANCH}."
+		git branch -D ${OC_BRANCH}
+		cd ${build_top}
+	fi
+
+	if [ ${count} -eq 0 ]; then
+		logb "Nothing to patch."
+	else
+		rm ${build_top}/.patched
+		logb "Done."
+	fi
+
 	if [ -e ${build_top}/.patched ]; then
 		logb "Unpatching build top..."
 		cd ${build_top}
@@ -121,23 +140,6 @@ function reverse_patch {
 				logr "Failed to apply patch ${patch_file}! Fix this."
 			fi
 		done
-
-		# change the kernel branch if necessary
-		logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
-		cd ${build_top} && repo sync ${kernel_dir} -d
-		if ! [ -z ${OC_BRANCH} ]; then
-			cd ${build_top}/${kernel_dir}
-			logb "Deleting kernel branch ${OC_BRANCH}."
-			git branch -D ${OC_BRANCH}
-			cd ${build_top}
-		fi
-
-		if [ ${count} -eq 0 ]; then
-			logb "Nothing to patch."
-		else
-			rm ${build_top}/.patched
-			logb "Done."
-		fi
 
 		logb "Replacing ld.gold ..."
 		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.1*/x86_64-linux/bin/ld); do
