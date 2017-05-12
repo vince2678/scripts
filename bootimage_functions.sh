@@ -88,7 +88,6 @@ ui_print("Extracting files...");
 package_extract_dir("blobs", "/tmp/blobs");
 set_metadata_recursive("/tmp/blobs", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644);
 assert(run_program("/tmp/install/bin/run_scripts.sh", "installbegin") == 0);
-assert(run_program("/tmp/install/bin/run_scripts.sh", "installbegin") == 0);
 assert(run_program("/tmp/install/bin/run_scripts.sh", "installend") == 0);
 assert(run_program("/tmp/install/bin/run_scripts.sh", "postvalidate") == 0);
 A_SCRIPT_F
