@@ -292,6 +292,11 @@ common_url="https://raw.githubusercontent.com/Galaxy-MSM8916/android_device_sams
 ${CURL} ${common_url}/releasetools/functions.sh 1>${boot_pkg_dir}/${install_target_dir}/functions.sh 2>/dev/null
 ${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_target_dir}/run_scripts.sh 2>/dev/null
 
+mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
+mkdir -p ${revert_dir}/${proprietary_dir}/etc/
+${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
+${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
+
 cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_dir}/${install_target_dir}/run_scripts.sh
 cp ${boot_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh ${revert_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh
 cp ${boot_pkg_dir}/${install_target_dir}/functions.sh ${revert_dir}/${install_target_dir}/functions.sh
