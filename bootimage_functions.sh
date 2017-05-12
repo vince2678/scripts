@@ -26,6 +26,8 @@ function copy_bootimage {
 
 		# create the directories
 		mkdir -p ${boot_pkg_dir}/${binary_target_dir}
+		mkdir -p ${revert_dir}/${binary_target_dir}
+		mkdir -p ${revert_dir}/${install_target_dir}/installbegin
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installbegin
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installend
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/postvalidate
@@ -45,8 +47,6 @@ function copy_bootimage {
 			logb "\t\tCopying wifi module..."
 			cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${boot_pkg_dir}/wlan.ko
 			cp ${BUILD_TEMP}/update-binary ${revert_dir}/${binary_target_dir}
-			mkdir -p ${revert_dir}/${binary_target_dir}
-			mkdir -p ${revert_dir}/${install_target_dir}/installbegin
 		fi
 
 		cp ${ANDROID_PRODUCT_OUT}/boot.img ${boot_pkg_dir}
