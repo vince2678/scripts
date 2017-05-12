@@ -279,7 +279,7 @@ if [ -d \$BLOBBASE ]; then
 	done
 
 	# set permissions on binary files
-	for FILE in bin/* ; do
+	for FILE in \`find bin -type f | cut -c 3-\`; do
 		ui_print "Setting /system/\$FILE executable ..."
 		chmod 755 /system/\$FILE
 	done
