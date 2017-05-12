@@ -128,7 +128,6 @@ function main {
 	#create the directories
 	mkdir ${BUILD_TEMP}/ -p
 	mkdir ${out_dir}/builds/boot -p
-	mkdir ${out_dir}/builds/boot/${device_name} -p
 	mkdir ${out_dir}/builds/full -p
 	mkdir ${out_dir}/builds/odin -p
 	mkdir ${out_dir}/builds/recovery -p
