@@ -18,7 +18,7 @@ function copy_bootimage {
 		boot_pkg_dir=${BUILD_TEMP}/boot_pkg
 		boot_pkg_zip=${BUILD_TEMP}/boot_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
 
-		revert_dir=${BUILD_TEMP}/boot_pkg_revert
+		revert_pkg_dir=${BUILD_TEMP}/boot_pkg_revert
 		revert_zip=${BUILD_TEMP}/revert_boot_image_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
 
 		binary_target_dir=META-INF/com/google/android
@@ -33,12 +33,12 @@ function copy_bootimage {
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installbegin
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installend
 		mkdir -p ${boot_pkg_dir}/${install_target_dir}/postvalidate
-		mkdir -p ${revert_dir}/${binary_target_dir}
-		mkdir -p ${revert_dir}/${blob_dir}
-		mkdir -p ${revert_dir}/${proprietary_dir}
-		mkdir -p ${revert_dir}/${install_target_dir}/installbegin
-		mkdir -p ${revert_dir}/${install_target_dir}/installend
-		mkdir -p ${revert_dir}/${install_target_dir}/postvalidate
+		mkdir -p ${revert_pkg_dir}/${binary_target_dir}
+		mkdir -p ${revert_pkg_dir}/${blob_dir}
+		mkdir -p ${revert_pkg_dir}/${proprietary_dir}
+		mkdir -p ${revert_pkg_dir}/${install_target_dir}/installbegin
+		mkdir -p ${revert_pkg_dir}/${install_target_dir}/installend
+		mkdir -p ${revert_pkg_dir}/${install_target_dir}/postvalidate
 
 
 		# download the update binary
@@ -54,7 +54,7 @@ function copy_bootimage {
 		if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
 			logb "\t\tCopying wifi module..."
 			cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${boot_pkg_dir}/${blob_dir}/wlan.ko
-			cp ${BUILD_TEMP}/update-binary ${revert_dir}/${binary_target_dir}
+			cp ${BUILD_TEMP}/update-binary ${revert_pkg_dir}/${binary_target_dir}
 		fi
 
 		cp ${ANDROID_PRODUCT_OUT}/boot.img ${boot_pkg_dir}/${blob_dir}
@@ -75,7 +75,7 @@ function copy_bootimage {
 
 		if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
 			logb "\t\tCreating flashables..."
-			cd ${revert_dir} && zip ${revert_zip} `find ${revert_dir} -type f | cut -c $(($(echo ${revert_dir}|wc -c)+1))-`
+			cd ${revert_pkg_dir} && zip ${revert_zip} `find ${revert_pkg_dir} -type f | cut -c $(($(echo ${revert_pkg_dir}|wc -c)+1))-`
 			logb "\t\tCopying reversion zip..."
 			rsync -v -P ${revert_zip} ${out_dir}/builds/boot/
 			# exit if there was an error
@@ -223,7 +223,7 @@ if [ -e /tmp/blobs/wlan.ko ]; then
 fi
 A_INSTALL_F
 
-cat <<B_INSTALL_F > ${revert_dir}/${install_target_dir}/installbegin/revert_boot_img.sh
+cat <<B_INSTALL_F > ${revert_pkg_dir}/${install_target_dir}/installbegin/revert_boot_img.sh
 #!/sbin/sh
 mount_fs system
 BOOT_PARTITION=/dev/block/bootdevice/by-name/boot
@@ -242,7 +242,7 @@ fi
 umount_fs system
 B_INSTALL_F
 
-cat <<B_INSTALL_F > ${revert_dir}/${install_target_dir}/installbegin/revert_wifi_module.sh
+cat <<B_INSTALL_F > ${revert_pkg_dir}/${install_target_dir}/installbegin/revert_wifi_module.sh
 #!/sbin/sh
 mount_fs system
 if [ -e /system/lib/modules/pronto/pronto_wlan.ko.old ]; then
@@ -293,14 +293,14 @@ ${CURL} ${common_url}/releasetools/functions.sh 1>${boot_pkg_dir}/${install_targ
 ${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_target_dir}/run_scripts.sh 2>/dev/null
 
 mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
-mkdir -p ${revert_dir}/${proprietary_dir}/etc/
-${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
+mkdir -p ${revert_pkg_dir}/${proprietary_dir}/etc/
+${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
 ${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
 
-cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_dir}/${install_target_dir}/run_scripts.sh
-cp ${boot_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh ${revert_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh
-cp ${boot_pkg_dir}/${install_target_dir}/functions.sh ${revert_dir}/${install_target_dir}/functions.sh
-cp ${boot_pkg_dir}/${binary_target_dir}/updater-script ${revert_dir}/${binary_target_dir}/updater-script
+cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_pkg_dir}/${install_target_dir}/run_scripts.sh
+cp ${boot_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh ${revert_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh
+cp ${boot_pkg_dir}/${install_target_dir}/functions.sh ${revert_pkg_dir}/${install_target_dir}/functions.sh
+cp ${boot_pkg_dir}/${binary_target_dir}/updater-script ${revert_pkg_dir}/${binary_target_dir}/updater-script
 }
 
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_bootimage")
