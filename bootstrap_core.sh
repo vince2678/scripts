@@ -33,7 +33,7 @@ vendors[1]="qcom"
 function bootstrap {
 
 	# make the target
-	${CC} ${CMD_HELPER_SRC} -o ${CMD_HELPER} 2>/dev/null
+	${CC} ${CMD_HELPER_SRC} -o ${CMD_HELPER} 1>/dev/null
 
 	# exit if we couldn't compile the code
 	if [ $? != "0" ]; then
