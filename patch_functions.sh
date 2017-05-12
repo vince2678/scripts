@@ -51,7 +51,7 @@ function apply_patch {
 
 		count=0
 
-		for patch_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null); do
+		for patch_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null | sort); do
 			# test applying the patch
 			cat ${patch_file} | patch -p1 --dry-run -f
 
@@ -63,7 +63,7 @@ function apply_patch {
 			fi
 		done
 
-		for patch_file in $(find ${PATCH_DIR} -type f 2>/dev/null); do
+		for patch_file in $(find ${PATCH_DIR} -type f 2>/dev/null | sort); do
 			# test applying the patch
 			cat ${patch_file} | patch -p1 -f --dry-run
 
@@ -110,7 +110,7 @@ function reverse_patch {
 		cd ${build_top}
 		count=0
 
-		for patch_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null); do
+		for patch_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null | sort -r); do
 			# test applying the patch
 			cat ${patch_file} | patch -Rp1 --dry-run -f
 
@@ -122,7 +122,7 @@ function reverse_patch {
 			fi
 		done
 
-		for patch_file in $(find ${PATCH_DIR} -type f 2>/dev/null); do
+		for patch_file in $(find ${PATCH_DIR} -type f 2>/dev/null | sort -r); do
 			# test applying the patch
 			cat  ${patch_file} | patch -Rp1 --dry-run -f
 
