@@ -177,7 +177,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 	}
     }
 
-    if ( (argc < 6) && !(sync) {
+    if ( (argc < 6) && !sync) {
                 fprintf (stderr, "Usage: %s [OPTION]\n",argv[0]);
                 fprintf (stderr, "  -d, --distro\tdistribution name\n" );
                 fprintf (stderr, "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" );
@@ -197,7 +197,7 @@ void parse_commmand_line(int argc, char *argv[]) {
         exit (EXIT_FAILURE);
     }
 
-    if (sync == 0) {
+    if (!sync) {
 	    if ( dflag == 0 ) {
 		fprintf (stderr, "%s: Missing -d (distro) option. \n", argv[0]);
 		exit (EXIT_FAILURE);
