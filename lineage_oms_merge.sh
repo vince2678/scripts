@@ -220,3 +220,37 @@ function sync_substratum() {
     echoText "SCRIPT COMPLETED!"
     echo -e ${RED}"TIME: $(format_time ${END} ${START})"${RESTORE}; newLine
 }
+
+function unsync_substratum() {
+    START=$( date +%s )
+
+    for FOLDER in ${SUBS_REPOS}; do
+        # PRINT TO THE USER WHAT WE ARE DOING
+        newLine; echoText "Unmerging ${FOLDER}"
+
+        # SHIFT TO PROPER FOLDER
+        cd ${build_top}
+        repo sync ${FOLDER} -d
+
+        # ADD TO RESULT STRING
+        if [[ $? -ne 0 ]]; then
+        RESULT_STRING+="${FOLDER}: ${RED}FAILED${RESTORE}\n"
+        else
+        RESULT_STRING+="${FOLDER}: ${GREEN}SUCCESS${RESTORE}\n"
+        fi
+    done
+
+    # SHIFT BACK TO THE TOP OF THE REPO
+    cd ${build_top}
+
+    # PRINT RESULTS
+    echoText "RESULTS"
+    echo -e ${RESULT_STRING}
+
+    # STOP TRACKING TIME
+    END=$( date +%s )
+
+    # PRINT RESULT TO USER
+    echoText "SCRIPT COMPLETED!"
+    echo -e ${RED}"TIME: $(format_time ${END} ${START})"${RESTORE}; newLine
+}
