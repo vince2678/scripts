@@ -9,4 +9,5 @@ bootstrap_core.sh
 build_functions.sh
 copy_functions.sh
 bootimage_functions.sh
+lineage_oms_merge.sh
 print_notification.sh

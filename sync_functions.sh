@@ -40,6 +40,12 @@ for i in `seq 0 ${#}`; do
 		logb "Syncing all trees..."
 		cd ${build_top}
 		repo sync --force-sync --prune
+
+		# sync substratum if we're on LOS 14.1
+		if [ "$ver" == "14.1" ]; then
+			sync_substratum
+		fi
+
 		cd $OLDPWD
 	fi
 done
