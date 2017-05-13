@@ -88,7 +88,7 @@ function get_platform_info {
 	#get the platform version
 	platform_version=$(grep 'PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk  | cut -d '=' -f 2)
 	export WITH_SU
-	if [ $platorm_version == "7.1.1" ] || [ $platorm_version == "7.1.2" ]; then
+	if [ "$platorm_version" == "7.1.1" ] || [ "$platorm_version" == "7.1.2" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 		if [ "$distro" == "lineage" ]; then
 			ver="14.1"
@@ -103,7 +103,7 @@ function get_platform_info {
 			logr "Error: Unrecognised distro"
 			exit_error 1
 		fi
-	elif [ $platorm_version == "6.0.1" ]; then
+	elif [ "$platorm_version" == "6.0.1" ]; then
 		if [ "$distro" == "lineage" ]; then
 			ver="13.0"
 			distroTxt="LineageOS"
@@ -117,7 +117,7 @@ function get_platform_info {
 			logr "Error: Unrecognised distro"
 			exit_error 1
 		fi
-	elif [ $platorm_version == "5.1.1" ]; then
+	elif [ "$platorm_version" == "5.1.1" ]; then
 
 		if [ "$distro" == "cm" ]; then
 			ver="12.1"
@@ -130,7 +130,7 @@ function get_platform_info {
 			exit_error 1
 		fi
 
-	elif [ $platorm_version == "5.0.2" ]; then
+	elif [ "$platorm_version" == "5.0.2" ]; then
 
 		if [ "$distro" == "cm" ]; then
 			ver="12.0"
