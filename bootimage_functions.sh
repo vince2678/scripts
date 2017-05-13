@@ -296,7 +296,11 @@ ${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_ta
 mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
 mkdir -p ${revert_pkg_dir}/${proprietary_dir}/etc/
 ${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
-${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
+if [ "$OVERCLOCKED"  == "y" ]; then
+	${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
+else
+	cp ${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh ${boot_pkg_dir}/${proprietary_dir}/etc/
+fi
 
 cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_pkg_dir}/${install_target_dir}/run_scripts.sh
 cp ${boot_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh ${revert_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh
