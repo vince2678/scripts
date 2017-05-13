@@ -156,6 +156,15 @@ function sync_substratum() {
         newLine; echoText "Merging ${FOLDER}"
 
         # SHIFT TO PROPER FOLDER
+        cd ${build_top}
+
+	#nuke everything in the dir just to be safe
+	rm -r ${FOLDER}/* -f
+
+	#sync
+        repo sync ${FOLDER} -d
+
+        # SHIFT TO PROPER FOLDER
         cd ${build_top}/${FOLDER}
 
         # SET PROPER URL
@@ -230,6 +239,11 @@ function unsync_substratum() {
 
         # SHIFT TO PROPER FOLDER
         cd ${build_top}
+
+	#nuke everything in the dir just to be safe
+	rm -r ${FOLDER}/* -f
+
+	#sync
         repo sync ${FOLDER} -d
 
         # ADD TO RESULT STRING
