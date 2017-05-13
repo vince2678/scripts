@@ -98,7 +98,7 @@ get_platform_info
 # sync the repos
 sync_vendor_trees "$@"
 sync_all_trees "$@"
-if [ ${SYNC} -ne 1 ]; then
+if [ `echo ${device_name}|wc -c` -gt 1 ]; then
 	# apply the patch
 	apply_patch
 	# setup the build environment

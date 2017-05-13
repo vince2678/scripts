@@ -16,7 +16,6 @@
 function sync_vendor_trees {
 for i in `seq 0 ${#}`; do
 	if [ "${!i}" == "--sync" ] || [ "${!i}" == "-v" ]; then
-		SYNC=1
 		logb "Syncing vendor trees..."
 		cd ${build_top}
 		for vendor in ${vendors[*]}; do
@@ -38,7 +37,6 @@ done
 function sync_all_trees {
 for i in `seq 0 ${#}`; do
 	if [ "${!i}" == "--sync_all" ] || [ "${!i}" == "-a" ] || [ "${!i}" == "--sync-all" ]; then
-		SYNC=1
 		logb "Syncing all trees..."
 		cd ${build_top}
 
