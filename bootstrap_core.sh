@@ -100,6 +100,7 @@ function get_platform_info {
 		for i in ${DISTROS}; do
 			if [ `echo $build_top | grep -o $i | wc -c` -gt 1 ]; then
 				distro=`echo $build_top | grep -o $i`
+				logr "Guessed distro is $distro/`echo $build_top | grep -o $i`"
 			fi
 		done
 	fi
