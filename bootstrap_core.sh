@@ -110,8 +110,7 @@ function get_platform_info {
 		exit_error 1
 	fi
 
-	if [ "`echo $platorm_version | grep -o "7.1"`" == "7.1" ]; then
-		logb "Platform is ${platform_version}"
+	if [ "`echo $platform_version | grep -o "7.1"`" == "7.1" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 		if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
 			ver="14.1"
@@ -123,8 +122,7 @@ function get_platform_info {
 			ver="7.1"
 			distroTxt="Omni"
 		fi
-	elif [ "`echo $platorm_version | grep -o "6.0"`" == "6.0" ]; then
-		logb "Platform is ${platform_version}"
+	elif [ "`echo $platform_version | grep -o "6.0"`" == "6.0" ]; then
 		if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
 			ver="13.0"
 			distroTxt="LineageOS"
@@ -135,8 +133,7 @@ function get_platform_info {
 			ver="6.0"
 			distroTxt="Omni"
 		fi
-	elif [ "`echo $platorm_version | grep -o "5.1"`" == "5.1" ]; then
-		logb "Platform is ${platform_version}"
+	elif [ "`echo $platform_version | grep -o "5.1"`" == "5.1" ]; then
 		if [ "`echo $distro | grep -o "cm"`" == "cm" ]; then
 			ver="12.1"
 			distroTxt="CyanogenMod"
@@ -144,8 +141,7 @@ function get_platform_info {
 			ver="5.1"
 			distroTxt="Omni"
 		fi
-	elif [ "`echo $platorm_version | grep -o "5.0"`" == "5.0" ]; then
-		logb "Platform is ${platform_version}"
+	elif [ "`echo $platform_version | grep -o "5.0"`" == "5.0" ]; then
 		if [ "`echo $distro | grep -o "cm"`" == "cm" ]; then
 			ver="12.0"
 			distroTxt="CyanogenMod"
