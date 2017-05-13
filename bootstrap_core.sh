@@ -55,7 +55,7 @@ function bootstrap {
 	CMD_OUT=`$CMD_HELPER ${arg_string}`
 
 	# exit if we didn't read any commands.
-	if [ $? != "0" ]; then
+	if [ $? -ne 0 ]; then
 		rm -rf ${CMD_HELPER} ${CMD_HELPER_SRC} ${BUILD_TEMP}
 		exit 1
 	fi
@@ -96,60 +96,58 @@ function get_platform_info {
 	export WITH_SU
 
 	# try to get distro version from path
-	if [ -z $distro ]; then
+	if [ `echo $distro | wc -c` -le 1 ]; then
 		for i in ${DISTROS}; do
 			distro=`echo $build_top | grep -o $i`
 		done
 	fi
-
-	if [ "$platorm_version" == "7.1.1" ] || [ "$platorm_version" == "7.1.2" ]; then
+	if [ `echo $platorm_version | grep -o "7.1"` == "7.1" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
-		if [ "$distro" == "lineage" ]; then
+		if [ `echo $distro | grep -o "lineage"` == "lineage" ]; then
 			ver="14.1"
 			distroTxt="LineageOS"
-		elif [ "$distro" == "cm" ]; then
+		elif [ `echo $distro | grep -o "cm"` == "cm" ]; then
 			ver="14.1"
 			distroTxt="CyanogenMod"
-		elif [ "$distro" == "omni" ]; then
+		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
 			ver="7.1"
 			distroTxt="Omni"
 		else
 			logr "Error: Unrecognised distro"
 			exit_error 1
 		fi
-	elif [ "$platorm_version" == "6.0.1" ]; then
-		if [ "$distro" == "lineage" ]; then
+	elif [ `echo $platorm_version | grep -o "6.0"` == "6.0" ]; then
+		if [ `echo $distro | grep -o "lineage"` == "lineage" ]; then
 			ver="13.0"
 			distroTxt="LineageOS"
-		elif [ "$distro" == "cm" ]; then
+		elif [ `echo $distro | grep -o "cm"` == "cm" ]; then
 			ver="13.0"
 			distroTxt="CyanogenMod"
-		elif [ "$distro" == "omni" ]; then
+		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
 			ver="6.0"
 			distroTxt="Omni"
 		else
 			logr "Error: Unrecognised distro"
 			exit_error 1
 		fi
-	elif [ "$platorm_version" == "5.1.1" ]; then
+	elif [ `echo $platorm_version | grep -o "5.1"` == "5.1" ]; then
 
-		if [ "$distro" == "cm" ]; then
+		if [ `echo $distro | grep -o "cm"` == "cm" ]; then
 			ver="12.1"
 			distroTxt="CyanogenMod"
-		elif [ "$distro" == "omni" ]; then
+		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
 			ver="5.1"
 			distroTxt="Omni"
 		else
 			logr "Error: Unrecognised distro"
 			exit_error 1
 		fi
+	elif [ `echo $platorm_version | grep -o "5.0"` == "5.0" ]; then
 
-	elif [ "$platorm_version" == "5.0.2" ]; then
-
-		if [ "$distro" == "cm" ]; then
+		if [ `echo $distro | grep -o "cm"` == "cm" ]; then
 			ver="12.0"
 			distroTxt="CyanogenMod"
-		elif [ "$distro" == "omni" ]; then
+		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
 			ver="5.0"
 			distroTxt="Omni"
 		else
@@ -165,32 +163,32 @@ function get_platform_info {
 	#set the recovery type
 	recovery_variant=$(grep RECOVERY_VARIANT ${platform_common_dir}/BoardConfigCommon.mk | sed s'/ //'g)
 	# get the release type
-	if [ "${release_type}" == "" ]; then
+	if [ `echo ${release_type} | wc -c` -le 1 ]; then
 		release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${distro}.mk | cut -d'=' -f2 | sed s'/ //'g)
 	fi
 
 	# check if it was succesfully set, and set it to the default if not
-	if [ "${release_type}" == "" ]; then
+	if [ `echo ${release_type} | wc -c` -le 1 ]; then
 		release_type="NIGHTLY"
 	fi
 
 	# get the recovery type
 	if [ "$recovery_variant" == "RECOVERY_VARIANT:=twrp" ]; then
-		if [ "$ver" == "7.1" ]; then
+		if [ `echo $ver | grep -o "7.1"` == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
-		elif [ "$ver" == "6.0" ]; then
+		elif [ `echo $ver | grep -o "6.0"` == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
 		fi
-	elif [ "$distro" == "lineageos" ] || [ "$distro" == "lineage" ]; then
+	elif [ `echo $distro | grep -o "lineage"` == "lineage" ]; then
 		recovery_flavour="LineageOSRecovery"
-	elif [ "$distro" == "cm" ]; then
+	elif [ `echo $distro | grep -o "cm"` == "cm" ]; then
 		recovery_flavour="CyanogenModRecovery"
-	elif [ "$distro" == "omni" ]; then
-		if [ "$ver" == "7.1" ]; then
+	elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
+		if [ `echo $ver | grep -o "7.1"` == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
-		elif [ "$ver" == "6.0" ]; then
+		elif [ `echo $ver | grep -o "6.0"` == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
