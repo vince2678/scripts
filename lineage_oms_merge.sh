@@ -27,18 +27,6 @@
 # USAGE: $ bash lineage_oms_merge.sh -h
 
 
-############
-#          #
-#  COLORS  #
-#          #
-############
-
-BOLD="\033[1m"
-GREEN="\033[01;32m"
-RED="\033[01;31m"
-RESTORE="\033[0m"
-
-
 ###############
 #             #
 #  FUNCTIONS  #

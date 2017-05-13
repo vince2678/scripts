@@ -13,10 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#colours
-RED='\033[1;31m'
-BLUE='\033[1;35m'
+############
+#          #
+#  COLORS  #
+#          #
+############
+START_TIME=$( date +%s )
+
+BOLD="\033[1m"
+GREEN="\033[01;32m"
+RED="\033[01;31m"
+RESTORE="\033[0m"
 NC='\033[0m' # No Color
+BLUE='\033[1;35m'
 
 # create a temprary working dir
 BUILD_TEMP=$(mktemp -d)
@@ -111,3 +120,10 @@ fi
 sync_script "$@"
 # copy the target
 clean_target
+
+
+END_TIME=$( date +%s )
+
+# PRINT RESULT TO USER
+echoText "SCRIPT COMPLETED!"
+echo -e ${RED}"TIME: $(format_time ${END_TIME} ${START_TIME})"${RESTORE}; newLine
