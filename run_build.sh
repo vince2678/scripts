@@ -84,14 +84,16 @@ bootstrap "$@"
 check_if_build_running
 # reverse any previously applied patch
 reverse_patch
+# get the platform info
+get_platform_info
 # sync the repos
 sync_vendor_trees "$@"
 sync_all_trees "$@"
 if [ "${distro}" != "" ]; then
 	# apply the patch
 	apply_patch
-	# run the main function
-	main "$@"
+	# setup the build environment
+	setup_env "$@"
 	# print the build start text
 	print_start_build
 	# make the targets

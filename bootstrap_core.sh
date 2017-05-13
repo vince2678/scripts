@@ -80,8 +80,6 @@ function bootstrap {
 	if [ -n ${BUILD_BIN_ROOT} ]; then
 		export PATH=$PATH:${BUILD_BIN_ROOT}
 	fi
-
-	get_platform_info
 }
 
 function get_platform_info {
@@ -181,4 +179,33 @@ function get_platform_info {
 			recovery_flavour="TWRP-2.8.7.0"
 		fi
 	fi
+}
+
+function setup_env {
+
+	#move into the build dir
+	cd $build_top
+
+	#set up the environment
+	. build/envsetup.sh
+
+	# remove duplicate crypt_fs.
+	if [ -d ${build_top}/device/qcom-common/cryptfs_hw ] && [ -d ${build_top}/vendor/qcom/opensource/cryptfs_hw ]; then
+		rm -r ${build_top}/vendor/qcom/opensource/cryptfs_hw
+	fi
+
+	#select the device
+	lunch ${distro}_${device_name}-${build_type}
+
+	# exit if there was an error
+	exit_error $?
+
+	#create the directories
+	mkdir ${BUILD_TEMP}/ -p
+	mkdir ${out_dir}/builds/boot -p
+	mkdir ${out_dir}/builds/full -p
+	mkdir ${out_dir}/builds/odin -p
+	mkdir ${out_dir}/builds/recovery -p
+	mkdir ${out_dir}/builds/recovery/${device_name} -p
+	mkdir ${out_dir}/builds/su -p
 }
