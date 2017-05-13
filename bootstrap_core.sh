@@ -159,6 +159,9 @@ function get_platform_info {
 
 	fi
 
+	# print the distro and platform
+	logb "Distro is: ${distroTxt}/${distro}-${ver} on platform ${platform_version}"
+
 	#set the recovery type
 	recovery_variant=$(grep RECOVERY_VARIANT ${platform_common_dir}/BoardConfigCommon.mk | sed s'/ //'g)
 	# get the release type
