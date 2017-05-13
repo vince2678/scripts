@@ -147,7 +147,7 @@ function sync_substratum() {
         cd ${build_top}
 
 	#nuke everything in the dir just to be safe
-	rm -r ${FOLDER}/* -f
+	rm -r ${FOLDER}/ -f
 
 	#sync
         repo sync ${FOLDER} -d
@@ -229,7 +229,7 @@ function unsync_substratum() {
         cd ${build_top}
 
 	#nuke everything in the dir just to be safe
-	rm -r ${FOLDER}/* -f
+	rm -r ${FOLDER}/ -f
 
 	#sync
         repo sync ${FOLDER} -d
