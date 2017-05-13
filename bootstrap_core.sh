@@ -98,7 +98,9 @@ function get_platform_info {
 	# try to get distro version from path
 	if [ `echo $distro | wc -c` -le 1 ]; then
 		for i in ${DISTROS}; do
-			distro=`echo $build_top | grep -o $i`
+			if [ `echo $build_top | grep -o $i | wc -c` -gt 1 ]; then
+				distro=`echo $build_top | grep -o $i`
+			fi
 		done
 	fi
 
@@ -118,9 +120,6 @@ function get_platform_info {
 		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
 			ver="7.1"
 			distroTxt="Omni"
-		else
-			logr "Error: Unrecognised distro $distro"
-			exit_error 1
 		fi
 	elif [ "`echo $platorm_version | grep -o "6.0"`" == "6.0" ]; then
 		if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
@@ -132,9 +131,6 @@ function get_platform_info {
 		elif [ "`echo $distro | grep -o "omni"`" == "omni" ]; then
 			ver="6.0"
 			distroTxt="Omni"
-		else
-			logr "Error: Unrecognised distro $distro"
-			exit_error 1
 		fi
 	elif [ "`echo $platorm_version | grep -o "5.1"`" == "5.1" ]; then
 
@@ -144,9 +140,6 @@ function get_platform_info {
 		elif [ "`echo $distro | grep -o "omni"`" == "omni" ]; then
 			ver="5.1"
 			distroTxt="Omni"
-		else
-			logr "Error: Unrecognised distro $distro"
-			exit_error 1
 		fi
 	elif [ "`echo $platorm_version | grep -o "5.0"`" == "5.0" ]; then
 
@@ -156,9 +149,6 @@ function get_platform_info {
 		elif [ "`echo $distro | grep -o "omni"`" == "omni" ]; then
 			ver="5.0"
 			distroTxt="Omni"
-		else
-			logr "Error: Unrecognised distro $distro"
-			exit_error 1
 		fi
 
 	fi
