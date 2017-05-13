@@ -82,12 +82,26 @@ function bootstrap {
 	fi
 }
 
+DISTROS="
+omni
+lineage
+cm
+rr"
+
 function get_platform_info {
 	#move into the build dir
 	cd $build_top
 	#get the platform version
 	platform_version=$(grep 'PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk  | cut -d '=' -f 2)
 	export WITH_SU
+
+	# try to get distro version from path
+	if [ -z $distro ]; then
+		for i in ${DISTROS}; do
+			distro=`echo $build_top | grep -o $i`
+		done
+	fi
+
 	if [ "$platorm_version" == "7.1.1" ] || [ "$platorm_version" == "7.1.2" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 		if [ "$distro" == "lineage" ]; then
