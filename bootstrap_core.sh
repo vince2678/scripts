@@ -101,7 +101,13 @@ function get_platform_info {
 			distro=`echo $build_top | grep -o $i`
 		done
 	fi
-	if [ `echo $platorm_version | grep -o "7.1"` == "7.1" ]; then
+
+	if [ `echo $distro | wc -c` -le 1 ]; then
+		logr "Error: Unrecognised distro $distro"
+		exit_error 1
+	fi
+
+	if [ "`echo $platorm_version | grep -o "7.1"`" == "7.1" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 		if [ `echo $distro | grep -o "lineage"` == "lineage" ]; then
 			ver="14.1"
@@ -113,45 +119,45 @@ function get_platform_info {
 			ver="7.1"
 			distroTxt="Omni"
 		else
-			logr "Error: Unrecognised distro"
+			logr "Error: Unrecognised distro $distro"
 			exit_error 1
 		fi
-	elif [ `echo $platorm_version | grep -o "6.0"` == "6.0" ]; then
-		if [ `echo $distro | grep -o "lineage"` == "lineage" ]; then
+	elif [ "`echo $platorm_version | grep -o "6.0"`" == "6.0" ]; then
+		if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
 			ver="13.0"
 			distroTxt="LineageOS"
-		elif [ `echo $distro | grep -o "cm"` == "cm" ]; then
+		elif [ "`echo $distro | grep -o "cm"`" == "cm" ]; then
 			ver="13.0"
 			distroTxt="CyanogenMod"
-		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
+		elif [ "`echo $distro | grep -o "omni"`" == "omni" ]; then
 			ver="6.0"
 			distroTxt="Omni"
 		else
-			logr "Error: Unrecognised distro"
+			logr "Error: Unrecognised distro $distro"
 			exit_error 1
 		fi
-	elif [ `echo $platorm_version | grep -o "5.1"` == "5.1" ]; then
+	elif [ "`echo $platorm_version | grep -o "5.1"`" == "5.1" ]; then
 
-		if [ `echo $distro | grep -o "cm"` == "cm" ]; then
+		if [ "`echo $distro | grep -o "cm"`" == "cm" ]; then
 			ver="12.1"
 			distroTxt="CyanogenMod"
-		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
+		elif [ "`echo $distro | grep -o "omni"`" == "omni" ]; then
 			ver="5.1"
 			distroTxt="Omni"
 		else
-			logr "Error: Unrecognised distro"
+			logr "Error: Unrecognised distro $distro"
 			exit_error 1
 		fi
-	elif [ `echo $platorm_version | grep -o "5.0"` == "5.0" ]; then
+	elif [ "`echo $platorm_version | grep -o "5.0"`" == "5.0" ]; then
 
-		if [ `echo $distro | grep -o "cm"` == "cm" ]; then
+		if [ "`echo $distro | grep -o "cm"`" == "cm" ]; then
 			ver="12.0"
 			distroTxt="CyanogenMod"
-		elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
+		elif [ "`echo $distro | grep -o "omni"`" == "omni" ]; then
 			ver="5.0"
 			distroTxt="Omni"
 		else
-			logr "Error: Unrecognised distro"
+			logr "Error: Unrecognised distro $distro"
 			exit_error 1
 		fi
 
@@ -174,9 +180,9 @@ function get_platform_info {
 
 	# get the recovery type
 	if [ "$recovery_variant" == "RECOVERY_VARIANT:=twrp" ]; then
-		if [ `echo $ver | grep -o "7.1"` == "7.1" ]; then
+		if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
-		elif [ `echo $ver | grep -o "6.0"` == "6.0" ]; then
+		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
@@ -186,9 +192,9 @@ function get_platform_info {
 	elif [ `echo $distro | grep -o "cm"` == "cm" ]; then
 		recovery_flavour="CyanogenModRecovery"
 	elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
-		if [ `echo $ver | grep -o "7.1"` == "7.1" ]; then
+		if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
-		elif [ `echo $ver | grep -o "6.0"` == "6.0" ]; then
+		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
 		else
 			recovery_flavour="TWRP-2.8.7.0"
