@@ -141,10 +141,12 @@ sleep 1
 mount_fs system
 
 ui_print "Backing up boot partition to /system/boot.img.bak ..."
+ui_print ""
 dd if=\$BOOT_PARTITION of=/system/boot.img.bak
 
 if [ \$? != 0 ]; then
     ui_print "Failed to back up boot image."
+    ui_print ""
 fi
 
 umount_fs system
@@ -154,6 +156,7 @@ ui_print "Unpacking \$BOOT_PARTITION..."
 
 if [ \$? != 0 ]; then
     ui_print \$error_msg
+    ui_print ""
     exit 1
 fi
 
@@ -162,6 +165,7 @@ ui_print "Unpacking \$BOOT_IMG..."
 
 if [ \$? != 0 ]; then
     ui_print \$error_msg
+    ui_print ""
     exit 1
 fi
 
@@ -175,6 +179,7 @@ cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-dt \$BOOT_PARTITION_TMPDIR/\${BOOT_PA
 
 if [ \$? != 0 ]; then
     ui_print \$error_msg
+    ui_print ""
     exit 1
 fi
 
@@ -195,6 +200,7 @@ ui_print "Repacking boot image..."
 
 if [ \$? != 0 ]; then
     ui_print \$error_msg
+    ui_print ""
     exit 1
 fi
 
@@ -206,14 +212,17 @@ dd if=\$file_out of=\$BOOT_PARTITION
 
 if [ \$? != 0 ]; then
     ui_print \$error_msg
+    ui_print ""
     exit 1
 fi
 
 ui_print "Cleaning up..."
+ui_print ""
 rm -r \$BOOT_PARTITION_TMPDIR
 rm -r \$BOOT_IMG_TMPDIR
 
 ui_print "Successfully flashed new boot image."
+ui_print ""
 SWAP_K_F
 
 cat <<A_INSTALL_F > ${boot_pkg_dir}/${install_target_dir}/installend/update_wifi_module.sh
@@ -223,9 +232,11 @@ if [ -e /tmp/blobs/wlan.ko ]; then
 
 	if [ -e /system/lib/modules/wlan.ko ]; then
 		ui_print "Backing up previous wlan module..."
+		ui_print ""
 		mv /system/lib/modules/wlan.ko /system/lib/modules/wlan.ko.old
 	fi
 	ui_print "Copying new wlan module..."
+	ui_print ""
 	cp /tmp/blobs/wlan.ko /system/lib/modules/wlan.ko
 	chmod 0644 /system/lib/modules/wlan.ko
 
@@ -239,15 +250,18 @@ mount_fs system
 BOOT_PARTITION=/dev/block/bootdevice/by-name/boot
 if [ -e /system/boot.img.bak ]; then
 	ui_print "Restoring boot image..."
+	ui_print ""
 	dd if=/system/boot.img.bak of=\$BOOT_PARTITION
 
 	if [ \$? != 0 ]; then
 	    ui_print "Failed to restore boot image."
+	    ui_print ""
 	    exit 1
 	fi
 	rm /system/boot.img.bak
 else
 	    ui_print "No backup boot image found."
+	    ui_print ""
 fi
 umount_fs system
 B_INSTALL_F
@@ -257,11 +271,13 @@ cat <<B_INSTALL_F > ${revert_pkg_dir}/${install_target_dir}/installbegin/revert_
 mount_fs system
 if [ -e /system/lib/modules/pronto/pronto_wlan.ko.old ]; then
 	ui_print "Restoring previous pronto wlan module..."
+	ui_print ""
 	rm /system/lib/modules/pronto/pronto_wlan.ko
 	mv /system/lib/modules/pronto/pronto_wlan.ko.old /system/lib/modules/pronto/pronto_wlan.ko
 fi
 if [ -e /system/lib/modules/wlan.ko.old ]; then
 	ui_print "Restoring previous wlan module..."
+	ui_print ""
 	rm /system/lib/modules/wlan.ko
 	mv /system/lib/modules/wlan.ko.old /system/lib/modules/wlan.ko
 fi
