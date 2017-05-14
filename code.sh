@@ -200,8 +200,7 @@ void parse_commmand_line(int argc, char *argv[]) {
 
     if (!sync_trees) {
 	    if ( dflag == 0 ) {
-		fprintf (stderr, "%s: Missing -d (distro) option. \n", argv[0]);
-		exit (EXIT_FAILURE);
+		fprintf (stderr, "%s: Warning: missing -d (distro) option. \n", argv[0]);
 	    }
 	    if ( tflag == 0 ) {
 		fprintf (stderr, "%s: Missing -t (target) option. \n", argv[0]);
