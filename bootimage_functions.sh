@@ -16,7 +16,11 @@
 function copy_bootimage {
 	if [ "$target" == "bootimage" ]; then
 		boot_pkg_dir=${BUILD_TEMP}/boot_pkg
-		boot_pkg_zip=${BUILD_TEMP}/boot_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
+			boot_pkg_zip=${BUILD_TEMP}/boot_caf-based_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		else
+			boot_pkg_zip=${BUILD_TEMP}/boot_aosp-based_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		fi
 
 		revert_pkg_dir=${BUILD_TEMP}/boot_pkg_revert
 		revert_zip=${BUILD_TEMP}/revert_boot_image_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
@@ -96,6 +100,14 @@ assert(run_program("/tmp/install/bin/run_scripts.sh", "installend") == 0);
 assert(run_program("/tmp/install/bin/run_scripts.sh", "postvalidate") == 0);
 A_SCRIPT_F
 
+
+if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
+	kern_base="CAF"
+else
+	kern_base="AOSP"
+fi
+dist_str="$kern_base $ver kernel only guaranteed to boot on $kern_base $ver based systems"
+
 cat <<SWAP_K_F > ${boot_pkg_dir}/${install_target_dir}/installbegin/swap_kernel.sh
 #!/sbin/sh
 
@@ -116,15 +128,12 @@ BOOT_IMG_TMPDIR=\$(mktemp -d)
 
 ui_print ""
 ui_print "==========================================="
+ui_print ""
 ui_print "Kernel swapper v1.0"
 ui_print ""
-ui_print "AOSP 7.1 kernel only guaranteed to boot on"
-ui_print "AOSP 7.1 based systems."
-sleep 1
+ui_print "$dist_str"
 ui_print ""
-ui_print "Likewise for AOSP 6.0 images."
-ui_print ""
-ui_print "=========================================="
+ui_print "==========================================="
 ui_print ""
 
 sleep 1
