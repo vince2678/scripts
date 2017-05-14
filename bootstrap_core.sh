@@ -176,11 +176,11 @@ function get_platform_info {
 		else
 			recovery_flavour="TWRP-2.8.7.0"
 		fi
-	elif [ `echo $distro | grep -o "lineage"` == "lineage" ]; then
+	elif [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
 		recovery_flavour="LineageOSRecovery"
-	elif [ `echo $distro | grep -o "cm"` == "cm" ]; then
+	elif [ "`echo $distro | grep -o "cm"`" == "cm" ]; then
 		recovery_flavour="CyanogenModRecovery"
-	elif [ `echo $distro | grep -o "omni"` == "omni" ]; then
+	elif [ "`echo $distro | grep -o "omni"`" == "omni" ]; then
 		if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
 		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
