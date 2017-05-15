@@ -40,8 +40,8 @@ function apply_patch {
 		git checkout ${OC_BRANCH}
 		logb "Updating kernel remotes..."
 		git remote update
-		logb "Rebasing kernel..."
-		git rebase github/${OC_BRANCH}
+		#logb "Rebasing kernel..."
+		#git rebase github/${OC_BRANCH}
 		cd ${build_top}
 	fi
 
