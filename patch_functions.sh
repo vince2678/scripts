@@ -37,6 +37,8 @@ function apply_patch {
 	if [ "${OVERCLOCKED}" == "y" ]; then
 		cd ${build_top}/${kernel_dir}
 		logb "Checking out kernel branch ${OC_BRANCH}."
+		git branch -D ${OC_BRANCH}
+		git remote update
 		git checkout ${OC_BRANCH}
 		logb "Updating kernel remotes..."
 		git remote update
