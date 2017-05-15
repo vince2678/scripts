@@ -133,6 +133,10 @@ ui_print "Kernel swapper v1.0"
 ui_print ""
 ui_print "$dist_str"
 ui_print ""
+sleep 1
+ui_print "CAF = CodeAuroraForums (Qualcomm source)"
+ui_print "AOSP = Upstream Google source code"
+ui_print ""
 ui_print "==========================================="
 ui_print ""
 
