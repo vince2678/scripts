@@ -107,6 +107,7 @@ else
 	kern_base="AOSP"
 fi
 dist_str="$kern_base $ver kernel only guaranteed to boot on $kern_base $ver based systems"
+plat_short=`echo $platform_version|cut -c -3`
 
 cat <<SWAP_K_F > ${boot_pkg_dir}/${install_target_dir}/installbegin/swap_kernel.sh
 #!/sbin/sh
@@ -153,71 +154,89 @@ if [ \$? != 0 ]; then
     ui_print ""
 fi
 
+display_id=\`cat /system/build.prop |grep ro.build.display.id\`
+dist=\`echo \$display_id | grep -o $distro\`
+plat=\`echo \$display_id | grep -o $plat_short\`
+
 umount_fs system
 
-ui_print "Unpacking \$BOOT_PARTITION..."
-\$BIN_PATH/unpackbootimg -i \$BOOT_PARTITION -o \$BOOT_PARTITION_TMPDIR/
+if [ -n "\$dist" ] && [ -n "\$plat" ]; then
+	ui_print
+	ui_print "Detected android distribution ${distroTxt}/${distro}-${ver} on platform ${platform_version}"
+	ui_print
+	ui_print "Flashing boot image without repacking..."
+	dd if=\$BOOT_IMG of=\$BOOT_PARTITION
+	if [ \$? != 0 ]; then
+	    ui_print
+	    ui_print "Failed to back up boot image."
+	    ui_print
+	    exit 1
+	fi
+else
+	ui_print "Unpacking \$BOOT_PARTITION..."
+	\$BIN_PATH/unpackbootimg -i \$BOOT_PARTITION -o \$BOOT_PARTITION_TMPDIR/
 
-if [ \$? != 0 ]; then
-    ui_print \$error_msg
-    ui_print ""
-    exit 1
-fi
+	if [ \$? != 0 ]; then
+	    ui_print \$error_msg
+	    ui_print ""
+	    exit 1
+	fi
 
-ui_print "Unpacking \$BOOT_IMG..."
-\$BIN_PATH/unpackbootimg -i \$BOOT_IMG -o \$BOOT_IMG_TMPDIR/
+	ui_print "Unpacking \$BOOT_IMG..."
+	\$BIN_PATH/unpackbootimg -i \$BOOT_IMG -o \$BOOT_IMG_TMPDIR/
 
-if [ \$? != 0 ]; then
-    ui_print \$error_msg
-    ui_print ""
-    exit 1
-fi
+	if [ \$? != 0 ]; then
+	    ui_print \$error_msg
+	    ui_print ""
+	    exit 1
+	fi
 
-ui_print "Replacing kernel..."
-rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
-cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-zImage \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
+	ui_print "Replacing kernel..."
+	rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
+	cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-zImage \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
 
-ui_print "Replacing dt..."
-rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
-cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-dt \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
+	ui_print "Replacing dt..."
+	rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
+	cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-dt \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
 
-if [ \$? != 0 ]; then
-    ui_print \$error_msg
-    ui_print ""
-    exit 1
-fi
+	if [ \$? != 0 ]; then
+	    ui_print \$error_msg
+	    ui_print ""
+	    exit 1
+	fi
 
-base=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-base\`
-ramdisk_offset=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk_offset\`
-pagesize=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-pagesize\`
-#cmdline="\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-cmdline\`"
-cmdline="\`cat \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-cmdline\`"
-zImage=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
-ramdisk=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk.gz
-dt=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
-file_out=\$BOOT_PARTITION_TMPDIR/boot.img
+	base=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-base\`
+	ramdisk_offset=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk_offset\`
+	pagesize=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-pagesize\`
+	#cmdline="\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-cmdline\`"
+	cmdline="\`cat \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-cmdline\`"
+	zImage=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
+	ramdisk=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk.gz
+	dt=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
+	file_out=\$BOOT_PARTITION_TMPDIR/boot.img
 
-ui_print "Repacking boot image..."
-\$BIN_PATH/mkbootimg --kernel \$zImage --ramdisk \$ramdisk --cmdline "\$cmdline" \\
-	--base \$base --pagesize \$pagesize --ramdisk_offset \$ramdisk_offset \\
-	--dt \$dt -o \$file_out
+	ui_print "Repacking boot image..."
+	\$BIN_PATH/mkbootimg --kernel \$zImage --ramdisk \$ramdisk --cmdline "\$cmdline" \\
+		--base \$base --pagesize \$pagesize --ramdisk_offset \$ramdisk_offset \\
+		--dt \$dt -o \$file_out
 
-if [ \$? != 0 ]; then
-    ui_print \$error_msg
-    ui_print ""
-    exit 1
-fi
+	if [ \$? != 0 ]; then
+	    ui_print \$error_msg
+	    ui_print ""
+	    exit 1
+	fi
 
-ui_print "Making bootimage SEAndroid enforcing..."
-echo -n "SEANDROIDENFORCE" >> \${file_out}
+	ui_print "Making bootimage SEAndroid enforcing..."
+	echo -n "SEANDROIDENFORCE" >> \${file_out}
 
-ui_print "Flashing boot image..."
-dd if=\$file_out of=\$BOOT_PARTITION
+	ui_print "Flashing boot image..."
+	dd if=\$file_out of=\$BOOT_PARTITION
 
-if [ \$? != 0 ]; then
-    ui_print \$error_msg
-    ui_print ""
-    exit 1
+	if [ \$? != 0 ]; then
+	    ui_print \$error_msg
+	    ui_print ""
+	    exit 1
+	fi
 fi
 
 ui_print "Cleaning up..."
