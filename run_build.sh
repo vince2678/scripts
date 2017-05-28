@@ -76,6 +76,8 @@ function print_help {
                 log "  -a, --sync_all\tSync entire build tree\n";
                 log "  -v, --sync\tSync device/kernel/vendor trees\n";
                 log "  -u, --su\tAdd SU to build\n";
+                log "  --update-script\tUpdate build script immediately\n";
+
                 log "  -j\tnumber of parallel make jobs to run\n";
 
 		exit
@@ -110,7 +112,6 @@ for index in `seq 1 ${#}`; do
 		--clean)    CLEAN_TARGET_OUT=$nextarg ;;
 		--device)   DEVICE_NAME=$nextarg ;;
 		--distro)   DISTRIBUTION=$nextarg ;;
-
 		--experimental)
 			logb "\t\tExperimental kernel is enabled"
 			EXPERIMENTAL_KERNEL=y
@@ -136,6 +137,7 @@ for index in `seq 1 ${#}`; do
 		--sync_all) SYNC_ALL=1 ;;
 		--target)   BUILD_TARGET=$nextarg ;;
 		--type)     BUILD_VARIANT=$nextarg ;;
+		--update-script)  UPDATE_SCRIPT=1;;
 		--wifi-fix)
 			logb "\t\tBuilding separate wlan module";
 			SEPARATE_WLAN_MODULE=y
@@ -156,8 +158,6 @@ for index in `seq 1 ${#}`; do
 	esac
 	prev_arg=$cur_arg
 done
-
-exit
 
 # fetch the critical build scripts
 logb "Getting build script list..."
@@ -189,42 +189,43 @@ for source_file in ${file_list}; do
 	fi
 done
 
-# save the patches
-extract_patches $@
-# setup env vars
-bootstrap "$@"
-# check if any other builds are running
-check_if_build_running
-# reverse any previously applied patch
-reverse_patch
-# get the platform info
-get_platform_info
-# sync the repos
-sync_vendor_trees "$@"
-sync_all_trees "$@"
-if [ `echo ${DEVICE_NAME}|wc -c` -gt 1 ]; then
-	# apply the patch
-	apply_patch
-	# setup the build environment
-	setup_env "$@"
-	# print the build start text
-	print_start_build
-	# make the targets
-	make_targets
-	# copy the files
-	copy_files
-	# generate the changes
-	generate_changes
-	# end the build
-	print_end_build
+if [ -z "$UPDATE_SCRIPT" ]; then
+	# save the patches
+	extract_patches $@
+	# setup env vars
+	bootstrap "$@"
+	# check if any other builds are running
+	check_if_build_running
 	# reverse any previously applied patch
 	reverse_patch
+	# get the platform info
+	get_platform_info
+	# sync the repos
+	sync_vendor_trees "$@"
+	sync_all_trees "$@"
+	if [ `echo ${DEVICE_NAME}|wc -c` -gt 1 ]; then
+		# apply the patch
+		apply_patch
+		# setup the build environment
+		setup_env "$@"
+		# print the build start text
+		print_start_build
+		# make the targets
+		make_targets
+		# copy the files
+		copy_files
+		# generate the changes
+		generate_changes
+		# end the build
+		print_end_build
+		# reverse any previously applied patch
+		reverse_patch
+	fi
 fi
 # sync the build script
 sync_script "$@"
 # copy the target
 clean_target
-
 
 END_TIME=$( date +%s )
 

@@ -55,6 +55,10 @@ fi
 
 function sync_script {
 	logb "Updating build script..."
-	${CURL} ${url}/$(basename $0) | tee $0 > /dev/null
+	if [ -z "$UPDATE_SCRIPT" ]; then
+		${CURL} ${url}/$(basename $0) | tee $0 > /dev/null
+	else
+		${CURL} ${url}/$(basename $0) | tee $0 > /dev/null && exit || exit
+	fi
 	logb "Done."
 }
