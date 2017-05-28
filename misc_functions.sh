@@ -18,7 +18,7 @@ lock=
 
 function check_if_build_running {
 
-	lock="${build_top}/${lock_name}"
+	lock="${BUILD_TOP}/${lock_name}"
 
 	exec 200>${lock}
 
@@ -51,8 +51,8 @@ function clean_target {
 	logb "Removing lock..."
 	rm ${lock}
 
-	if [ ${clean_target_out} -eq 1 ]; then
-		if [ "$target" == "otapackage" ]; then
+	if [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
+		if [ "$BUILD_TARGET" == "otapackage" ]; then
 			make clean
 		fi
 	fi
@@ -61,9 +61,9 @@ function clean_target {
 function exit_error {
 	if [ $1 != 0 ]; then
 		logr "Error, aborting..."
-		if [ $silent -eq 0 ]; then
+		if [ $SILENT -ne 1 ]; then
 			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
-			textStr="${dateStr}[${target}] ${distroTxt} ${ver} build %23${build_num} for ${device_name} device on ${USER}@${HOSTNAME} aborted."
+			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${BUILD_NUMBER} for ${DEVICE_NAME} device on ${USER}@${HOSTNAME} aborted."
 			wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 		fi
 		# remove the temp dir

@@ -144,7 +144,7 @@ function sync_substratum() {
         newLine; echoText "Merging ${FOLDER}"
 
         # SHIFT TO PROPER FOLDER
-        cd ${build_top}
+        cd ${BUILD_TOP}
 
 	#nuke everything in the dir just to be safe
 	rm -r ${FOLDER}/ -f
@@ -153,7 +153,7 @@ function sync_substratum() {
         repo sync ${FOLDER} -d
 
         # SHIFT TO PROPER FOLDER
-        cd ${build_top}/${FOLDER}
+        cd ${BUILD_TOP}/${FOLDER}
 
         # SET PROPER URL
         URL=android_$( echo ${FOLDER} | sed "s/\//_/g" )
@@ -192,7 +192,7 @@ function sync_substratum() {
     done
 
     # SHIFT BACK TO THE TOP OF THE REPO
-    cd ${build_top}
+    cd ${BUILD_TOP}
 
     # SYNC THEME INTERFACER REPO
     newLine; echoText "Syncing packages/services/ThemeInterfacer"
@@ -226,7 +226,7 @@ function unsync_substratum() {
         newLine; echoText "Unmerging ${FOLDER}"
 
         # SHIFT TO PROPER FOLDER
-        cd ${build_top}
+        cd ${BUILD_TOP}
 
 	#nuke everything in the dir just to be safe
 	rm -r ${FOLDER}/ -f
@@ -243,7 +243,7 @@ function unsync_substratum() {
     done
 
     # SHIFT BACK TO THE TOP OF THE REPO
-    cd ${build_top}
+    cd ${BUILD_TOP}
 
     # PRINT RESULTS
     echoText "RESULTS"

@@ -33,23 +33,23 @@ function apply_patch {
 
 	# change the kernel branch if necessary
 	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
-	cd ${build_top} && repo sync ${kernel_dir} -d
-	if [ "${OVERCLOCKED}" == "y" ]; then
-		cd ${build_top}/${kernel_dir}
-		logb "Checking out kernel branch ${OC_BRANCH}."
-		git branch -D ${OC_BRANCH}
+	cd ${BUILD_TOP} && repo sync ${kernel_dir} -d
+	if [ "${EXPERIMENTAL_KERNEL}" == "y" ]; then
+		cd ${BUILD_TOP}/${kernel_dir}
+		logb "Checking out kernel branch ${EXPERIMENTAL_BRANCH}."
+		git branch -D ${EXPERIMENTAL_BRANCH}
 		git remote update
-		git checkout ${OC_BRANCH}
+		git checkout ${EXPERIMENTAL_BRANCH}
 		logb "Updating kernel remotes..."
 		git remote update
 		#logb "Rebasing kernel..."
-		#git rebase github/${OC_BRANCH}
-		cd ${build_top}
+		#git rebase github/${EXPERIMENTAL_BRANCH}
+		cd ${BUILD_TOP}
 	fi
 
-	if ! [ -e ${build_top}/.patched ]; then
+	if ! [ -e ${BUILD_TOP}/.patched ]; then
 		logb "Patching build top..."
-		cd ${build_top}
+		cd ${BUILD_TOP}
 
 		count=0
 
@@ -81,18 +81,18 @@ function apply_patch {
 			logb "Nothing to patch."
 		else
 			logb "Removing patch artifacts..."
-			cd ${build_top}/frameworks
+			cd ${BUILD_TOP}/frameworks
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
 
-			cd ${build_top}/packages
+			cd ${BUILD_TOP}/packages
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
 
-			cd ${build_top}/system
+			cd ${BUILD_TOP}/system
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
-			touch ${build_top}/.patched
+			touch ${BUILD_TOP}/.patched
 
 			logb "Done."
 		fi
@@ -112,17 +112,17 @@ function reverse_patch {
 
 	# change the kernel branch if necessary
 	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
-	cd ${build_top} && repo sync ${kernel_dir} -d
-	if [ "${OVERCLOCKED}" == "y" ]; then
-		cd ${build_top}/${kernel_dir}
-		logb "Deleting kernel branch ${OC_BRANCH}."
-		git branch -D ${OC_BRANCH} 2>/dev/null
-		cd ${build_top}
+	cd ${BUILD_TOP} && repo sync ${kernel_dir} -d
+	if [ "${EXPERIMENTAL_KERNEL}" == "y" ]; then
+		cd ${BUILD_TOP}/${kernel_dir}
+		logb "Deleting kernel branch ${EXPERIMENTAL_BRANCH}."
+		git branch -D ${EXPERIMENTAL_BRANCH} 2>/dev/null
+		cd ${BUILD_TOP}
 	fi
 
-	if [ -e ${build_top}/.patched ]; then
+	if [ -e ${BUILD_TOP}/.patched ]; then
 		logb "Unpatching build top..."
-		cd ${build_top}
+		cd ${BUILD_TOP}
 		count=0
 
 		for patch_file in $(find ${platform_common_dir}/patch/ -type f 2>/dev/null | sort -r); do
@@ -153,19 +153,19 @@ function reverse_patch {
 			logb "Nothing to patch."
 		else
 			logb "Removing patch artifacts..."
-			cd ${build_top}/frameworks
+			cd ${BUILD_TOP}/frameworks
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
 
-			cd ${build_top}/packages
+			cd ${BUILD_TOP}/packages
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
 
-			cd ${build_top}/system
+			cd ${BUILD_TOP}/system
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
 
-			rm ${build_top}/.patched
+			rm ${BUILD_TOP}/.patched
 			logb "Done."
 		fi
 

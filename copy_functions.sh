@@ -20,38 +20,38 @@ function copy_recoveryimage {
 		cd $BUILD_TEMP
 		#archive the image
 		#define some variables
-		if [ -z ${build_num} ]; then
-			rec_name=${recovery_flavour}-${distro}-${ver}-$(date +%Y%m%d)-${device_name}
+		if [ -z ${BUILD_NUMBER} ]; then
+			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${DEVICE_NAME}
 		else
-			rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
+			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
 		fi
 
 		logb "\t\tCopying recovery image..."
 		tar cf ${rec_name}.tar recovery.img
-		rsync -v -P ${rec_name}.tar ${out_dir}/builds/recovery/${device_name}/${rec_name}.tar || exit 1
+		rsync -v -P ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar || exit 1
 	fi
 }
 
 function copy_otapackage {
-	ota_out=${distro}_${device_name}-ota-${BUILD_NUMBER}.zip
+	ota_out=${DISTRIBUTION}_${DEVICE_NAME}-ota-${BUILD_NUMBER}.zip
 	if [ -e ${ANDROID_PRODUCT_OUT}/${ota_out} ]; then
 
 		#define some variables
-		if [ -z ${build_num} ]; then
-			rec_name=${recovery_flavour}-${distro}-${ver}-${device_name}
-			arc_name=${distro}-${ver}-$(date +%Y%m%d)-${release_type}-${device_name}
+		if [ -z ${BUILD_NUMBER} ]; then
+			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}-${DEVICE_NAME}
+			arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
 		else
-			rec_name=${recovery_flavour}-${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${device_name}
-			arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
+			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
+			arc_name=${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 		fi
 
 		#check if our correct binary exists
-		if [ -e ${build_top}/META-INF ]; then
+		if [ -e ${BUILD_TOP}/META-INF ]; then
 			ota_bin="META-INF/com/google/android/update-binary"
 
 			logb "\t\tFound update binary..."
-			cp -dpR ${build_top}/META-INF $BUILD_TEMP/META-INF
-			cp -ndpR ${build_top}/META-INF ./
+			cp -dpR ${BUILD_TOP}/META-INF $BUILD_TEMP/META-INF
+			cp -ndpR ${BUILD_TOP}/META-INF ./
 			#delete the old binary
 			logb "\t\tPatching zip file unconditionally..."
 			zip -d ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
@@ -62,12 +62,12 @@ function copy_otapackage {
 		logb "\t\tCopying zip image..."
 
 		# don't copy in the backgroud if we're not making the ODIN archive as well.
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${out_dir}/builds/full/${arc_name}.zip || exit 1
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip || exit 1
 
 		#calculate md5sums
 		md5sums=$(md5sum ${ANDROID_PRODUCT_OUT}/${ota_out} | cut -d " " -f 1)
 
-		echo "${md5sums} ${arc_name}.zip" > ${out_dir}/builds/full/${arc_name}.zip.md5  || exit 1 &
+		echo "${md5sums} ${arc_name}.zip" > ${OUTPUT_DIR}/builds/full/${arc_name}.zip.md5  || exit 1 &
 
 		exit_error $?
 	fi
@@ -77,20 +77,20 @@ function copy_otapackage {
 function copy_supackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ]; then
 		logb "\t\tCopying su image..."
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${out_dir}/builds/su/addonsu-arm_j${build_num}.zip
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${BUILD_NUMBER}.zip
 	elif [ -e ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ]; then
 		logb "\t\tCopying su image..."
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${out_dir}/builds/su/addonsu-${ver}-arm_j${build_num}.zip
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${BUILD_NUMBER}.zip
 	fi
 }
 
 function copy_odin_package {
-	if [ ${with_odin} -eq 1 ]; then
+	if [ ${MAKE_ODIN_PACKAGE} -eq 1 ]; then
 		#define some variables
-		if [ -z ${build_num} ]; then
-			arc_name=${distro}-${ver}-$(date +%Y%m%d)-${release_type}-${device_name}
+		if [ -z ${BUILD_NUMBER} ]; then
+			arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
 		else
-			arc_name=${distro}-${ver}_j${build_num}_$(date +%Y%m%d)_${release_type}-${device_name}
+			arc_name=${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 		fi
 
 		cd ${ANDROID_PRODUCT_OUT}
@@ -118,7 +118,7 @@ function copy_odin_package {
 
 		logb "\t\tCopying ODIN-flashable compressed image..."
 		#copy it to the output dir
-		rsync -v -P  ${arc_name}.tar.md5.7z ${out_dir}/builds/odin/
+		rsync -v -P  ${arc_name}.tar.md5.7z ${OUTPUT_DIR}/builds/odin/
 
 		# exit if there was an error
 		exit_error $?

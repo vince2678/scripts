@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#	  http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
 # limitations under the License.
 
 ############
-#          #
+#		  #
 #  COLORS  #
-#          #
+#		  #
 ############
 START_TIME=$( date +%s )
 
@@ -52,8 +52,112 @@ function logb {
 }
 
 function log {
-	echo "$@"
+	echo -e "$@"
 }
+
+function validate_arg {
+	valid=$(echo $1 | sed s'/^[\-][a-z0-9A-Z\-]*/valid/'g)
+	[ "$valid" == "valid" ] && return 0 || return 1;
+}
+
+function print_help {
+                log "Usage: `basename $0` [OPTION]\n";
+                log "  -d, --distribution\tdistribution name\n" ;
+                log "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" ;
+                log "  -e, --type\twhere type is one of user|userdebug|eng\n" ;
+                log "  -n, --device\tdevice name\n" ;
+                log "  -p, --path\tbuild top path\n" ;
+                log "  -o, --output\toutput path (path to jenkins archive dir)\n";
+                log "\nOptional commands:\n";
+                log "  -b\tbuild number\n";
+                log "  -s, --silent\tdon't publish to Telegram\n";
+                log "  -c, --odin\tbuild compressed (ODIN) images\n";
+                log "  -r, --clean\tclean build directory on completion\n";
+                log "  -a, --sync_all\tSync entire build tree\n";
+                log "  -v, --sync\tSync device/kernel/vendor trees\n";
+                log "  -u, --su\tAdd SU to build\n";
+                log "  -j\tnumber of parallel make jobs to run\n";
+
+		exit
+}
+prev_arg=
+for index in `seq 1 ${#}`; do
+	nexti=$((index+1))
+	cur_arg=${!index}
+	nextarg=${!nexti}
+
+	case ${!index} in
+		-a) SYNC_ALL=1 ;;
+		-b) BUILD_NUMBER=$nextarg ;;
+		-d) DISTRIBUTION=$nextarg ;;
+		-e) BUILD_VARIANT=$nextarg ;;
+		-j) JOB_NUMBER=$nextarg ;;
+		-h) print_help ;;
+		-n) DEVICE_NAME=$nextarg ;;
+		-o) OUTPUT_DIR=$nextarg ;;
+		-p) BUILD_TOP=`realpath $nextarg` ;;
+		-r) CLEAN_TARGET_OUT=$nextarg ;;
+		-s) SILENT=1 ;;
+		-t) BUILD_TARGET=$nextarg ;;
+		-u) WITH_SU=true ;;
+		-v) SYNC_VENDOR=1 ;;
+		-w)
+		    logb "\t\tBuilding separate wlan module";
+		    SEPARATE_WLAN_MODULE=y
+		    ;;
+
+		# long options
+		--clean)    CLEAN_TARGET_OUT=$nextarg ;;
+		--device)   DEVICE_NAME=$nextarg ;;
+		--distro)   DISTRIBUTION=$nextarg ;;
+
+		--experimental)
+			logb "\t\tExperimental kernel is enabled"
+			EXPERIMENTAL_KERNEL=y
+			EXPERIMENTAL_BRANCH="cm-14.1-experimental"
+			;;
+
+		--help)     print_help ;;
+		--jobs)     JOB_NUMBER=$nextarg ;;
+
+		--oc)
+			logb "\t\tExperimental kernel is enabled"
+			EXPERIMENTAL_KERNEL=y
+			EXPERIMENTAL_BRANCH="cm-14.1-experimental"
+			;;
+
+		--odin)     MAKE_ODIN_PACKAGE=1 ;;
+		--output)   OUTPUT_DIR=$nextarg ;;
+		--path)     BUILD_TOP=`realpath $nextarg` ; logr "Path is $BUILD_TOP";;
+		--silent)   SILENT=1 ;;
+		--su)       WITH_SU=true ;;
+		--sync)     SYNC_VENDOR=1 ;;
+		--sync-all) SYNC_ALL=1 ;;
+		--sync_all) SYNC_ALL=1 ;;
+		--target)   BUILD_TARGET=$nextarg ;;
+		--type)     BUILD_VARIANT=$nextarg ;;
+		--wifi-fix)
+			logb "\t\tBuilding separate wlan module";
+			SEPARATE_WLAN_MODULE=y
+			;;
+
+		*) validate_arg $cur_arg;
+			if [ $? -eq 0 ]; then
+				logr "Unrecognised option passed"
+				print_help
+			else
+				validate_arg $prev_arg
+				if [ $? -eq 1 ]; then
+				logr "Argument passed without flag option"
+					print_help
+				fi
+			fi
+			;;
+	esac
+	prev_arg=$cur_arg
+done
+
+exit
 
 # fetch the critical build scripts
 logb "Getting build script list..."
@@ -98,7 +202,7 @@ get_platform_info
 # sync the repos
 sync_vendor_trees "$@"
 sync_all_trees "$@"
-if [ `echo ${device_name}|wc -c` -gt 1 ]; then
+if [ `echo ${DEVICE_NAME}|wc -c` -gt 1 ]; then
 	# apply the patch
 	apply_patch
 	# setup the build environment

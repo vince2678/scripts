@@ -16,17 +16,17 @@
 function make_targets {
 	#start building
 	if [ $ver == "13.0" ]; then
-		make -j${job_num} $target CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA13/api"
+		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA13/api"
 	elif [ $ver == "14.1" ]; then
-		make -j${job_num} $target CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA14/api"
+		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA14/api"
 	else
-		make -j${job_num} $target CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
+		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
 	fi
 	#cowardly exit 1 if we fail.
 	exit_error $?
 	#build su
-	#if [ $ver == "13.0" ] && [ "$target" != "recoveryimage" ] && [ "$target" != "bootimage" ]; then
-		#make -j${job_num} addonsu
+	#if [ $ver == "13.0" ] && [ "$BUILD_TARGET" != "recoveryimage" ] && [ "$BUILD_TARGET" != "bootimage" ]; then
+		#make -j${JOB_NUMBER} addonsu
 		#cowardly exit 1 if we fail.
 		#exit_error $?
 	#fi
@@ -36,56 +36,56 @@ function generate_changes {
 	logb "Generating changes..."
 
 	#get the date of the most recent build
-	dates=($(ls ${BUILD_WWW_MOUNT_POINT}/builds/full/${distro}-${ver}-*-${device_name}.zip 2>/dev/null | cut -d '-' -f 3 | sort -r))
+	dates=($(ls ${BUILD_WWW_MOUNT_POINT}/builds/full/${DISTRIBUTION}-${ver}-*-${DEVICE_NAME}.zip 2>/dev/null | cut -d '-' -f 3 | sort -r))
 
 	# use a preset time if we couldn't get the archive times.
 	if [ -z $dates ]; then
 		dates=20170201
 	fi
 
-	if [ "$target" == "otapackage" ]; then
+	if [ "$BUILD_TARGET" == "otapackage" ]; then
 		#generate the changes
-		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${device_name}
+		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
 
-		echo -e "DEVICE\n---------\n" > ${out_dir}/builds/full/${arc_name}.txt
+		echo -e "DEVICE\n---------\n" > ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 		cd ${common_dir}
 
-		echo -e "\nDEVICE-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+		echo -e "\nDEVICE-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
-		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[0]}/${device_name}
+		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[0]}/${DEVICE_NAME}
 
-		echo -e "\nVENDOR\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+		echo -e "\nVENDOR\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[1]}/binaries
 
-		echo -e "\nVENDOR BINARIES\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+		echo -e "\nVENDOR BINARIES\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 	fi
 
 	cd ${platform_common_dir}
 
-	echo -e "\nMSM8916-COMMON\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+	echo -e "\nMSM8916-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 	cd ${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
 
-	echo -e "\nKERNEL\n---------\n" >> ${out_dir}/builds/full/${arc_name}.txt
+	echo -e "\nKERNEL\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${out_dir}/builds/full/${arc_name}.txt
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 }
 

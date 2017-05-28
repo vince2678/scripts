@@ -14,16 +14,16 @@
 # limitations under the License.
 
 function copy_bootimage {
-	if [ "$target" == "bootimage" ]; then
+	if [ "$BUILD_TARGET" == "bootimage" ]; then
 		boot_pkg_dir=${BUILD_TEMP}/boot_pkg
-		if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
-			boot_pkg_zip=${BUILD_TEMP}/boot_caf-based_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		if [ "`echo $DISTRIBUTION | grep -o "lineage"`" == "lineage" ]; then
+			boot_pkg_zip=${BUILD_TEMP}/boot_caf-based_j${BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 		else
-			boot_pkg_zip=${BUILD_TEMP}/boot_aosp-based_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+			boot_pkg_zip=${BUILD_TEMP}/boot_aosp-based_j${BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 		fi
 
 		revert_pkg_dir=${BUILD_TEMP}/boot_pkg_revert
-		revert_zip=${BUILD_TEMP}/revert_boot_image_j${build_num}_$(date +%Y%m%d)-${device_name}.zip
+		revert_zip=${BUILD_TEMP}/revert_boot_image_j${BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 
 		binary_target_dir=META-INF/com/google/android
 		install_target_dir=install/bin
@@ -74,12 +74,12 @@ function copy_bootimage {
 		cd ${boot_pkg_dir} && zip ${boot_pkg_zip} `find ${boot_pkg_dir} -type f | cut -c $(($(echo ${boot_pkg_dir}|wc -c)+1))-`
 		cd ${revert_pkg_dir} && zip ${revert_zip} `find ${revert_pkg_dir} -type f | cut -c $(($(echo ${revert_pkg_dir}|wc -c)+1))-`
 		logb "\t\tCopying boot image..."
-		rsync -v -P ${boot_pkg_zip} ${out_dir}/builds/boot/
+		rsync -v -P ${boot_pkg_zip} ${OUTPUT_DIR}/builds/boot/
 		# exit if there was an error
 		exit_error $?
 
 		logb "\t\tCopying reversion zip..."
-		rsync -v -P ${revert_zip} ${out_dir}/builds/boot/
+		rsync -v -P ${revert_zip} ${OUTPUT_DIR}/builds/boot/
 		# exit if there was an error
 		exit_error $?
 	fi
@@ -101,7 +101,7 @@ assert(run_program("/tmp/install/bin/run_scripts.sh", "postvalidate") == 0);
 A_SCRIPT_F
 
 
-if [ "`echo $distro | grep -o "lineage"`" == "lineage" ]; then
+if [ "`echo $DISTRIBUTION | grep -o "lineage"`" == "lineage" ]; then
 	kern_base="CAF"
 else
 	kern_base="AOSP"
@@ -155,14 +155,14 @@ if [ \$? != 0 ]; then
 fi
 
 display_id=\`cat /system/build.prop |grep ro.build.display.id\`
-dist=\`echo \$display_id | grep -o $distro\`
+dist=\`echo \$display_id | grep -o $DISTRIBUTION\`
 plat=\`echo \$display_id | grep -o $plat_short\`
 
 umount_fs system
 
 if [ -n "\$dist" ] && [ -n "\$plat" ]; then
 	ui_print
-	ui_print "Detected android distribution ${distroTxt}/${distro}-${ver} on platform ${platform_version}"
+	ui_print "Detected android distribution ${distroTxt}/${DISTRIBUTION}-${ver} on platform ${platform_version}"
 	ui_print
 	ui_print "Flashing boot image without repacking..."
 	dd if=\$BOOT_IMG of=\$BOOT_PARTITION
@@ -344,7 +344,7 @@ ${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_ta
 mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
 mkdir -p ${revert_pkg_dir}/${proprietary_dir}/etc/
 ${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
-if [ "$OVERCLOCKED"  == "y" ]; then
+if [ "$EXPERIMENTAL_KERNEL"  == "y" ]; then
 	${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
 else
 	cp ${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh ${boot_pkg_dir}/${proprietary_dir}/etc/

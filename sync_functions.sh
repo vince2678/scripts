@@ -14,47 +14,43 @@
 # limitations under the License.
 
 function sync_vendor_trees {
-for i in `seq 0 ${#}`; do
-	if [ "${!i}" == "--sync" ] || [ "${!i}" == "-v" ]; then
-		logb "Syncing vendor trees..."
-		cd ${build_top}
-		for vendor in ${vendors[*]}; do
-			targets="device vendor kernel"
-			for dir in ${targets}; do
-				if ! [ -d ${dir}/${vendor} ]; then continue; fi
-				cd ${dir}/${vendor}/
-				devices=`ls`
-				cd ${build_top}
-				for i in ${devices}; do
-					repo sync ${dir}/${vendor}/${i} --force-sync --prune
-				done
+if [ -n "$SYNC_VENDOR" ]; then
+	logb "Syncing vendor trees..."
+	cd ${BUILD_TOP}
+	for vendor in ${vendors[*]}; do
+		targets="device vendor kernel"
+		for dir in ${targets}; do
+			if ! [ -d ${dir}/${vendor} ]; then continue; fi
+			cd ${dir}/${vendor}/
+			devices=`ls`
+			cd ${BUILD_TOP}
+			for i in ${devices}; do
+				repo sync ${dir}/${vendor}/${i} --force-sync --prune
 			done
 		done
-	fi
-done
+	done
+fi
 }
 
 function sync_all_trees {
-for i in `seq 0 ${#}`; do
-	if [ "${!i}" == "--sync_all" ] || [ "${!i}" == "-a" ] || [ "${!i}" == "--sync-all" ]; then
-		logb "Syncing all trees..."
-		cd ${build_top}
+if [ -n "$SYNC_ALL" ]; then
+	logb "Syncing all trees..."
+	cd ${BUILD_TOP}
 
-		# sync substratum if we're on LOS 14.1
-		if [ "$ver" == "14.1" ]; then
-			unsync_substratum
-		fi
-
-		repo sync --force-sync --prune
-
-		# sync substratum if we're on LOS 14.1
-		if [ "$ver" == "14.1" ]; then
-			sync_substratum
-		fi
-
-		cd $OLDPWD
+	# sync substratum if we're on LOS 14.1
+	if [ "$ver" == "14.1" ]; then
+		unsync_substratum
 	fi
-done
+
+	repo sync --force-sync --prune
+
+	# sync substratum if we're on LOS 14.1
+	if [ "$ver" == "14.1" ]; then
+		sync_substratum
+	fi
+
+	cd $OLDPWD
+fi
 }
 
 function sync_script {
