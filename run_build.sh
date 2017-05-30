@@ -85,10 +85,17 @@ function print_help {
 prev_arg=
 for index in `seq 1 ${#}`; do
 	nexti=$((index+1))
-	cur_arg=${!index}
-	nextarg=${!nexti}
 
-	case ${!index} in
+	# find arguments of the form --arg=val and split to --arg val
+	if [ -n `echo $cur_arg | grep -o =` ]; then
+		cur_arg=`echo ${!index} | cut -d'=' -f 1`
+		nextarg=`echo ${!index} | cut -d'=' -f 2`
+	else
+		cur_arg=${!index}
+		nextarg=${!nexti}
+	fi
+
+	case $cur_arg in
 		-a) SYNC_ALL=1 ;;
 		-b) BUILD_NUMBER=$nextarg ;;
 		-d) DISTRIBUTION=$nextarg ;;
