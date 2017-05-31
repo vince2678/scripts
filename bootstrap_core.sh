@@ -58,7 +58,7 @@ function get_platform_info {
 	export WITH_SU
 
 	# try to get distribution version from path
-	if [ `echo $DISTRIBUTION | wc -c` -le 1 ]; then
+	if [ "x$DISTRIBUTION" == "x" ]; then
 		for i in ${DISTROS}; do
 			if [ `echo $BUILD_TOP | grep -o $i | wc -c` -gt 1 ]; then
 				DISTRIBUTION=`echo $BUILD_TOP | grep -o $i`
@@ -67,47 +67,47 @@ function get_platform_info {
 		done
 	fi
 
-	if [ `echo $DISTRIBUTION | wc -c` -le 1 ]; then
-		logr "Error: Unrecognised distribution $DISTRIBUTION"
+	if [ "x$DISTRIBUTION" == "x" ]; then
+		logr "Error: No distribution specified!"
 		exit_error 1
 	fi
 
 	if [ "`echo $platform_version | grep -o "7.1"`" == "7.1" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
-		if [ "`echo $DISTRIBUTION | grep -o "lineage"`" == "lineage" ]; then
+		if [ "x$DISTRIBUTION" == "xlineage" ]; then
 			ver="14.1"
 			distroTxt="LineageOS"
-		elif [ "`echo $DISTRIBUTION | grep -o "cm"`" == "cm" ]; then
+		elif [ "x$DISTRIBUTION" == "xcm" ]; then
 			ver="14.1"
 			distroTxt="CyanogenMod"
-		elif [ "`echo $DISTRIBUTION | grep -o "omni"`" == "omni" ]; then
+		elif [ "x$DISTRIBUTION" == "xomni" ]; then
 			ver="7.1"
 			distroTxt="Omni"
 		fi
 	elif [ "`echo $platform_version | grep -o "6.0"`" == "6.0" ]; then
-		if [ "`echo $DISTRIBUTION | grep -o "lineage"`" == "lineage" ]; then
+		if [ "x$DISTRIBUTION" == "xlineage" ]; then
 			ver="13.0"
 			distroTxt="LineageOS"
-		elif [ "`echo $DISTRIBUTION | grep -o "cm"`" == "cm" ]; then
+		elif [ "x$DISTRIBUTION" == "xcm" ]; then
 			ver="13.0"
 			distroTxt="CyanogenMod"
-		elif [ "`echo $DISTRIBUTION | grep -o "omni"`" == "omni" ]; then
+		elif [ "x$DISTRIBUTION" == "xomni" ]; then
 			ver="6.0"
 			distroTxt="Omni"
 		fi
 	elif [ "`echo $platform_version | grep -o "5.1"`" == "5.1" ]; then
-		if [ "`echo $DISTRIBUTION | grep -o "cm"`" == "cm" ]; then
+		if [ "x$DISTRIBUTION" == "xcm" ]; then
 			ver="12.1"
 			distroTxt="CyanogenMod"
-		elif [ "`echo $DISTRIBUTION | grep -o "omni"`" == "omni" ]; then
+		elif [ "x$DISTRIBUTION" == "xomni" ]; then
 			ver="5.1"
 			distroTxt="Omni"
 		fi
 	elif [ "`echo $platform_version | grep -o "5.0"`" == "5.0" ]; then
-		if [ "`echo $DISTRIBUTION | grep -o "cm"`" == "cm" ]; then
+		if [ "x$DISTRIBUTION" == "xcm" ]; then
 			ver="12.0"
 			distroTxt="CyanogenMod"
-		elif [ "`echo $DISTRIBUTION | grep -o "omni"`" == "omni" ]; then
+		elif [ "x$DISTRIBUTION" == "xomni" ]; then
 			ver="5.0"
 			distroTxt="Omni"
 		fi
@@ -118,14 +118,14 @@ function get_platform_info {
 	logb "Distro is: ${distroTxt}/${DISTRIBUTION}-${ver} on platform ${platform_version}"
 
 	#set the recovery type
-	recovery_variant=$(grep RECOVERY_VARIANT ${platform_common_dir}/BoardConfigCommon.mk | sed s'/ //'g)
+	recovery_variant=$(grep RECOVERY_VARIANT ${platform_common_dir}/BoardConfigCommon.mk 2>/dev/null | sed s'/ //'g)
 	# get the release type
-	if [ `echo ${release_type} | wc -c` -le 1 ]; then
-		release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${DISTRIBUTION}.mk | cut -d'=' -f2 | sed s'/ //'g)
+	if [ "x${release_type}" == "x" ]; then
+		release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${DISTRIBUTION}.mk 2>/dev/null | cut -d'=' -f2 | sed s'/ //'g)
 	fi
 
 	# check if it was succesfully set, and set it to the default if not
-	if [ `echo ${release_type} | wc -c` -le 1 ]; then
+	if [ "x${release_type}" == "x" ]; then
 		release_type="NIGHTLY"
 	fi
 
@@ -138,11 +138,11 @@ function get_platform_info {
 		else
 			recovery_flavour="TWRP-2.8.7.0"
 		fi
-	elif [ "`echo $DISTRIBUTION | grep -o "lineage"`" == "lineage" ]; then
+	elif [ "x$DISTRIBUTION" == "xlineage" ]; then
 		recovery_flavour="LineageOSRecovery"
-	elif [ "`echo $DISTRIBUTION | grep -o "cm"`" == "cm" ]; then
+	elif [ "x$DISTRIBUTION" == "xcm" ]; then
 		recovery_flavour="CyanogenModRecovery"
-	elif [ "`echo $DISTRIBUTION | grep -o "omni"`" == "omni" ]; then
+	elif [ "x$DISTRIBUTION" == "xomni" ]; then
 		if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
 		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then

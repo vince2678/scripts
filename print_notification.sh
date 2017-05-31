@@ -14,7 +14,7 @@
 # limitations under the License.
 
 function print_start_build {
-	if [ ${JOB_BUILD_NUMBER} -ge 1 ]; then
+	if [ "x${JOB_BUILD_NUMBER}" != "x" ] && [ ${JOB_BUILD_NUMBER} -ge 1 ]; then
 		logb "\n=================================================="
 		logb "Build started on Jenkins on ${ROUTEID}.\n"
 		logb "BUILDING #${JOB_BUILD_NUMBER} FROM ${USER}@${HOSTNAME}\n"
@@ -24,7 +24,7 @@ function print_start_build {
 		logb "Output Directory: ${OUTPUT_DIR}\n"
 		logb "===================================================\n"
 
-		if [ "$SILENT" -ne 1 ]; then
+		if [ "x$SILENT" != "x1" ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
 		link="http://grandprime.ddns.net/jenkins/"
@@ -39,7 +39,7 @@ function print_start_build {
 
 function print_end_build {
 	logb "Done."
-	if [ "$SILENT" -ne 1 ]; then
+	if [ "x$SILENT" != "x1" ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
 		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."

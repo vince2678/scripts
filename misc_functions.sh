@@ -51,17 +51,17 @@ function clean_target {
 	logb "Removing lock..."
 	rm ${lock}
 
-	if [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
-		if [ "$BUILD_TARGET" == "otapackage" ]; then
+	if [ "x${CLEAN_TARGET_OUT}" != "x" ] && [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
+		if [ "x$BUILD_TARGET" == "xotapackage" ]; then
 			make clean
 		fi
 	fi
 }
 
 function exit_error {
-	if [ $1 != 0 ]; then
+	if [ "x$1" != "x" ] && [ "$1" -ne 0 ]; then
 		logr "Error, aborting..."
-		if [ "$SILENT" -ne 1 ]; then
+		if [ "x$SILENT" != "x1" ]; then
 			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for ${DEVICE_NAME} device on ${USER}@${HOSTNAME} aborted."
 			wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null

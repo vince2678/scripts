@@ -15,9 +15,9 @@
 
 function make_targets {
 	#start building
-	if [ $ver == "13.0" ]; then
+	if [ "x$ver" == "x13.0" ]; then
 		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA13/api"
-	elif [ $ver == "14.1" ]; then
+	elif [ "x$ver" == "x14.1" ]; then
 		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA14/api"
 	else
 		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
@@ -40,7 +40,7 @@ function generate_changes {
 
 	# use a preset time if we couldn't get the archive times.
 	if [ -z $dates ]; then
-		dates=20170201
+		dates=20170530
 	fi
 
 	cd ${platform_common_dir}
@@ -57,7 +57,7 @@ function generate_changes {
 	git log --decorate=full \
 		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
-	if [ "$BUILD_TARGET" == "otapackage" ]; then
+	if [ "x$BUILD_TARGET" == "xotapackage" ]; then
 		#generate the changes
 		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
 

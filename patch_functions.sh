@@ -34,7 +34,7 @@ function apply_patch {
 	# change the kernel branch if necessary
 	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
 	cd ${BUILD_TOP} && repo sync ${kernel_dir} -d
-	if [ "${EXPERIMENTAL_KERNEL}" == "y" ]; then
+	if [ "x${EXPERIMENTAL_KERNEL}" == "xy" ]; then
 		cd ${BUILD_TOP}/${kernel_dir}
 		logb "Checking out kernel branch ${EXPERIMENTAL_BRANCH}."
 		git branch -D ${EXPERIMENTAL_BRANCH}
@@ -113,7 +113,7 @@ function reverse_patch {
 	# change the kernel branch if necessary
 	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
 	cd ${BUILD_TOP} && repo sync ${kernel_dir} -d
-	if [ "${EXPERIMENTAL_KERNEL}" == "y" ]; then
+	if [ "x${EXPERIMENTAL_KERNEL}" == "xy" ]; then
 		cd ${BUILD_TOP}/${kernel_dir}
 		logb "Deleting kernel branch ${EXPERIMENTAL_BRANCH}."
 		git branch -D ${EXPERIMENTAL_BRANCH} 2>/dev/null
