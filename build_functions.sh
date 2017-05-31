@@ -43,6 +43,20 @@ function generate_changes {
 		dates=20170201
 	fi
 
+	cd ${platform_common_dir}
+
+	echo -e "\nMSM8916-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+
+	git log --decorate=full \
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+
+	cd ${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
+
+	echo -e "\nKERNEL\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+
+	git log --decorate=full \
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+
 	if [ "$BUILD_TARGET" == "otapackage" ]; then
 		#generate the changes
 		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
@@ -65,27 +79,6 @@ function generate_changes {
 
 		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
-
-		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[1]}/binaries
-
-		echo -e "\nVENDOR BINARIES\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
-
-		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 	fi
-
-	cd ${platform_common_dir}
-
-	echo -e "\nMSM8916-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
-
-	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
-
-	cd ${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
-
-	echo -e "\nKERNEL\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
-
-	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 }
 
