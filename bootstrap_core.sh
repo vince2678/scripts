@@ -48,7 +48,7 @@ DISTROS="
 omni
 lineage
 cm
-rr"
+RR"
 
 function get_platform_info {
 	#move into the build dir
@@ -77,6 +77,9 @@ function get_platform_info {
 		if [ "x$DISTRIBUTION" == "xlineage" ]; then
 			ver="14.1"
 			distroTxt="LineageOS"
+		elif [ "x$DISTRIBUTION" == "xRR" ]; then
+			ver="5.8"
+			distroTxt="ResurrectionRemix"
 		elif [ "x$DISTRIBUTION" == "xcm" ]; then
 			ver="14.1"
 			distroTxt="CyanogenMod"
@@ -88,6 +91,9 @@ function get_platform_info {
 		if [ "x$DISTRIBUTION" == "xlineage" ]; then
 			ver="13.0"
 			distroTxt="LineageOS"
+		elif [ "x$DISTRIBUTION" == "xRR" ]; then
+			ver="5.7"
+			distroTxt="ResurrectionRemix"
 		elif [ "x$DISTRIBUTION" == "xcm" ]; then
 			ver="13.0"
 			distroTxt="CyanogenMod"
@@ -99,6 +105,9 @@ function get_platform_info {
 		if [ "x$DISTRIBUTION" == "xcm" ]; then
 			ver="12.1"
 			distroTxt="CyanogenMod"
+		elif [ "x$DISTRIBUTION" == "xRR" ]; then
+			ver="5.6"
+			distroTxt="ResurrectionRemix"
 		elif [ "x$DISTRIBUTION" == "xomni" ]; then
 			ver="5.1"
 			distroTxt="Omni"
