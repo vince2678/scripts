@@ -65,23 +65,23 @@ function validate_arg {
 }
 
 function print_help {
-                log "Usage: `basename $0` [OPTION]\n";
-                log "  -d, --distribution\tdistribution name\n" ;
-                log "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" ;
-                log "  -e, --type\twhere type is one of user|userdebug|eng\n" ;
-                log "  -p, --path\tbuild top path\n" ;
-                log "  -o, --output\toutput path (path to jenkins archive dir)\n";
-                log "\nOptional commands:\n";
-                log "  -b\tbuild number\n";
-                log "  -s, --silent\tdon't publish to Telegram\n";
-                log "  -c, --odin\tbuild compressed (ODIN) images\n";
-                log "  -r, --clean\tclean build directory on completion\n";
-                log "  -a, --sync_all\tSync entire build tree\n";
-                log "  -v, --sync\tSync device/kernel/vendor trees\n";
-                log "  -u, --su\tAdd SU to build\n";
-                log "  --update-script\tUpdate build script immediately\n";
-
-                log "  -j\tnumber of parallel make jobs to run\n";
+                log "Usage: `basename $0` [OPTION]";
+                log "  -d, --distribution\tdistribution name" ;
+                log "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage" ;
+                log "  -e, --type\twhere type is one of user|userdebug|eng" ;
+                log "  --device\tdevice name" ;
+                log "  -p, --path\tbuild top path" ;
+                log "  -o, --output\toutput path (path to jenkins archive dir)";
+                log "\nOptional commands:";
+                log "  -b\tbuild number";
+                log "  -s, --silent\tdon't publish to Telegram";
+                log "  -c, --odin\tbuild compressed (ODIN) images";
+                log "  -r, --clean\tclean build directory on completion";
+                log "  -a, --sync_all\tSync entire build tree";
+                log "  -v, --sync\tSync device/kernel/vendor trees";
+                log "  -u, --su\tAdd SU to build";
+                log "  --update-script\tUpdate build script immediately";
+                log "  -j\tnumber of parallel make jobs to run";
 
 		exit
 }
@@ -105,7 +105,6 @@ for index in `seq 1 ${#}`; do
 		-e) BUILD_VARIANT=$nextarg ;;
 		-j) JOB_NUMBER=$nextarg ;;
 		-h) print_help ;;
-		-n) DEVICE_NAME=$nextarg ;;
 		-o) OUTPUT_DIR=$nextarg ;;
 		-p) BUILD_TOP=`realpath $nextarg` ;;
 		-r) CLEAN_TARGET_OUT=$nextarg ;;
@@ -139,7 +138,7 @@ for index in `seq 1 ${#}`; do
 
 		--odin)     MAKE_ODIN_PACKAGE=1 ;;
 		--output)   OUTPUT_DIR=$nextarg ;;
-		--path)     BUILD_TOP=`realpath $nextarg` ; logr "Path is $BUILD_TOP";;
+		--path)     BUILD_TOP=`realpath $nextarg` ;;
 		--silent)   SILENT=1 ;;
 		--su)       WITH_SU=true ;;
 		--sync)     SYNC_VENDOR=1 ;;
