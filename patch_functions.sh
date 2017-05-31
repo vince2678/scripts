@@ -98,7 +98,7 @@ function apply_patch {
 		fi
 
 		logb "Replacing ld.gold ..."
-		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.1*/x86_64-linux/bin/ld); do
+		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc*/x86_64-linux/bin/ld 2>/dev/null); do
 			cp ${ld_bin} ${ld_bin}.old
 			cp $(which ld.gold) $ld_bin
 		done
@@ -170,7 +170,7 @@ function reverse_patch {
 		fi
 
 		logb "Replacing ld.gold ..."
-		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.1*/x86_64-linux/bin/ld); do
+		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc*/x86_64-linux/bin/ld 2>/dev/null); do
 			cp ${ld_bin}.old ${ld_bin}
 			rm ${ld_bin}.old -f
 		done
