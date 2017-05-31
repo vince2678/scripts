@@ -59,6 +59,8 @@ function log {
 
 function validate_arg {
 	valid=$(echo $1 | sed s'/^[\-][a-z0-9A-Z\-]*/valid/'g)
+	[ "x$1" == "x$0" ] && return 0;
+	[ "x$1" == "x" ] && return 0;
 	[ "$valid" == "valid" ] && return 0 || return 1;
 }
 
@@ -67,7 +69,6 @@ function print_help {
                 log "  -d, --distribution\tdistribution name\n" ;
                 log "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage\n" ;
                 log "  -e, --type\twhere type is one of user|userdebug|eng\n" ;
-                log "  -n, --device\tdevice name\n" ;
                 log "  -p, --path\tbuild top path\n" ;
                 log "  -o, --output\toutput path (path to jenkins archive dir)\n";
                 log "\nOptional commands:\n";
@@ -159,7 +160,7 @@ for index in `seq 1 ${#}`; do
 			else
 				validate_arg $prev_arg
 				if [ $? -eq 1 ]; then
-				logr "Argument passed without flag option"
+					logr "Argument passed without flag option"
 					print_help
 				fi
 			fi
@@ -167,6 +168,23 @@ for index in `seq 1 ${#}`; do
 	esac
 	prev_arg=$cur_arg
 done
+
+if [ "x$UPDATE_SCRIPT" == "x" ] && [ "x$SYNC_ALL" == "x" ] && [ "x$SYNC_VENDOR" == "x" ]; then
+	if [ "x${DEVICE_NAME}" == "x" ]; then
+		logr "No device name specified!"
+		exit 1
+	fi
+
+	if [ "x${BUILD_VARIANT}" == "x" ]; then
+		logr "No build variant specified!"
+		exit 1
+	fi
+
+	if [ "x${BUILD_TARGET}" == "x" ]; then
+		logr "No build target specified!"
+		exit 1
+	fi
+fi
 
 # fetch the critical build scripts
 logb "Getting build script list..."
@@ -212,7 +230,8 @@ if [ -z "$UPDATE_SCRIPT" ]; then
 	# sync the repos
 	sync_vendor_trees "$@"
 	sync_all_trees "$@"
-	if [ `echo ${DEVICE_NAME}|wc -c` -gt 1 ]; then
+
+	if [ "x${BUILD_TARGET}" != "x" ] [ "x${BUILD_VARIANT}" != "x" ] && [ "x${DEVICE_NAME}" != "x" ]; then
 		# apply the patch
 		apply_patch
 		# setup the build environment
