@@ -20,10 +20,10 @@ function copy_recoveryimage {
 		cd $BUILD_TEMP
 		#archive the image
 		#define some variables
-		if [ -z ${BUILD_NUMBER} ]; then
+		if [ -z ${JOB_BUILD_NUMBER} ]; then
 			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${DEVICE_NAME}
 		else
-			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
+			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
 		fi
 
 		logb "\t\tCopying recovery image..."
@@ -37,12 +37,12 @@ function copy_otapackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/${ota_out} ]; then
 
 		#define some variables
-		if [ -z ${BUILD_NUMBER} ]; then
+		if [ -z ${JOB_BUILD_NUMBER} ]; then
 			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}-${DEVICE_NAME}
 			arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
 		else
-			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
-			arc_name=${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
+			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
+			arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 		fi
 
 		#check if our correct binary exists
@@ -77,20 +77,20 @@ function copy_otapackage {
 function copy_supackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ]; then
 		logb "\t\tCopying su image..."
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${BUILD_NUMBER}.zip
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${JOB_BUILD_NUMBER}.zip
 	elif [ -e ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ]; then
 		logb "\t\tCopying su image..."
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${BUILD_NUMBER}.zip
+		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${JOB_BUILD_NUMBER}.zip
 	fi
 }
 
 function copy_odin_package {
 	if [ ${MAKE_ODIN_PACKAGE} -eq 1 ]; then
 		#define some variables
-		if [ -z ${BUILD_NUMBER} ]; then
+		if [ -z ${JOB_BUILD_NUMBER} ]; then
 			arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
 		else
-			arc_name=${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
+			arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 		fi
 
 		cd ${ANDROID_PRODUCT_OUT}

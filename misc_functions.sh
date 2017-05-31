@@ -63,7 +63,7 @@ function exit_error {
 		logr "Error, aborting..."
 		if [ "$SILENT" -ne 1 ]; then
 			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
-			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${BUILD_NUMBER} for ${DEVICE_NAME} device on ${USER}@${HOSTNAME} aborted."
+			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for ${DEVICE_NAME} device on ${USER}@${HOSTNAME} aborted."
 			wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 		fi
 		# remove the temp dir

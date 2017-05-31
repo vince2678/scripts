@@ -99,7 +99,7 @@ for index in `seq 1 ${#}`; do
 
 	case $cur_arg in
 		-a) SYNC_ALL=1 ;;
-		-b) BUILD_NUMBER=$nextarg ;;
+		-b) JOB_BUILD_NUMBER=$nextarg ;;
 		-d) DISTRIBUTION=$nextarg ;;
 		-e) BUILD_VARIANT=$nextarg ;;
 		-j) JOB_NUMBER=$nextarg ;;

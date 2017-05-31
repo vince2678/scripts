@@ -14,12 +14,12 @@
 # limitations under the License.
 
 function print_start_build {
-	if [ ${BUILD_NUMBER} -ge 1 ]; then
+	if [ ${JOB_BUILD_NUMBER} -ge 1 ]; then
 		logb "\n=================================================="
 		logb "Build started on Jenkins on ${ROUTEID}.\n"
-		logb "BUILDING #${BUILD_NUMBER} FROM ${USER}@${HOSTNAME}\n"
+		logb "BUILDING #${JOB_BUILD_NUMBER} FROM ${USER}@${HOSTNAME}\n"
 		logb "Release type: ${release_type} \n"
-		arc_name=${DISTRIBUTION}-${ver}_j${BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
+		arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 		logb "Archive prefix is: ${arc_name} \n"
 		logb "Output Directory: ${OUTPUT_DIR}\n"
 		logb "===================================================\n"
@@ -29,7 +29,7 @@ function print_start_build {
 
 		link="http://grandprime.ddns.net/jenkins/"
 
-		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${BUILD_NUMBER} started for device ${DEVICE_NAME} via Jenkins, running on ${USER}@${HOSTNAME}."
+		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} started for device ${DEVICE_NAME} via Jenkins, running on ${USER}@${HOSTNAME}."
 		textStr="${str_main}"
 
 		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
@@ -42,7 +42,7 @@ function print_end_build {
 	if [ "$SILENT" -ne 1 ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
-		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."
+		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."
 		textStr="${str_main}"
 
 		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
