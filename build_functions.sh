@@ -41,7 +41,7 @@ function generate_changes {
 
 	cd ${platform_common_dir}
 
-	echo -e "\nMSM8916-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+	echo -e "\nMSM8916-COMMON\n---------\n" > ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 	git log --decorate=full \
 		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
@@ -57,7 +57,7 @@ function generate_changes {
 		#generate the changes
 		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
 
-		echo -e "DEVICE\n---------\n" > ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+		echo -e "DEVICE\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
 
 		git log --decorate=full \
 			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
