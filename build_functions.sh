@@ -36,7 +36,7 @@ function generate_changes {
 
 	# use a preset time if we couldn't get the archive times.
 	if [ -z $dates ]; then
-		dates=20170530
+		dates=20170430
 	fi
 
 	cd ${platform_common_dir}
