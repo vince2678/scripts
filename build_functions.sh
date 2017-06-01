@@ -41,40 +41,42 @@ function generate_changes {
 
 	cd ${platform_common_dir}
 
-	echo -e "\nMSM8916-COMMON\n---------\n" > ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+	changelog_name=changelog-${arc_name}.txt
+
+	echo -e "\nMSM8916-COMMON\n---------\n" > ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 	cd ${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
 
-	echo -e "\nKERNEL\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+	echo -e "\nKERNEL\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 	if [ "x$BUILD_TARGET" == "xotapackage" ]; then
 		#generate the changes
 		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
 
-		echo -e "\nDEVICE\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+		echo -e "\nDEVICE\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 		cd ${common_dir}
 
-		echo -e "\nDEVICE-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+		echo -e "\nDEVICE-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[0]}/${DEVICE_NAME}
 
-		echo -e "\nVENDOR\n---------\n" >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+		echo -e "\nVENDOR\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${arc_name}.txt
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
 	fi
 }
 
