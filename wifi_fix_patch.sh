@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function extract_wifi_fix_patch {
-if [ "${WIFI_FIX}" == "y" ]; then
+if [ "${SEPARATE_WLAN_MODULE}" == "y" ]; then
 logb "\t\tExtracting Wifi fix patch..."
 cat <<WIFI_F > ${PATCH_DIR}/wifi_fix.patch
 diff --git a/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig b/kernel/samsung/msm8916/arch/arm/configs/msm8916_sec_defconfig
