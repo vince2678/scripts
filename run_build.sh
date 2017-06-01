@@ -268,10 +268,10 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 		generate_changes
 		# end the build
 		print_end_build
-		# reverse repo maps
-		reverse_repo_map
 		# reverse any previously applied patch
 		reverse_patch
+		# reverse repo maps
+		reverse_repo_map
 	fi
 fi
 # sync the build script
