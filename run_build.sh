@@ -211,14 +211,19 @@ mkdir -p ${script_dir}
 
 # source the files
 for source_file in ${file_list}; do
+	logb "Fetching $source_file ..."
 	${CURL} ${url}/${source_file} 1>${script_dir}/${source_file} 2>/dev/null
 
 	if [ $? -eq 0 ]; then
+		logb "Sourcing $source_file ..."
 		. ${script_dir}/${source_file}
+		logb "Updating local version of $source_file ..."
 		mv -f ${script_dir}/${source_file} $(dirname $0)/${source_file}
 	else
+		logb "Sourcing $source_file ..."
 		. $(dirname $0)/${source_file}
 	fi
+	newLine
 done
 
 if [ "x$UPDATE_SCRIPT" == "x" ]; then
