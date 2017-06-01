@@ -215,7 +215,7 @@ for source_file in ${file_list}; do
 	fi
 done
 
-if [ -z "$UPDATE_SCRIPT" ]; then
+if [ "x$UPDATE_SCRIPT" == "x" ]; then
 	# save the patches
 	extract_patches $@
 	# setup env vars
