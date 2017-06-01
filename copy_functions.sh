@@ -134,7 +134,7 @@ COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_odin_package")
 
 function copy_files {
 	for ix in `seq 0 $((${#COPY_FUNCTIONS[@]}-1))`; do
-		echoTextBlue "\tRunning function ${COPY_FUNCTIONS[$ix]}"
+		echoTextBlue "Running function ${COPY_FUNCTIONS[$ix]}"
 		${COPY_FUNCTIONS[$ix]} $@
 	done
 }

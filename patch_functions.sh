@@ -19,12 +19,12 @@ function extract_patches {
 	mkdir -p ${PATCH_DIR}
 
 	for ix in `seq 0 $((${#PRE_PATCH_FUNCTIONS[@]}-1))`; do
-		echoTextBlue "\tRunning function ${PRE_PATCH_FUNCTIONS[$ix]}"
+		echoTextBlue "Running function ${PRE_PATCH_FUNCTIONS[$ix]}"
 		${PRE_PATCH_FUNCTIONS[$ix]} $@
 	done
 
 	for ix in `seq 0 $((${#PATCH_FUNCTIONS[@]}-1))`; do
-		echoTextBlue "\tRunning function ${PATCH_FUNCTIONS[$ix]}"
+		echoTextBlue "Running function ${PATCH_FUNCTIONS[$ix]}"
 		${PATCH_FUNCTIONS[$ix]} $@
 	done
 }
