@@ -16,19 +16,15 @@
 function make_targets {
 	#start building
 	if [ "x$ver" == "x13.0" ]; then
-		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA13/api"
+		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA13/api"
 	elif [ "x$ver" == "x14.1" ]; then
-		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA14/api"
+		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA14/api"
 	else
-		make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
+		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://grandprime.ddns.net/OTA/api"
 	fi
-	#cowardly exit 1 if we fail.
-	exit_error $?
 	#build su
 	#if [ $ver == "13.0" ] && [ "$BUILD_TARGET" != "recoveryimage" ] && [ "$BUILD_TARGET" != "bootimage" ]; then
-		#make -j${JOB_NUMBER} addonsu
-		#cowardly exit 1 if we fail.
-		#exit_error $?
+		#exit_on_failure make -j${JOB_NUMBER} addonsu
 	#fi
 }
 

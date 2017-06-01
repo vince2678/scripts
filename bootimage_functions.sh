@@ -31,18 +31,18 @@ function copy_bootimage {
 		proprietary_dir=proprietary
 
 		# create the directories
-		mkdir -p ${boot_pkg_dir}/${binary_target_dir}
-		mkdir -p ${boot_pkg_dir}/${blob_dir}
-		mkdir -p ${boot_pkg_dir}/${proprietary_dir}
-		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installbegin
-		mkdir -p ${boot_pkg_dir}/${install_target_dir}/installend
-		mkdir -p ${boot_pkg_dir}/${install_target_dir}/postvalidate
-		mkdir -p ${revert_pkg_dir}/${binary_target_dir}
-		mkdir -p ${revert_pkg_dir}/${blob_dir}
-		mkdir -p ${revert_pkg_dir}/${proprietary_dir}
-		mkdir -p ${revert_pkg_dir}/${install_target_dir}/installbegin
-		mkdir -p ${revert_pkg_dir}/${install_target_dir}/installend
-		mkdir -p ${revert_pkg_dir}/${install_target_dir}/postvalidate
+		exit_on_failure mkdir -p ${boot_pkg_dir}/${binary_target_dir}
+		exit_on_failure mkdir -p ${boot_pkg_dir}/${blob_dir}
+		exit_on_failure mkdir -p ${boot_pkg_dir}/${proprietary_dir}
+		exit_on_failure mkdir -p ${boot_pkg_dir}/${install_target_dir}/installbegin
+		exit_on_failure mkdir -p ${boot_pkg_dir}/${install_target_dir}/installend
+		exit_on_failure mkdir -p ${boot_pkg_dir}/${install_target_dir}/postvalidate
+		exit_on_failure mkdir -p ${revert_pkg_dir}/${binary_target_dir}
+		exit_on_failure mkdir -p ${revert_pkg_dir}/${blob_dir}
+		exit_on_failure mkdir -p ${revert_pkg_dir}/${proprietary_dir}
+		exit_on_failure mkdir -p ${revert_pkg_dir}/${install_target_dir}/installbegin
+		exit_on_failure mkdir -p ${revert_pkg_dir}/${install_target_dir}/installend
+		exit_on_failure mkdir -p ${revert_pkg_dir}/${install_target_dir}/postvalidate
 
 
 		# download the update binary
@@ -74,14 +74,10 @@ function copy_bootimage {
 		cd ${boot_pkg_dir} && zip ${boot_pkg_zip} `find ${boot_pkg_dir} -type f | cut -c $(($(echo ${boot_pkg_dir}|wc -c)+1))-`
 		cd ${revert_pkg_dir} && zip ${revert_zip} `find ${revert_pkg_dir} -type f | cut -c $(($(echo ${revert_pkg_dir}|wc -c)+1))-`
 		logb "\t\tCopying boot image..."
-		rsync -v -P ${boot_pkg_zip} ${OUTPUT_DIR}/builds/boot/
-		# exit if there was an error
-		exit_error $?
+		exit_on_failure rsync -v -P ${boot_pkg_zip} ${OUTPUT_DIR}/builds/boot/
 
 		logb "\t\tCopying reversion zip..."
-		rsync -v -P ${revert_zip} ${OUTPUT_DIR}/builds/boot/
-		# exit if there was an error
-		exit_error $?
+		exit_on_failure rsync -v -P ${revert_zip} ${OUTPUT_DIR}/builds/boot/
 	fi
 }
 
@@ -341,8 +337,8 @@ common_url="https://raw.githubusercontent.com/Galaxy-MSM8916/android_device_sams
 ${CURL} ${common_url}/releasetools/functions.sh 1>${boot_pkg_dir}/${install_target_dir}/functions.sh 2>/dev/null
 ${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_target_dir}/run_scripts.sh 2>/dev/null
 
-mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
-mkdir -p ${revert_pkg_dir}/${proprietary_dir}/etc/
+exit_on_failure mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
+exit_on_failure mkdir -p ${revert_pkg_dir}/${proprietary_dir}/etc/
 ${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
 if [ "$EXPERIMENTAL_KERNEL"  == "y" ]; then
 	${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null

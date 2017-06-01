@@ -28,7 +28,7 @@ function copy_recoveryimage {
 
 		logb "\t\tCopying recovery image..."
 		tar cf ${rec_name}.tar recovery.img
-		rsync -v -P ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar || exit 1
+		exit_on_failure rsync -v -P ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar || exit 1
 	fi
 }
 
@@ -71,24 +71,22 @@ function copy_otapackage {
 	logb "\t\tCopying zip image..."
 
 	# don't copy in the backgroud if we're not making the ODIN archive as well.
-	rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip || exit 1
+	exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip || exit 1
 
 	#calculate md5sums
 	md5sums=$(md5sum ${ANDROID_PRODUCT_OUT}/${ota_out} | cut -d " " -f 1)
 
-	echo "${md5sums} ${arc_name}.zip" > ${OUTPUT_DIR}/builds/full/${arc_name}.zip.md5  || exit 1 &
-
-	exit_error $?
+	echo "${md5sums} ${arc_name}.zip" > ${OUTPUT_DIR}/builds/full/${arc_name}.zip.md5  || exit 1
 }
 
 
 function copy_supackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ]; then
 		logb "\t\tCopying su image..."
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${JOB_BUILD_NUMBER}.zip
+		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${JOB_BUILD_NUMBER}.zip
 	elif [ -e ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ]; then
 		logb "\t\tCopying su image..."
-		rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${JOB_BUILD_NUMBER}.zip
+		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${JOB_BUILD_NUMBER}.zip
 	fi
 }
 
@@ -119,17 +117,11 @@ function copy_odin_package {
 		logb "\t\tCompressing ODIN-flashable image..."
 
 		#compress the image
-		7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
-
-		# exit if there was an error
-		exit_error $?
+		exit_on_failure 7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
 
 		logb "\t\tCopying ODIN-flashable compressed image..."
 		#copy it to the output dir
-		rsync -v -P  ${arc_name}.tar.md5.7z ${OUTPUT_DIR}/builds/odin/
-
-		# exit if there was an error
-		exit_error $?
+		exit_on_failure rsync -v -P  ${arc_name}.tar.md5.7z ${OUTPUT_DIR}/builds/odin/
 	fi
 }
 

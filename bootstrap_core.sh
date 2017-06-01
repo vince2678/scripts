@@ -182,11 +182,11 @@ function setup_env {
 	exit_error $?
 
 	#create the directories
-	mkdir ${BUILD_TEMP}/ -p
-	mkdir ${OUTPUT_DIR}/builds/boot -p
-	mkdir ${OUTPUT_DIR}/builds/full -p
-	mkdir ${OUTPUT_DIR}/builds/odin -p
-	mkdir ${OUTPUT_DIR}/builds/recovery -p
-	mkdir ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME} -p
-	mkdir ${OUTPUT_DIR}/builds/su -p
+	exit_on_failure mkdir ${BUILD_TEMP}/ -p
+	exit_on_failure mkdir ${OUTPUT_DIR}/builds/boot -p
+	exit_on_failure mkdir ${OUTPUT_DIR}/builds/full -p
+	exit_on_failure mkdir ${OUTPUT_DIR}/builds/odin -p
+	exit_on_failure mkdir ${OUTPUT_DIR}/builds/recovery -p
+	exit_on_failure mkdir ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME} -p
+	exit_on_failure mkdir ${OUTPUT_DIR}/builds/su -p
 }
