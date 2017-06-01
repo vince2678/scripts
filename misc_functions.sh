@@ -59,12 +59,13 @@ function clean_target {
 }
 
 function exit_on_failure {
+	logb "Running $@"
 	$@ 2>/dev/null
 	exit_error $?
 }
 
 function exit_error {
-	if [ "x$1" != "x" ] && [ "$1" -ne 0 ]; then
+	if [ "x$1" != "x0" ]; then
 		logr "Error, aborting..."
 		if [ "x$SILENT" != "x1" ]; then
 			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
