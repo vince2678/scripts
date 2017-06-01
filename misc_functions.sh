@@ -59,7 +59,7 @@ function clean_target {
 }
 
 function exit_on_failure {
-	logb "Running $@"
+	echoText "Running command: $@"
 	$@ 2>/dev/null
 	exit_error $?
 }
