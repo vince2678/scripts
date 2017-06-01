@@ -28,7 +28,7 @@ function copy_recoveryimage {
 
 		logb "\t\tCopying recovery image..."
 		tar cf ${rec_name}.tar recovery.img
-		exit_on_failure rsync -v -P ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar || exit 1
+		exit_on_failure rsync -v -P ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar
 	fi
 }
 
@@ -40,7 +40,7 @@ function copy_otapackage {
 
 		if [ "x$ota_out" == "x" ]; then
 			logr "Failed to find ota package!!"
-			exit 1
+			exit_error 1
 		fi
 	fi
 	logb "Found ota package $ota_out"
@@ -71,12 +71,12 @@ function copy_otapackage {
 	logb "\t\tCopying zip image..."
 
 	# don't copy in the backgroud if we're not making the ODIN archive as well.
-	exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip || exit 1
+	exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip
 
 	#calculate md5sums
 	md5sums=$(md5sum ${ANDROID_PRODUCT_OUT}/${ota_out} | cut -d " " -f 1)
 
-	echo "${md5sums} ${arc_name}.zip" > ${OUTPUT_DIR}/builds/full/${arc_name}.zip.md5  || exit 1
+	echo "${md5sums} ${arc_name}.zip" > ${OUTPUT_DIR}/builds/full/${arc_name}.zip.md5 || exit_error 1
 }
 
 
