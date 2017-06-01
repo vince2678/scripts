@@ -16,7 +16,7 @@
 function copy_bootimage {
 	if [ "x$BUILD_TARGET" == "xbootimage" ]; then
 		boot_pkg_dir=${BUILD_TEMP}/boot_pkg
-		if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xrRR" ]; then
+		if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xRR" ]; then
 			boot_pkg_zip=${BUILD_TEMP}/boot_caf-based_j${JOB_JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 		else
 			boot_pkg_zip=${BUILD_TEMP}/boot_aosp-based_j${JOB_JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
