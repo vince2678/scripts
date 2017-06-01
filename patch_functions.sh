@@ -30,13 +30,13 @@ function extract_patches {
 }
 
 function apply_repo_map {
+	logg "Applying custom repository branch maps.."
 	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
-		logb "Applying custom repository branch maps.."
 
 		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
-		if [ -d "$repo" ]; then
+		if [ -d "${BUILD_TOP}/$repo" ]; then
 			logb "Repo is $repo.\n Reverting..."
 			cd ${BUILD_TOP} && repo sync $repo -d
 
@@ -118,13 +118,13 @@ function apply_patch {
 }
 
 function reverse_repo_map {
+	logg "Reversing custom repository branch maps.."
 	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
-		logb "Reversing custom repository branch maps.."
 
 		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
-		if [ -d "$repo" ]; then
+		if [ -d "${BUILD_TOP}/$repo" ]; then
 			logb "Repo is $repo.\n Reverting..."
 			cd ${BUILD_TOP} && repo sync $repo -d
 
