@@ -230,7 +230,7 @@ if [ -z "$UPDATE_SCRIPT" ]; then
 	sync_vendor_trees "$@"
 	sync_all_trees "$@"
 
-	if [ "x${BUILD_TARGET}" != "x" ] [ "x${BUILD_VARIANT}" != "x" ] && [ "x${DEVICE_NAME}" != "x" ]; then
+	if [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ] && [ "x${DEVICE_NAME}" != "x" ]; then
 		# apply the patch
 		apply_patch
 		# setup the build environment
