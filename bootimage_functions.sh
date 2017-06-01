@@ -17,13 +17,13 @@ function copy_bootimage {
 	if [ "x$BUILD_TARGET" == "xbootimage" ]; then
 		boot_pkg_dir=${BUILD_TEMP}/boot_pkg
 		if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xRR" ]; then
-			boot_pkg_zip=${BUILD_TEMP}/boot_caf-based_j${JOB_JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
+			boot_pkg_zip=${BUILD_TEMP}/boot_caf-based_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 		else
-			boot_pkg_zip=${BUILD_TEMP}/boot_aosp-based_j${JOB_JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
+			boot_pkg_zip=${BUILD_TEMP}/boot_aosp-based_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 		fi
 
 		revert_pkg_dir=${BUILD_TEMP}/boot_pkg_revert
-		revert_zip=${BUILD_TEMP}/revert_boot_image_j${JOB_JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
+		revert_zip=${BUILD_TEMP}/revert_boot_image_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 
 		binary_target_dir=META-INF/com/google/android
 		install_target_dir=install/bin
