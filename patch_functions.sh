@@ -37,12 +37,12 @@ function apply_repo_map {
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
 		if [ -d "${BUILD_TOP}/$repo" ]; then
-			echoTextBlue "Repo is $repo.\n Reverting..."
+			echoTextBlue "Repo is $repo. Reverting..."
 			cd ${BUILD_TOP} && repo sync $repo -d
 
 			cd ${BUILD_TOP}/$repo
 			echoTextBlue "Deleting repository branch $branch."
-			git branch -D $branch
+			git branch -D $branch 2>/dev/null
 			git remote update
 			echoTextBlue "Checking out repository branch $branch."
 			git checkout $branch
