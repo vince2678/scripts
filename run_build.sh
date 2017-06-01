@@ -227,7 +227,7 @@ for source_file in ${file_list}; do
 		logb "Sourcing $source_file ..."
 		. $(dirname $0)/${source_file}
 	fi
-	newLine
+	echo
 done
 
 if [ "x$UPDATE_SCRIPT" == "x" ]; then
