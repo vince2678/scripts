@@ -110,8 +110,8 @@ function echoTextGreen() {
     echo -e ${RESTORE}
 }
 
-function echoTextGold() {
-    echo -e ${GOLD}
+function echoTextBold() {
+    echo -e ${BOLD}
     echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
     echo -e "==  ${@}  =="
     echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
