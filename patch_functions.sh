@@ -30,7 +30,7 @@ function extract_patches {
 }
 
 function apply_repo_map {
-	echoTextGreen "Applying custom repository branch maps.."
+	echoTextGold "Applying custom repository branch maps.."
 	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
 
 		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
@@ -55,7 +55,7 @@ function apply_repo_map {
 }
 
 function reverse_repo_map {
-	logg "Reversing custom repository branch maps.."
+	echoTextGold "Reversing custom repository branch maps.."
 	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
 
 		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`

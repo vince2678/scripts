@@ -110,6 +110,14 @@ function echoTextGreen() {
     echo -e ${RESTORE}
 }
 
+function echoTextGold() {
+    echo -e ${GOLD}
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "==  ${@}  =="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e ${RESTORE}
+}
+
 # FORMATS THE TIME
 function format_time() {
     MINS=$(((${1}-${2})/60))
