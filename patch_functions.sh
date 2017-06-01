@@ -54,6 +54,26 @@ function apply_repo_map {
 	done
 }
 
+function reverse_repo_map {
+	logg "Reversing custom repository branch maps.."
+	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
+
+		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
+		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
+
+		if [ -d "${BUILD_TOP}/$repo" ]; then
+			logb "Repo is $repo.\n Reverting..."
+			cd ${BUILD_TOP} && repo sync $repo -d
+
+			cd ${BUILD_TOP}/$repo
+			logb "Deleting repository branch $branch."
+			git branch -D $branch 2>/dev/null
+			cd ${BUILD_TOP}
+		fi
+		echo
+	done
+}
+
 function apply_patch {
 
 	if ! [ -e ${BUILD_TOP}/.patched ]; then
@@ -115,26 +135,6 @@ function apply_patch {
 		logb "Done."
 		cd $OLDPWD
 	fi
-}
-
-function reverse_repo_map {
-	logg "Reversing custom repository branch maps.."
-	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
-
-		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
-		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
-
-		if [ -d "${BUILD_TOP}/$repo" ]; then
-			logb "Repo is $repo.\n Reverting..."
-			cd ${BUILD_TOP} && repo sync $repo -d
-
-			cd ${BUILD_TOP}/$repo
-			logb "Deleting repository branch $branch."
-			git branch -D $branch 2>/dev/null
-			cd ${BUILD_TOP}
-		fi
-		echo
-	done
 }
 
 function reverse_patch {
