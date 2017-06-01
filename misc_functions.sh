@@ -83,10 +83,30 @@ function exit_error {
 
 # PRINTS A FORMATTED HEADER TO POINT OUT WHAT IS BEING DONE TO THE USER
 function echoText() {
+    echoTextRed "$@"
+}
+
+function echoTextRed() {
     echo -e ${RED}
-    echo -e "====$( for i in $( seq ${#1} ); do echo -e "=\c"; done )===="
-    echo -e "==  ${1}  =="
-    echo -e "====$( for i in $( seq ${#1} ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "==  ${@}  =="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e ${RESTORE}
+}
+
+function echoTextBlue() {
+    echo -e ${BLUE}
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "==  ${@}  =="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e ${RESTORE}
+}
+
+function echoTextGreen() {
+    echo -e ${GREEN}
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "==  ${@}  =="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
     echo -e ${RESTORE}
 }
 
