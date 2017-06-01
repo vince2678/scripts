@@ -29,23 +29,32 @@ function extract_patches {
 	done
 }
 
-function apply_patch {
+function apply_repo_map {
+	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
+		logb "Applying custom repository branch maps.."
 
-	# change the kernel branch if necessary
-	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
-	cd ${BUILD_TOP} && repo sync ${kernel_dir} -d
-	if [ "x${EXPERIMENTAL_KERNEL}" == "xy" ]; then
-		cd ${BUILD_TOP}/${kernel_dir}
-		logb "Checking out kernel branch ${EXPERIMENTAL_BRANCH}."
-		git branch -D ${EXPERIMENTAL_BRANCH}
-		git remote update
-		git checkout ${EXPERIMENTAL_BRANCH}
-		logb "Updating kernel remotes..."
-		git remote update
-		#logb "Rebasing kernel..."
-		#git rebase github/${EXPERIMENTAL_BRANCH}
-		cd ${BUILD_TOP}
-	fi
+		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
+		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
+
+		if [ -d "$repo" ]; then
+			logb "Repo is $repo.\n Reverting..."
+			cd ${BUILD_TOP} && repo sync $repo -d
+
+			cd ${BUILD_TOP}/$repo
+			logb "Deleting repository branch $branch."
+			git branch -D $branch
+			git remote update
+			logb "Checking out repository branch $branch."
+			git checkout $branch
+			logb "Updating remotes..."
+			git remote update
+			cd ${BUILD_TOP}
+		fi
+		echo
+	done
+}
+
+function apply_patch {
 
 	if ! [ -e ${BUILD_TOP}/.patched ]; then
 		logb "Patching build top..."
@@ -108,17 +117,27 @@ function apply_patch {
 	fi
 }
 
-function reverse_patch {
+function reverse_repo_map {
+	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
+		logb "Reversing custom repository branch maps.."
 
-	# change the kernel branch if necessary
-	logb "Kernel directory is ${kernel_dir}.\n Reverting kernel..."
-	cd ${BUILD_TOP} && repo sync ${kernel_dir} -d
-	if [ "x${EXPERIMENTAL_KERNEL}" == "xy" ]; then
-		cd ${BUILD_TOP}/${kernel_dir}
-		logb "Deleting kernel branch ${EXPERIMENTAL_BRANCH}."
-		git branch -D ${EXPERIMENTAL_BRANCH} 2>/dev/null
-		cd ${BUILD_TOP}
-	fi
+		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
+		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
+
+		if [ -d "$repo" ]; then
+			logb "Repo is $repo.\n Reverting..."
+			cd ${BUILD_TOP} && repo sync $repo -d
+
+			cd ${BUILD_TOP}/$repo
+			logb "Deleting repository branch $branch."
+			git branch -D $branch 2>/dev/null
+			cd ${BUILD_TOP}
+		fi
+		echo
+	done
+}
+
+function reverse_patch {
 
 	if [ -e ${BUILD_TOP}/.patched ]; then
 		logb "Unpatching build top..."

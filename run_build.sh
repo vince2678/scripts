@@ -39,9 +39,9 @@ PATCH_FUNCTIONS=();
 COPY_FUNCTIONS=();
 POST_COPY_FUNCTIONS=();
 
-url="https://raw.githubusercontent.com/vince2678/build_script/master"
+REPO_BRANCH_MAP=();
 
-kernel_dir=kernel/samsung/msm8916
+url="https://raw.githubusercontent.com/vince2678/build_script/master"
 
 SILENT=0
 
@@ -78,6 +78,10 @@ function print_help {
                 log "  -o, --output\toutput path (path to jenkins archive dir)";
                 log "\nOptional commands:";
                 log "  -b\tbuild number";
+                log "\n  --branch-map\tSpecify branches to check out for particular repositories";
+                log "              \tin the form repo directory:branch, for example,";
+                log "              \t--branch-map vendor/samsung:cm-14.1-experimental ";
+                log "              \tThis option can be specified multiple times.\n ";
                 log "  -s, --silent\tdon't publish to Telegram";
                 log "  -c, --odin\tbuild compressed (ODIN) images";
                 log "  -r, --clean\tclean build directory on completion";
@@ -122,13 +126,16 @@ for index in `seq 1 ${#}`; do
 		    ;;
 
 		# long options
+		--branch-map)
+			logb "\t\tBranch map $nextarg specified"
+			REPO_BRANCH_MAP=("${REPO_BRANCH_MAP[@]}" "$nextarg")
+			;;
 		--clean)    CLEAN_TARGET_OUT=$nextarg ;;
 		--device)   DEVICE_NAME=$nextarg ;;
 		--distro)   DISTRIBUTION=$nextarg ;;
 		--experimental)
 			logb "\t\tExperimental kernel is enabled"
-			EXPERIMENTAL_KERNEL=y
-			EXPERIMENTAL_BRANCH="cm-14.1-experimental"
+			REPO_BRANCH_MAP=("${REPO_BRANCH_MAP[@]}" "kernel/samsung/msm8916:cm-14.1-experimental")
 			;;
 
 		--help)     print_help ;;
@@ -136,8 +143,7 @@ for index in `seq 1 ${#}`; do
 
 		--oc)
 			logb "\t\tExperimental kernel is enabled"
-			EXPERIMENTAL_KERNEL=y
-			EXPERIMENTAL_BRANCH="cm-14.1-experimental"
+			REPO_BRANCH_MAP=("${REPO_BRANCH_MAP[@]}" "kernel/samsung/msm8916:cm-14.1-experimental")
 			;;
 
 		--odin)     MAKE_ODIN_PACKAGE=1 ;;
@@ -246,6 +252,8 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 	sync_all_trees "$@"
 
 	if [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ] && [ "x${DEVICE_NAME}" != "x" ]; then
+		# apply custom repo-branch maps
+		apply_repo_map
 		# apply the patch
 		apply_patch
 		# setup the build environment
@@ -260,6 +268,8 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 		generate_changes
 		# end the build
 		print_end_build
+		# reverse repo maps
+		reverse_repo_map
 		# reverse any previously applied patch
 		reverse_patch
 	fi
