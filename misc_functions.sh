@@ -58,6 +58,11 @@ function clean_target {
 	fi
 }
 
+function exit_on_failure {
+	$@ 2>/dev/null
+	exit_error $?
+}
+
 function exit_error {
 	if [ "x$1" != "x" ] && [ "$1" -ne 0 ]; then
 		logr "Error, aborting..."
