@@ -93,7 +93,7 @@ function copy_supackage {
 }
 
 function copy_odin_package {
-	if [ "x$MAKE_ODIN_PACKAGE" == "x" ] && [ ${MAKE_ODIN_PACKAGE} -eq 1 ]; then
+	if [ "x$MAKE_ODIN_PACKAGE" == "x1" ]; then
 		#define some variables
 		if [ "x${JOB_BUILD_NUMBER}" == "x" ]; then
 			arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
