@@ -168,25 +168,26 @@ for index in `seq 1 ${#}`; do
 	prev_arg=$cur_arg
 done
 
-if [ "x${BUILD_TOP}" == "x" ]; then
-	logr "No android source directory specified!"
-	exit 1
-fi
-
-if [ "x$UPDATE_SCRIPT" == "x" ] && [ "x$SYNC_ALL" == "x" ] && [ "x$SYNC_VENDOR" == "x" ]; then
-	if [ "x${DEVICE_NAME}" == "x" ]; then
-		logr "No device name specified!"
+if [ "x$UPDATE_SCRIPT" == "x" ]; then
+	if [ "x${BUILD_TOP}" == "x" ]; then
+		logr "No android source directory specified!"
 		exit 1
 	fi
+	if [ "x$SYNC_ALL" == "x" ] && [ "x$SYNC_VENDOR" == "x" ]; then
+		if [ "x${DEVICE_NAME}" == "x" ]; then
+			logr "No device name specified!"
+			exit 1
+		fi
 
-	if [ "x${BUILD_VARIANT}" == "x" ]; then
-		logr "No build variant specified!"
-		exit 1
-	fi
+		if [ "x${BUILD_VARIANT}" == "x" ]; then
+			logr "No build variant specified!"
+			exit 1
+		fi
 
-	if [ "x${BUILD_TARGET}" == "x" ]; then
-		logr "No build target specified!"
-		exit 1
+		if [ "x${BUILD_TARGET}" == "x" ]; then
+			logr "No build target specified!"
+			exit 1
+		fi
 	fi
 fi
 
