@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-lock_name=".lock"
+lock_name="android_build_lock"
 lock=
 
 function check_if_build_running {
 
-	lock="${BUILD_TOP}/${lock_name}"
+	lock="/var/lock/${lock_name}"
 
 	exec 200>${lock}
 
