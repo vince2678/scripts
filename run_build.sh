@@ -20,12 +20,12 @@
 ############
 START_TIME=$( date +%s )
 
+BLUE='\033[1;35m'
 BOLD="\033[1m"
 GREEN="\033[01;32m"
-RED="\033[01;31m"
-RESTORE="\033[0m"
 NC='\033[0m' # No Color
-BLUE='\033[1;35m'
+RED="\033[01;31m"
+RESTORE=$NC
 
 # create a temprary working dir
 BUILD_TEMP=$(mktemp -d)
@@ -51,6 +51,10 @@ function logr {
 
 function logb {
 	echo -e ${BLUE} "$@" ${NC}
+}
+
+function logg {
+	echo -e ${GREEN} "$@" ${NC}
 }
 
 function log {
@@ -217,7 +221,7 @@ for source_file in ${file_list}; do
 	if [ $? -eq 0 ]; then
 		logb "Sourcing $source_file ..."
 		. ${script_dir}/${source_file}
-		logb "Updating local version of $source_file ..."
+		logg "Updating local version of $source_file ..."
 		mv -f ${script_dir}/${source_file} $(dirname $0)/${source_file}
 	else
 		logb "Sourcing $source_file ..."
