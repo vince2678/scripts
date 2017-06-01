@@ -19,34 +19,34 @@ function extract_patches {
 	mkdir -p ${PATCH_DIR}
 
 	for ix in `seq 0 $((${#PRE_PATCH_FUNCTIONS[@]}-1))`; do
-		logr "\tRunning function ${PRE_PATCH_FUNCTIONS[$ix]}"
+		echoTextBlue "\tRunning function ${PRE_PATCH_FUNCTIONS[$ix]}"
 		${PRE_PATCH_FUNCTIONS[$ix]} $@
 	done
 
 	for ix in `seq 0 $((${#PATCH_FUNCTIONS[@]}-1))`; do
-		logr "\tRunning function ${PATCH_FUNCTIONS[$ix]}"
+		echoTextBlue "\tRunning function ${PATCH_FUNCTIONS[$ix]}"
 		${PATCH_FUNCTIONS[$ix]} $@
 	done
 }
 
 function apply_repo_map {
-	logg "Applying custom repository branch maps.."
+	echoTextGreen "Applying custom repository branch maps.."
 	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
 
 		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
 		if [ -d "${BUILD_TOP}/$repo" ]; then
-			logb "Repo is $repo.\n Reverting..."
+			echoTextBlue "Repo is $repo.\n Reverting..."
 			cd ${BUILD_TOP} && repo sync $repo -d
 
 			cd ${BUILD_TOP}/$repo
-			logb "Deleting repository branch $branch."
+			echoTextBlue "Deleting repository branch $branch."
 			git branch -D $branch
 			git remote update
-			logb "Checking out repository branch $branch."
+			echoTextBlue "Checking out repository branch $branch."
 			git checkout $branch
-			logb "Updating remotes..."
+			echoTextBlue "Updating remotes..."
 			git remote update
 			cd ${BUILD_TOP}
 		fi
@@ -62,11 +62,11 @@ function reverse_repo_map {
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
 		if [ -d "${BUILD_TOP}/$repo" ]; then
-			logb "Repo is $repo.\n Reverting..."
+			echoTextBlue "Repo is $repo.\n Reverting..."
 			cd ${BUILD_TOP} && repo sync $repo -d
 
 			cd ${BUILD_TOP}/$repo
-			logb "Deleting repository branch $branch."
+			echoTextBlue "Deleting repository branch $branch."
 			git branch -D $branch 2>/dev/null
 			cd ${BUILD_TOP}
 		fi
@@ -77,7 +77,7 @@ function reverse_repo_map {
 function apply_patch {
 
 	if ! [ -e ${BUILD_TOP}/.patched ]; then
-		logb "Patching build top..."
+		echoTextBlue "Patching build top..."
 		cd ${BUILD_TOP}
 
 		count=0
@@ -90,7 +90,7 @@ function apply_patch {
 				cat  ${patch_file} | patch -p1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
-				logr "Failed to apply patch ${patch_file}! Fix this."
+				echoText "Failed to apply patch ${patch_file}! Fix this."
 			fi
 		done
 
@@ -102,14 +102,14 @@ function apply_patch {
 				cat ${patch_file} | patch -p1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
-				logr "Failed to apply patch ${patch_file}! Fix this."
+				echoText "Failed to apply patch ${patch_file}! Fix this."
 			fi
 		done
 
 		if [ ${count} -eq 0 ]; then
-			logb "Nothing to patch."
+			echoTextBlue "Nothing to patch."
 		else
-			logb "Removing patch artifacts..."
+			echoTextBlue "Removing patch artifacts..."
 			cd ${BUILD_TOP}/frameworks
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
@@ -126,7 +126,7 @@ function apply_patch {
 			logb "Done."
 		fi
 
-		logb "Replacing ld.gold ..."
+		echoTextBlue "Replacing ld.gold ..."
 		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc*/x86_64-linux/bin/ld 2>/dev/null); do
 			cp ${ld_bin} ${ld_bin}.old
 			cp $(which ld.gold) $ld_bin
@@ -140,7 +140,7 @@ function apply_patch {
 function reverse_patch {
 
 	if [ -e ${BUILD_TOP}/.patched ]; then
-		logb "Unpatching build top..."
+		echoTextBlue "Unpatching build top..."
 		cd ${BUILD_TOP}
 		count=0
 
@@ -152,7 +152,7 @@ function reverse_patch {
 				cat ${patch_file} | patch -Rp1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
-				logr "Failed to apply patch ${patch_file}! Fix this."
+				echoText "Failed to apply patch ${patch_file}! Fix this."
 			fi
 		done
 
@@ -164,14 +164,14 @@ function reverse_patch {
 				cat ${patch_file} | patch -Rp1 -f 1>/dev/null 2>/dev/null
 				count=$(($count+1))
 			else
-				logr "Failed to apply patch ${patch_file}! Fix this."
+				echoText "Failed to apply patch ${patch_file}! Fix this."
 			fi
 		done
 
 		if [ ${count} -eq 0 ]; then
 			logb "Nothing to patch."
 		else
-			logb "Removing patch artifacts..."
+			echoTextBlue "Removing patch artifacts..."
 			cd ${BUILD_TOP}/frameworks
 			find -name '*.orig' | xargs rm -f
 			find -name '*.rej' | xargs rm -f
@@ -188,7 +188,7 @@ function reverse_patch {
 			logb "Done."
 		fi
 
-		logb "Replacing ld.gold ..."
+		echoTextBlue "Replacing ld.gold ..."
 		for ld_bin in $(ls prebuilts/gcc/linux-x86/host/x86_64-linux-glibc*/x86_64-linux/bin/ld 2>/dev/null); do
 			cp ${ld_bin}.old ${ld_bin}
 			rm ${ld_bin}.old -f

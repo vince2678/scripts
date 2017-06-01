@@ -282,5 +282,5 @@ clean_target
 END_TIME=$( date +%s )
 
 # PRINT RESULT TO USER
-echoText "SCRIPT COMPLETED!"
+echoTextGreen "SCRIPT COMPLETED!"
 echo -e ${RED}"TIME: $(format_time ${END_TIME} ${START_TIME})"${RESTORE}; newLine

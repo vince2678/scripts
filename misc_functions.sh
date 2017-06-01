@@ -22,7 +22,7 @@ function check_if_build_running {
 
 	exec 200>${lock}
 
-	logr "Attempting to acquire lock..."
+	echoTextBlue "Attempting to acquire lock..."
 
 	# loop if we can't get the lock
 	while true; do
@@ -39,16 +39,16 @@ function check_if_build_running {
 	pid=$$
 	echo ${pid} 1>&200
 
-	logr "Lock acquired. PID is ${pid}"
+	echoTextBlue "Lock acquired. PID is ${pid}"
 }
 
 function clean_target {
 	#start cleaning up
-	logb "Removing temp dir..."
+	echoText "Removing temp dir..."
 	rm -r $BUILD_TEMP
-	logb "Cleaning build dir..."
+	echoText "Cleaning build dir..."
 	cd ${ANDROID_BUILD_TOP}/
-	logb "Removing lock..."
+	echoText "Removing lock..."
 	rm ${lock}
 
 	if [ "x${CLEAN_TARGET_OUT}" != "x" ] && [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
@@ -59,23 +59,23 @@ function clean_target {
 }
 
 function exit_on_failure {
-	echoText "Running command: $@"
+	echoTextBlue "Running command: $@"
 	$@ 2>/dev/null
 	exit_error $?
 }
 
 function exit_error {
 	if [ "x$1" != "x0" ]; then
-		logr "Error, aborting..."
+		echoText "Error encountered, aborting..."
 		if [ "x$SILENT" != "x1" ]; then
 			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for ${DEVICE_NAME} device on ${USER}@${HOSTNAME} aborted."
 			wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
 		fi
 		# remove the temp dir
-		logr "Removing temp dir..."
+		echoText "Removing temp dir..."
 		rm -rf $BUILD_TEMP
-		logr "Removing lock..."
+		echoText "Removing lock..."
 		rm ${lock}
 		exit 1
 	fi

@@ -26,7 +26,7 @@ function copy_recoveryimage {
 			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
 		fi
 
-		logb "\t\tCopying recovery image..."
+		echoTextBlue "\t\tCopying recovery image..."
 		tar cf ${rec_name}.tar recovery.img
 		exit_on_failure rsync -v -P ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar
 	fi
@@ -36,15 +36,15 @@ function copy_otapackage {
 	if [ "x$BUILD_TARGET" == "xotapackage" ]; then
 		ota_out=${DISTRIBUTION}_${DEVICE_NAME}-ota-${BUILD_NUMBER}.zip
 		if ! [ -e ${ANDROID_PRODUCT_OUT}/${ota_out} ]; then
-			logb "Searching for OTA package..."
+			echoTextBlue "Searching for OTA package..."
 			ota_out=`basename $(find ${ANDROID_PRODUCT_OUT} -maxdepth 1 -type f -name '*zip' | head -1) 2>/dev/null`
 
 			if [ "x$ota_out" == "x" ]; then
-				logr "Failed to find ota package!!"
+				echoText "Failed to find ota package!!"
 				exit_error 1
 			fi
 		fi
-		logb "Found ota package $ota_out"
+		echoTextBlue "Found ota package $ota_out"
 
 		#define some variables
 		if [ "x${JOB_BUILD_NUMBER}" == "x" ]; then
@@ -59,17 +59,17 @@ function copy_otapackage {
 		if [ -e ${BUILD_TOP}/META-INF ]; then
 			ota_bin="META-INF/com/google/android/update-binary"
 
-			logb "\t\tFound update binary..."
+			echoTextBlue "\t\tFound update binary..."
 			cp -dpR ${BUILD_TOP}/META-INF $BUILD_TEMP/META-INF
 			cp -ndpR ${BUILD_TOP}/META-INF ./
 			#delete the old binary
-			logb "\t\tPatching zip file unconditionally..."
+			echoTextBlue "\t\tPatching zip file unconditionally..."
 			zip -d ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
 			zip -ur ${ANDROID_PRODUCT_OUT}/${ota_out} ${ota_bin}
 		fi
 
 		#copy the zip in the background
-		logb "\t\tCopying zip image..."
+		echoTextBlue "\t\tCopying zip image..."
 
 		# don't copy in the backgroud if we're not making the ODIN archive as well.
 		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip
@@ -84,10 +84,10 @@ function copy_otapackage {
 
 function copy_supackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ]; then
-		logb "\t\tCopying su image..."
+		echoTextBlue "\t\tCopying su image..."
 		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${JOB_BUILD_NUMBER}.zip
 	elif [ -e ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ]; then
-		logb "\t\tCopying su image..."
+		echoTextBlue "\t\tCopying su image..."
 		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${JOB_BUILD_NUMBER}.zip
 	fi
 }
@@ -116,12 +116,12 @@ function copy_odin_package {
 		#calculate the md5sum
 		md5sum -t ${arc_name}.tar >> ${arc_name}.tar
 		mv -f ${arc_name}.tar ${arc_name}.tar.md5
-		logb "\t\tCompressing ODIN-flashable image..."
+		echoTextBlue "\t\tCompressing ODIN-flashable image..."
 
 		#compress the image
 		exit_on_failure 7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
 
-		logb "\t\tCopying ODIN-flashable compressed image..."
+		echoTextBlue "\t\tCopying ODIN-flashable compressed image..."
 		#copy it to the output dir
 		exit_on_failure rsync -v -P  ${arc_name}.tar.md5.7z ${OUTPUT_DIR}/builds/odin/
 	fi
@@ -134,7 +134,7 @@ COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_odin_package")
 
 function copy_files {
 	for ix in `seq 0 $((${#COPY_FUNCTIONS[@]}-1))`; do
-		logr "\tRunning function ${COPY_FUNCTIONS[$ix]}"
+		echoTextBlue "\tRunning function ${COPY_FUNCTIONS[$ix]}"
 		${COPY_FUNCTIONS[$ix]} $@
 	done
 }

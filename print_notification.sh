@@ -15,14 +15,14 @@
 
 function print_start_build {
 	if [ "x${JOB_BUILD_NUMBER}" != "x" ] && [ ${JOB_BUILD_NUMBER} -ge 1 ]; then
-		logb "\n=================================================="
+		logb "\n==========================================================="
 		logb "Build started on Jenkins on ${ROUTEID}.\n"
 		logb "BUILDING #${JOB_BUILD_NUMBER} FROM ${USER}@${HOSTNAME}\n"
 		logb "Release type: ${release_type} \n"
 		arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 		logb "Archive prefix is: ${arc_name} \n"
 		logb "Output Directory: ${OUTPUT_DIR}\n"
-		logb "===================================================\n"
+		logb "============================================================\n"
 
 		if [ "x$SILENT" != "x1" ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
