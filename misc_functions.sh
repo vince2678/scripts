@@ -49,6 +49,7 @@ function clean_target {
 	echoText "Cleaning build dir..."
 	cd ${ANDROID_BUILD_TOP}/
 	echoText "Removing lock..."
+		exec 200>&-
 	rm ${lock}
 
 	if [ "x${CLEAN_TARGET_OUT}" != "x" ] && [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
@@ -76,6 +77,7 @@ function exit_error {
 		echoText "Removing temp dir..."
 		rm -rf $BUILD_TEMP
 		echoText "Removing lock..."
+		exec 200>&-
 		rm ${lock}
 		exit 1
 	fi
