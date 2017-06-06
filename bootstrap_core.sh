@@ -140,7 +140,16 @@ function get_platform_info {
 
 	# get the recovery type
 	if [ "$recovery_variant" == "twrp" ] || [ -d "${BUILD_TOP}/bootable/recovery-twrp" ]; then
-		if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
+		[ -e "${BUILD_TOP}/bootable/recovery/variables.h" ] && TWRP_VAR_FILE="${BUILD_TOP}/bootable/recovery/variables.h"
+		[ -e "${BUILD_TOP}/bootable/recovery-twrp/variables.h" ] && TWRP_VAR_FILE="${BUILD_TOP}/bootable/recovery-twrp/variables.h"
+
+		if [ "x${TWRP_VAR_FILE}" != "x" ]; then
+			recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_VERSION_STR' | cut -d '"' -f 2`
+			if [ -z "$recovery_ver" ]; then
+				recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_MAIN_VERSION_STR' | cut -d '"' -f 2`
+			fi
+			recovery_flavour="TWRP-${recovery_ver}"
+		elif [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
 		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
 			recovery_flavour="TWRP-3.0.x"
