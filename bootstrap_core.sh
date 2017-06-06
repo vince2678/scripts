@@ -127,7 +127,7 @@ function get_platform_info {
 	logb "Distro is: ${distroTxt}/${DISTRIBUTION}-${ver} on platform ${platform_version}"
 
 	#set the recovery type
-	recovery_variant=$(grep RECOVERY_VARIANT ${platform_common_dir}/BoardConfigCommon.mk 2>/dev/null | sed s'/ //'g)
+	recovery_variant=$(grep RECOVERY_VARIANT ${platform_common_dir}/BoardConfigCommon.mk 2>/dev/null | sed s'/ //'g |cut -d':' -f2)
 	# get the release type
 	if [ "x${release_type}" == "x" ]; then
 		release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${DISTRIBUTION}.mk 2>/dev/null | cut -d'=' -f2 | sed s'/ //'g)
@@ -139,7 +139,7 @@ function get_platform_info {
 	fi
 
 	# get the recovery type
-	if [ "$recovery_variant" == "RECOVERY_VARIANT:=twrp" ]; then
+	if [ "$recovery_variant" == "twrp" ] || [ -d "${BUILD_TOP}/bootable/recovery-twrp" ]; then
 		if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
 			recovery_flavour="TWRP-3.1.x"
 		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
