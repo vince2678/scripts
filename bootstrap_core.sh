@@ -144,9 +144,9 @@ function get_platform_info {
 		[ -e "${BUILD_TOP}/bootable/recovery-twrp/variables.h" ] && TWRP_VAR_FILE="${BUILD_TOP}/bootable/recovery-twrp/variables.h"
 
 		if [ "x${TWRP_VAR_FILE}" != "x" ]; then
-			recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_VERSION_STR' | cut -d '"' -f 2`
+			recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_VERSION_STR' | grep '"' | cut -d '"' -f 2`
 			if [ -z "$recovery_ver" ]; then
-				recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_MAIN_VERSION_STR' | cut -d '"' -f 2`
+				recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_MAIN_VERSION_STR' | grep '"' | cut -d '"' -f 2`
 			fi
 			recovery_flavour="TWRP-${recovery_ver}"
 		elif [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
