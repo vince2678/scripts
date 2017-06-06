@@ -61,7 +61,7 @@ function clean_target {
 
 function exit_on_failure {
 	echoTextBlue "Running command: $@"
-	$@ 2>/dev/null
+	$@
 	exit_error $?
 }
 
