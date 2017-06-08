@@ -115,7 +115,7 @@ for index in `seq 1 ${#}`; do
 		-h) print_help ;;
 		-o) OUTPUT_DIR=$nextarg ;;
 		-p) BUILD_TOP=`realpath $nextarg` ;;
-		-r) CLEAN_TARGET_OUT=$nextarg ;;
+		-r) CLEAN_TARGET_OUT=1;;
 		-s) SILENT=1 ;;
 		-t) BUILD_TARGET=$nextarg ;;
 		-u) WITH_SU=true ;;
@@ -130,7 +130,7 @@ for index in `seq 1 ${#}`; do
 			logb "\t\tBranch map $nextarg specified"
 			REPO_BRANCH_MAP=("${REPO_BRANCH_MAP[@]}" "$nextarg")
 			;;
-		--clean)    CLEAN_TARGET_OUT=$nextarg ;;
+		--clean)    CLEAN_TARGET_OUT=1 ;;
 		--device)   DEVICE_NAME=$nextarg ;;
 		--distro)   DISTRIBUTION=$nextarg ;;
 		--experimental)
