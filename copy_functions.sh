@@ -13,6 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+function rsync_cp {
+	if [ "x${SYNC_HOST}" == "x" ]; then
+		exit_on_failure rsync -av -P $1 $2
+	else
+		exit_on_failure ssh -o StrictHostKeyChecking=no ${SYNC_HOST} mkdir -p $(dirname $2)
+		exit_on_failure rsync -av -P -e "ssh -o StrictHostKeyChecking=no" $1 ${SYNC_HOST}:$2
+	fi
+}
+
 function copy_recoveryimage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/recovery.img ]; then
 		#copy the recovery image

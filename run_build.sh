@@ -74,6 +74,7 @@ function print_help {
                 log "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage" ;
                 log "  -e, --type\twhere type is one of user|userdebug|eng" ;
                 log "  --device\tdevice name" ;
+                log "  -H, --host\trsync host details. In the form [user@]hostname";
                 log "  -p, --path\tbuild top path" ;
                 log "  -o, --output\toutput path (path to jenkins archive dir)";
                 log "\nOptional commands:";
@@ -113,6 +114,7 @@ for index in `seq 1 ${#}`; do
 		-e) BUILD_VARIANT=$nextarg ;;
 		-j) JOB_NUMBER=$nextarg ;;
 		-h) print_help ;;
+		-H) SYNC_HOST=$nextarg ;;
 		-o) OUTPUT_DIR=$nextarg ;;
 		-p) BUILD_TOP=`realpath $nextarg` ;;
 		-r) CLEAN_TARGET_OUT=1;;
@@ -139,6 +141,7 @@ for index in `seq 1 ${#}`; do
 			;;
 
 		--help)     print_help ;;
+		--host)     SYNC_HOST=$nextarg ;;
 		--jobs)     JOB_NUMBER=$nextarg ;;
 
 		--oc)
