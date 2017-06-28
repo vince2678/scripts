@@ -74,10 +74,10 @@ function copy_bootimage {
 		cd ${boot_pkg_dir} && zip ${boot_pkg_zip} `find ${boot_pkg_dir} -type f | cut -c $(($(echo ${boot_pkg_dir}|wc -c)+1))-`
 		cd ${revert_pkg_dir} && zip ${revert_zip} `find ${revert_pkg_dir} -type f | cut -c $(($(echo ${revert_pkg_dir}|wc -c)+1))-`
 		echoTextBlue "Copying boot image..."
-		exit_on_failure rsync -v -P ${boot_pkg_zip} ${OUTPUT_DIR}/builds/boot/
+		rsync_cp ${boot_pkg_zip} ${OUTPUT_DIR}/builds/boot/
 
 		echoTextBlue "Copying reversion zip..."
-		exit_on_failure rsync -v -P ${revert_zip} ${OUTPUT_DIR}/builds/boot/
+		rsync_cp ${revert_zip} ${OUTPUT_DIR}/builds/boot/
 	fi
 }
 

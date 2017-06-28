@@ -43,7 +43,7 @@ function copy_recoveryimage {
 
 		logb "\n\t\tCopying recovery image...\n"
 		tar cf ${rec_name}.tar recovery.img
-		exit_on_failure rsync -v -P ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar
+		rsync_cp ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar
 	fi
 }
 
@@ -87,7 +87,7 @@ function copy_otapackage {
 		logb "\n\t\tCopying zip image..."
 
 		# don't copy in the backgroud if we're not making the ODIN archive as well.
-		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip
+		rsync_cp ${ANDROID_PRODUCT_OUT}/${ota_out} ${OUTPUT_DIR}/builds/full/${arc_name}.zip
 
 		#calculate md5sums
 		md5sums=$(md5sum ${ANDROID_PRODUCT_OUT}/${ota_out} | cut -d " " -f 1)
@@ -100,10 +100,10 @@ function copy_otapackage {
 function copy_supackage {
 	if [ -e ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ]; then
 		logb "\n\t\tCopying su image..."
-		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${JOB_BUILD_NUMBER}.zip
+		rsync_cp ${ANDROID_PRODUCT_OUT}/addonsu-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-arm_j${JOB_BUILD_NUMBER}.zip
 	elif [ -e ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ]; then
 		logb "\n\t\tCopying su image..."
-		exit_on_failure rsync -v -P ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${JOB_BUILD_NUMBER}.zip
+		rsync_cp ${ANDROID_PRODUCT_OUT}/addonsu-${ver}-arm.zip ${OUTPUT_DIR}/builds/su/addonsu-${ver}-arm_j${JOB_BUILD_NUMBER}.zip
 	fi
 }
 
@@ -138,7 +138,7 @@ function copy_odin_package {
 
 		logb "\n\t\tCopying ODIN-flashable compressed image..."
 		#copy it to the output dir
-		exit_on_failure rsync -v -P  ${arc_name}.tar.md5.7z ${OUTPUT_DIR}/builds/odin/
+		rsync_cp ${arc_name}.tar.md5.7z ${OUTPUT_DIR}/builds/odin/
 	fi
 }
 
