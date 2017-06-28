@@ -18,7 +18,7 @@ function rsync_cp {
 		exit_on_failure rsync -av -P $1 $2
 	else
 		remote_mkdir $(dirname $2)
-		exit_on_failure rsync -av -P -e "ssh -o StrictHostKeyChecking=no" $1 ${SYNC_HOST}:$2
+		exit_on_failure rsync -av -P -e 'ssh -o StrictHostKeyChecking=no' $1 ${SYNC_HOST}:$2
 	fi
 }
 
