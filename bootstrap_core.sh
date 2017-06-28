@@ -192,10 +192,4 @@ function setup_env {
 
 	#create the directories
 	exit_on_failure mkdir ${BUILD_TEMP}/ -p
-	remote_mkdir ${OUTPUT_DIR}/builds/boot -p
-	remote_mkdir ${OUTPUT_DIR}/builds/full -p
-	remote_mkdir ${OUTPUT_DIR}/builds/odin -p
-	remote_mkdir ${OUTPUT_DIR}/builds/recovery -p
-	remote_mkdir ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME} -p
-	remote_mkdir ${OUTPUT_DIR}/builds/su -p
 }

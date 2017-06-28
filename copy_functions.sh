@@ -138,6 +138,7 @@ function copy_odin_package {
 
 		logb "\n\t\tCopying ODIN-flashable compressed image..."
 		#copy it to the output dir
+		remote_mkdir ${OUTPUT_DIR}/builds/odin
 		rsync_cp ${arc_name}.tar.md5.7z ${OUTPUT_DIR}/builds/odin/
 	fi
 }
