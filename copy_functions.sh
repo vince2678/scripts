@@ -23,7 +23,7 @@ function rsync_cp {
 }
 
 function remote_mkdir {
-	if [ "x${SYNC_HOST}" != "x" ] && [ "x${$1}" != "x" ]; then
+	if [ "x${SYNC_HOST}" != "x" ] && [ "x${1}" != "x" ]; then
 		exit_on_failure ssh -o StrictHostKeyChecking=no ${SYNC_HOST} mkdir -p $1
 	fi
 }
