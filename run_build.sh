@@ -167,12 +167,12 @@ for index in `seq 1 ${#}`; do
 
 		*) validate_arg $cur_arg;
 			if [ $? -eq 0 ]; then
-				logr "Unrecognised option passed"
+				logr "Unrecognised option $cur_arg passed"
 				print_help
 			else
 				validate_arg $prev_arg
 				if [ $? -eq 1 ]; then
-					logr "Argument passed without flag option"
+					logr "Argument $cur_arg passed without flag option"
 					print_help
 				fi
 			fi
