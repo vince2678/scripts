@@ -43,6 +43,8 @@ function generate_changes {
 
 	changelog_name=changelog-${arc_name}.txt
 
+	remote_mkdir ${OUTPUT_DIR}/builds/full
+
 	echo -e "\nMSM8916-COMMON\n---------\n" > ${OUTPUT_DIR}/builds/full/${changelog_name}
 
 	git log --decorate=full \
