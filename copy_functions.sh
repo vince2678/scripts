@@ -94,7 +94,8 @@ function copy_otapackage {
 		#calculate md5sums
 		md5sums=$(md5sum ${ANDROID_PRODUCT_OUT}/${ota_out} | cut -d " " -f 1)
 
-		echo "${md5sums} ${arc_name}.zip" > ${OUTPUT_DIR}/builds/full/${arc_name}.zip.md5 || exit_error 1
+		echo "${md5sums} ${arc_name}.zip" > ${BUILD_TEMP}/${arc_name}.zip.md5 || exit_error 1
+		rsync_cp ${BUILD_TEMP}/${arc_name}.zip.md5 ${OUTPUT_DIR}/builds/full/${arc_name}.zip.md5
 	fi
 }
 

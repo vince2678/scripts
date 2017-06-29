@@ -43,40 +43,43 @@ function generate_changes {
 
 	changelog_name=changelog-${arc_name}.txt
 
-	echo -e "\nMSM8916-COMMON\n---------\n" > ${OUTPUT_DIR}/builds/full/${changelog_name}
+	echo -e "\nMSM8916-COMMON\n---------\n" > ${BUILD_TEMP}/${changelog_name}
 
 	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${BUILD_TEMP}/${changelog_name}
 
 	cd ${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
 
-	echo -e "\nKERNEL\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+	echo -e "\nKERNEL\n---------\n" >> ${BUILD_TEMP}/${changelog_name}
 
 	git log --decorate=full \
-		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+		--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${BUILD_TEMP}/${changelog_name}
 
 	if [ "x$BUILD_TARGET" == "xotapackage" ]; then
 		#generate the changes
 		cd ${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
 
-		echo -e "\nDEVICE\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+		echo -e "\nDEVICE\n---------\n" >> ${BUILD_TEMP}/${changelog_name}
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${BUILD_TEMP}/${changelog_name}
 
 		cd ${common_dir}
 
-		echo -e "\nDEVICE-COMMON\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+		echo -e "\nDEVICE-COMMON\n---------\n" >> ${BUILD_TEMP}/${changelog_name}
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${BUILD_TEMP}/${changelog_name}
 
 		cd ${ANDROID_BUILD_TOP}/vendor/${vendors[0]}/${DEVICE_NAME}
 
-		echo -e "\nVENDOR\n---------\n" >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+		echo -e "\nVENDOR\n---------\n" >> ${BUILD_TEMP}/${changelog_name}
 
 		git log --decorate=full \
-			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${OUTPUT_DIR}/builds/full/${changelog_name}
+			--since=$(date -d ${dates[0]} +%m-%d-%Y) >> ${BUILD_TEMP}/${changelog_name}
+
 	fi
+
+	rsync_cp ${BUILD_TEMP}/${changelog_name} ${OUTPUT_DIR}/builds/full/${changelog_name}
 }
 
