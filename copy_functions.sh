@@ -15,6 +15,7 @@
 
 function rsync_cp {
 	if [ "x${SYNC_HOST}" == "x" ]; then
+		remote_mkdir $(dirname $2)
 		exit_on_failure rsync -av -P $1 $2
 	else
 		remote_mkdir $(dirname $2)
@@ -25,8 +26,12 @@ function rsync_cp {
 }
 
 function remote_mkdir {
-	if [ "x${SYNC_HOST}" != "x" ] && [ "x${1}" != "x" ]; then
-		exit_on_failure ssh -o StrictHostKeyChecking=no ${SYNC_HOST} mkdir -p $1
+	if [ "x${1}" != "x" ]; then
+		if [ "x${SYNC_HOST}" != "x" ]; then
+			exit_on_failure ssh -o StrictHostKeyChecking=no ${SYNC_HOST} mkdir -p $1
+		else
+			exit_on_failure mkdir -p $1
+		fi
 	fi
 }
 
