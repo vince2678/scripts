@@ -1,5 +1,6 @@
 patch_functions.sh
 wifi_fix_patch.sh
+substratum_patch.sh
 sync_functions.sh
 misc_functions.sh
 bootstrap_core.sh
