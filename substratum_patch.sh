@@ -12,6 +12,7 @@ index 0000000..3a163fe
 +# Substratum
 +PRODUCT_PACKAGES += \
 +	Substratum
++ 
 SUBS_P
 }
 

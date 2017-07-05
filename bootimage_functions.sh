@@ -69,8 +69,6 @@ function copy_bootimage {
 		# Create the scripts
 		create_scripts
 
-		remote_mkdir ${OUTPUT_DIR}/builds/boot
-
 		#archive the image
 		echoTextBlue "Creating flashables..."
 		cd ${boot_pkg_dir} && zip ${boot_pkg_zip} `find ${boot_pkg_dir} -type f | cut -c $(($(echo ${boot_pkg_dir}|wc -c)+1))-`
