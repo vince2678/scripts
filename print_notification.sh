@@ -25,15 +25,14 @@ function print_start_build {
 		logb "============================================================\n"
 
 		if [ "x$SILENT" != "x1" ]; then
-		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
+			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
-		link="http://grandprime.ddns.net/jenkins/"
+			link="http://grandprime.ddns.net/jenkins/"
 
-		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} started for device ${DEVICE_NAME} via Jenkins, running on ${USER}@${HOSTNAME}."
-		textStr="${str_main}"
+			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} started for device ${DEVICE_NAME} via Jenkins, running on ${USER}@${HOSTNAME}."
 
-		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
-	   fi
+			print_to_telegram $textStr
+		fi
 	fi
 }
 
@@ -42,9 +41,8 @@ function print_end_build {
 	if [ "x$SILENT" != "x1" ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
-		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."
-		textStr="${str_main}"
+		textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."
 
-		wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=${textStr}" -O - > /dev/null 2>/dev/null
+		print_to_telegram $textStr
 	fi
 }

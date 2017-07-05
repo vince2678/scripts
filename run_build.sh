@@ -76,6 +76,7 @@ function print_help {
                 log "  --device\tdevice name" ;
                 log "  -H, --host\trsync/ssh host details. In the form [user@]hostname";
                 log "  -p, --path\tbuild top path" ;
+                log "  -P, --print-via-proxy\tConnect to telegram via host specified above." ;
                 log "  -o, --output\toutput path (path to jenkins archive dir)";
                 log "\nOptional commands:";
                 log "  -b\tbuild number";
@@ -117,6 +118,7 @@ for index in `seq 1 ${#}`; do
 		-H) SYNC_HOST=$nextarg ;;
 		-o) OUTPUT_DIR=$nextarg ;;
 		-p) BUILD_TOP=`realpath $nextarg` ;;
+		-P) PRINT_VIA_PROXY=y ;;
 		-r) CLEAN_TARGET_OUT=1;;
 		-s) SILENT=1 ;;
 		-t) BUILD_TARGET=$nextarg ;;
@@ -152,6 +154,7 @@ for index in `seq 1 ${#}`; do
 		--odin)     MAKE_ODIN_PACKAGE=1 ;;
 		--output)   OUTPUT_DIR=$nextarg ;;
 		--path)     BUILD_TOP=`realpath $nextarg` ;;
+		--print-via-proxy) PRINT_VIA_PROXY=y ;;
 		--silent)   SILENT=1 ;;
 		--su)       WITH_SU=true ;;
 		--sync)     SYNC_VENDOR=1 ;;
