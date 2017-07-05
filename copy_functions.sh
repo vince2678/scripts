@@ -14,6 +14,7 @@
 # limitations under the License.
 
 function rsync_cp {
+	sync_count=1
 	if [ "x${SYNC_HOST}" == "x" ]; then
 		remote_mkdir $(dirname $2)
 		exit_on_failure rsync -av --append-verify -P $1 $2
@@ -21,7 +22,17 @@ function rsync_cp {
 		remote_mkdir $(dirname $2)
 		echoTextBlue "Using rsync to copy $1 -> ${SYNC_HOST}:$2"
 		rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' $1 ${SYNC_HOST}:$2
-		exit_error $?
+
+		sync_exit_error=$?
+
+		while [ sync_exit_error -ne 0 ] && [ $sync_count -le $RETRY_COUNT ]; do
+			echoTextRed "[${sync_count}/${RETRY_COUNT}] Retrying copy of $1 -> ${SYNC_HOST}:$2"
+			rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' $1 ${SYNC_HOST}:$2
+			sync_exit_error=$?
+			sync_count=$((sync_count+1))
+		done
+
+		exit_error $sync_exit_error
 	fi
 }
 
