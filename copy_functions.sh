@@ -25,7 +25,7 @@ function rsync_cp {
 
 		sync_exit_error=$?
 
-		while [ sync_exit_error -ne 0 ] && [ $sync_count -le $RETRY_COUNT ]; do
+		while [ $sync_exit_error -ne 0 ] && [ $sync_count -le $RETRY_COUNT ]; do
 			echoTextRed "[${sync_count}/${RETRY_COUNT}] Retrying copy of $1 -> ${SYNC_HOST}:$2"
 			rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' $1 ${SYNC_HOST}:$2
 			sync_exit_error=$?
