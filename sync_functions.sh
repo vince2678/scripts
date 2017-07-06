@@ -21,12 +21,7 @@ if [ -n "$SYNC_VENDOR" ]; then
 		targets="device vendor kernel"
 		for dir in ${targets}; do
 			if ! [ -d ${dir}/${vendor} ]; then continue; fi
-			cd ${dir}/${vendor}/
-			devices=`ls`
-			cd ${BUILD_TOP}
-			for i in ${devices}; do
-				repo sync ${dir}/${vendor}/${i} --force-sync --prune
-			done
+			repo sync ${dir}/${vendor}/* --force-sync --prune
 		done
 	done
 fi
