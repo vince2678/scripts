@@ -31,13 +31,8 @@ function make_targets {
 function generate_changes {
 	logb "Generating changes..."
 
-	#get the date of the most recent build
-	dates=($(ls ${BUILD_WWW_MOUNT_POINT}/builds/full/${DISTRIBUTION}-${ver}-*-${DEVICE_NAME}.zip 2>/dev/null | cut -d '-' -f 3 | sort -r))
-
-	# use a preset time if we couldn't get the archive times.
-	if [ -z $dates ]; then
-		dates=20170430
-	fi
+	# use a preset time (6 days ago)
+	dates=$(date -d "`date` - 6 days" +%Y%m%d)
 
 	cd ${platform_common_dir}
 
