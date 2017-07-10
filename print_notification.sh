@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+BUILD_START_TIME=
 function print_start_build {
 	if [ "x${JOB_BUILD_NUMBER}" != "x" ] && [ ${JOB_BUILD_NUMBER} -ge 1 ]; then
 		logb "\n==========================================================="
@@ -29,6 +29,7 @@ function print_start_build {
 
 			link="http://grandprime.ddns.net/jenkins/"
 
+			BUILD_START_TIME=$( date +%s)
 			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} started for device ${DEVICE_NAME} via Jenkins, running on ${USER}@${HOSTNAME}."
 
 			print_to_telegram $textStr
@@ -42,8 +43,9 @@ function print_end_build {
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
 		END_TIME=$( date +%s )
-		totalTime="$(format_time ${END_TIME} ${START_TIME})"
-		textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully.%0ATotal time: ${totalTime}"
+		buildTime="%0ABuild time: $(format_time ${END_TIME} ${BUILD_START_TIME})"
+		totalTime="%0ATotal time: $(format_time ${END_TIME} ${START_TIME})"
+		textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully.${buildTime}${totalTime}"
 
 		print_to_telegram $textStr
 	fi
