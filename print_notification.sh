@@ -41,7 +41,9 @@ function print_end_build {
 	if [ "x$SILENT" != "x1" ]; then
 		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
 
-		textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."
+		END_TIME=$( date +%s )
+		totalTime="$(format_time ${END_TIME} ${START_TIME})"
+		textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully.%0ATotal time: ${totalTime}"
 
 		print_to_telegram $textStr
 	fi
