@@ -43,11 +43,10 @@ function apply_repo_map {
 			cd ${BUILD_TOP}/$repo
 			echoTextBlue "Deleting repository branch $branch."
 			git branch -D $branch 2>/dev/null
-			git remote update
+			echoTextBlue "Fetching repository branch $branch..."
+			git fetch github $branch
 			echoTextBlue "Checking out repository branch $branch."
 			git checkout $branch
-			echoTextBlue "Updating remotes..."
-			git remote update
 			cd ${BUILD_TOP}
 		fi
 		echo
