@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 PATCH_DIR=$BUILD_TEMP/patches
 
 function extract_patches {
