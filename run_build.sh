@@ -90,6 +90,7 @@ function print_help {
                 log "  -s, --silent\tdon't publish to Telegram";
                 log "  -c, --odin\tbuild compressed (ODIN) images";
                 log "  -r, --clean\tclean build directory on completion";
+                log "  -N, --no-pack-bootimage\tDon't pack the bootimage into a zip.\n";
                 log "  -R, --retry\tRetry upload this many times upon failure before giving up.";
                 log "              \tDefault is 3 ";
                 log "  -a, --sync_all\tSync entire build tree";
@@ -124,6 +125,7 @@ for index in `seq 1 ${#}`; do
 		-o) OUTPUT_DIR=$nextarg ;;
 		-p) BUILD_TOP=`realpath $nextarg` ;;
 		-P) PRINT_VIA_PROXY=y ;;
+		-N) NO_PACK_BOOTIMAGE=1 ;;
 		-r) CLEAN_TARGET_OUT=1;;
 		-R) RETRY_COUNT=$nextarg;;
 		-s) SILENT=1 ;;
@@ -151,6 +153,8 @@ for index in `seq 1 ${#}`; do
 		--help)     print_help ;;
 		--host)     SYNC_HOST=$nextarg ;;
 		--jobs)     JOB_NUMBER=$nextarg ;;
+
+		--no-pack-bootimage) NO_PACK_BOOTIMAGE=1 ;;
 
 		--oc)
 			logb "\t\tExperimental kernel is enabled"

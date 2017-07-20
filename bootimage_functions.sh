@@ -14,7 +14,7 @@
 # limitations under the License.
 
 function copy_bootimage {
-	if [ "x$BUILD_TARGET" == "xbootimage" ]; then
+	if [ "x$BUILD_TARGET" == "xbootimage" ] && [ "x$NO_PACK_BOOTIMAGE" == "x" ]; then
 		boot_pkg_dir=${BUILD_TEMP}/boot_pkg
 		if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xRR" ]; then
 			boot_pkg_zip=${BUILD_TEMP}/boot_caf-based_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
