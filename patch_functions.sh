@@ -46,7 +46,7 @@ function apply_repo_map {
 			echoTextBlue "Fetching repository branch $branch..."
 			git fetch github $branch
 			echoTextBlue "Checking out repository branch $branch."
-			git checkout $branch
+			git checkout github/$branch
 			cd ${BUILD_TOP}
 		fi
 		echo
