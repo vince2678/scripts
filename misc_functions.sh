@@ -138,25 +138,25 @@ function format_time() {
     fi
 
     if [[ ${HOURS} -eq 1 ]]; then
-        TIME_STRING+="1 HOUR, "
+        TIME_STRING+="1 hour, "
     elif [[ ${HOURS} -ge 2 ]]; then
-        TIME_STRING+="${HOURS} HOURS, "
+        TIME_STRING+="${HOURS} hours, "
     fi
 
     if [[ ${MINS} -eq 1 ]]; then
-        TIME_STRING+="1 MINUTE"
+        TIME_STRING+="1 minute"
     else
-        TIME_STRING+="${MINS} MINUTES"
+        TIME_STRING+="${MINS} minutes"
     fi
 
     if [[ ${SECS} -eq 1 && -n ${HOURS} ]]; then
-        TIME_STRING+=", AND 1 SECOND"
+        TIME_STRING+=", and 1 second"
     elif [[ ${SECS} -eq 1 && -z ${HOURS} ]]; then
-        TIME_STRING+=" AND 1 SECOND"
+        TIME_STRING+=" and 1 second"
     elif [[ ${SECS} -ne 1 && -n ${HOURS} ]]; then
-        TIME_STRING+=", AND ${SECS} SECONDS"
+        TIME_STRING+=", and ${SECS} seconds"
     elif [[ ${SECS} -ne 1 && -z ${HOURS} ]]; then
-        TIME_STRING+=" AND ${SECS} SECONDS"
+        TIME_STRING+=" and ${SECS} seconds"
     fi
 
     echo ${TIME_STRING}
