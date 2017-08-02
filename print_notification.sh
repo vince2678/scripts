@@ -61,7 +61,7 @@ function print_end_build {
 				str_rom="%0A ROM: ${link}/builds/full/${arc_name}.zip"
 				str_rec="%0A Recovery: ${link}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar"
 			fi
-			str_changelog="%0AChangelog: ${link}/builds/full/${arc_name}.txt"
+			str_changelog="%0AChangelog: ${link}/builds/full/chagelog-${arc_name}.txt"
 			str_blurb="%0A%0AYou can flash boot/recovery images using ODIN or you can extract them using 7zip or tar under Linux and flash using TWRP."
 		fi
 
