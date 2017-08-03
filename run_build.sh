@@ -33,7 +33,7 @@ RETRY_COUNT=3
 # create a temprary working dir
 BUILD_TEMP=$(mktemp -d)
 
-CURL="curl -connect-timeout=10"
+CURL="curl --silent -connect-timeout=10"
 
 # file extraction function names
 PRE_PATCH_FUNCTIONS=();
