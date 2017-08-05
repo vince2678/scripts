@@ -51,12 +51,13 @@ function print_end_build {
 		if [ "x$BUILD_URL" != "x" ]; then
 			arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
-			bimg_name=bootimage-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
+			#bimg_name=bootimage-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
+			bimg_name=boot_caf-based_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}
 
 			if [ "$BUILD_TARGET" == "recoveryimage" ]; then
 				str_rec="%0ARecovery: ${link}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar"
 			elif [ "$BUILD_TARGET" == "bootimage" ]; then
-				str_boot="%0ABoot image: ${link}/builds/boot/${DEVICE_NAME}/${bimg_name}.tar"
+				str_boot="%0ABoot image: ${link}/builds/boot/${bimg_name}.zip"
 			elif [ "$BUILD_TARGET" == "otapackage" ]; then
 				str_rom="%0A ROM: ${link}/builds/full/${arc_name}.zip"
 				str_rec="%0A Recovery: ${link}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar"
