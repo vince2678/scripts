@@ -32,8 +32,9 @@ function extract_patches {
 
 function apply_repo_map {
 	echoTextBold "Applying custom repository branch maps.."
+	count=0
 	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
-
+		count=$((count+1))
 		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
@@ -49,15 +50,24 @@ function apply_repo_map {
 			echoTextBlue "Checking out repository branch $branch."
 			git checkout github/$branch
 			cd ${BUILD_TOP}
+		else
+			echoTextRed "Directory $repo does not exist!!"
+			exit_error 1
+
 		fi
 		echo
 	done
+
+	if [ $count -eq 0 ]; then
+		echoTextBold "No branch maps to apply."
+	fi
 }
 
 function reverse_repo_map {
 	echoTextBold "Reversing custom repository branch maps.."
+	count=0
 	for ix in `seq 0 $((${#REPO_BRANCH_MAP[@]}-1))`; do
-
+		count=$((count+1))
 		repo=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 1`
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
@@ -72,6 +82,10 @@ function reverse_repo_map {
 		fi
 		echo
 	done
+
+	if [ $count -eq 0 ]; then
+		echoTextBold "No branch maps to apply."
+	fi
 }
 
 function apply_patch {
