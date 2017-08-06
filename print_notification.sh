@@ -74,6 +74,7 @@ function print_end_build {
 		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."
 		textStr="${str_main}${str_rom}${str_rec}${str_boot}${str_changelog}${str_blurb}${buildTime}${totalTime}"
 		textStr=$(echo $textStr |sed s'/\/\//\//'g)
+		textStr=$(echo $textStr |sed s'/http:\//http:\/\//'g)
 
 		print_to_telegram $textStr
 	fi
