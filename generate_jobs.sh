@@ -87,6 +87,18 @@ CONFIG_FILE_F
 fi
 }
 
+# clean up the dirs
+for jobs_folder in $(find $JENKINS_JOB_DIR  -name jobs | tac); do
+	for job_dir in $(find $jobs_folder -maxdepth 1 -type d); do
+		file_count=$(find $job_dir -type f | wc -l)
+		if [ $file_count -le 3 ]; then
+			rm -r $job_dir
+		fi
+	done
+done
+
+rmdir $(find $JENKINS_JOB_DIR -type d -empty)
+
 for LINE in $LINES; do
 
 	BLOCKING_JOBS="administrative/block_all_jobs"
@@ -124,9 +136,10 @@ for LINE in $LINES; do
 	done
 
 	JOB_BASE_NAME=${DIST_SHORT}-${DIST_VERSION}-${DEVICE_CODENAME}
-	CONFIG_PATH=${JENKINS_JOB_DIR}/${JOB_DIR_PROPER}/${JOB_BASE_NAME}/config.xml
+	JOB_DIR_PATH=${JENKINS_JOB_DIR}/${JOB_DIR_PROPER}/${JOB_BASE_NAME}/
+	CONFIG_PATH=${JOB_DIR_PATH}/config.xml
 
-	mkdir -p $(dirname ${CONFIG_PATH})
+	mkdir -p $JOB_DIR_PATH
 
 	if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
 
