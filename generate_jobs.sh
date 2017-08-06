@@ -40,8 +40,16 @@ for LINE in $LINES; do
 		get_var $LINE $variable
 	done
 
+	JOB_DIR_PROPER=
+
+	while [ $(dirname $JOB_DIR) != "." ]; do
+		JOB_DIR_PROPER="$(basename $JOB_DIR)/jobs/${JOB_DIR_PROPER}"
+		JOB_DIR=$(dirname $JOB_DIR)
+	done
+	JOB_DIR_PROPER="$(basename $JOB_DIR)/jobs/${JOB_DIR_PROPER}"
+
 	JOB_BASE_NAME=${DIST_SHORT}-${DIST_VERSION}-${DEVICE_CODENAME}
-	CONFIG_PATH=${JENKINS_JOB_DIR}/${JOB_DIR}/jobs/${JOB_BASE_NAME}/config.xml
+	CONFIG_PATH=${JENKINS_JOB_DIR}/${JOB_DIR_PROPER}/${JOB_BASE_NAME}/config.xml
 
 	mkdir -p $(dirname ${CONFIG_PATH})
 
