@@ -26,6 +26,67 @@ function get_var {
 	COUNT=$((COUNT+1))
 }
 
+function generate_folder_config() {
+# generate_folder_config FOLDER_NAME CONFIG_PATH
+local FOLDER_NAME=$(echo $1 | sed s'/_/ /'g)
+local CONFIG_PATH=$2
+
+if ! [ -f $CONFIG_PATH ]; then
+mkdir -p $(dirname $CONFIG_PATH)
+cat <<CONFIG_FILE_F > ${CONFIG_PATH}
+<?xml version='1.0' encoding='UTF-8'?>
+<com.cloudbees.hudson.plugins.folder.Folder plugin="cloudbees-folder@6.0.4">
+  <actions/>
+  <description></description>
+  <displayName>$FOLDER_NAME</displayName>
+  <properties>
+    <com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider_-FolderCredentialsProperty>
+      <domainCredentialsMap class="hudson.util.CopyOnWriteMap\$Hash">
+        <entry>
+          <com.cloudbees.plugins.credentials.domains.Domain plugin="credentials@2.1.13">
+            <specifications/>
+          </com.cloudbees.plugins.credentials.domains.Domain>
+          <java.util.concurrent.CopyOnWriteArrayList>
+            <com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl plugin="credentials@2.1.13">
+              <id>fc700093-f1c0-4a9f-9fe4-05ffbf031a04</id>
+              <description></description>
+              <password>{AQAAABAAAAEwTMI9ZHoBapZN8l7SW6evceOEy31UC5u88XLukcQDpGpw1eMBUBzIrWsz9fJaGIGyDo2mVJ78LydXkI9ol2hUWO7uS1bWV7LMK+Zg+k4E6FljJQ1ehKJ+igbJ0BnKcIIXMJ66YwjI/YPiwgAoIiT0P0A/J8RKEM5lrIH/bbIQVMf0VLtkLmRU7c5SLPgSCBM+lcTt+AV36ma9RPs3NMCMhxQu/PhUkgfDt3TR7sbsB96b4j3493qnPTxlhyqO967VajslELFUBVTrnDaXHJomQ++iyYGxQYGHx2fRn3H2hNDBjJQpybRScIisVg7KZ3f9okjnibNIgieC6RzA6Vo5Q25K9eZEOTkdP4pRynnB0skkwDhcYMAQ3Qv2dYrv7UASbgtlSJSoNbzHB/dEvi/kQk1fXAcz5+O8ip152tvIobk=}</password>
+            </com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl>
+            <com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl plugin="credentials@2.1.13">
+              <id>86eb4de2-2fe4-414d-9b01-4c06bc24fc1e</id>
+              <description></description>
+              <password>{AQAAABAAAAEwaNWmwgx5aqY+gvly4TKICpz9nMqSX0CbXkoqeSJFdnT79NBCjhvqHdR0gniSHHlSQ79zESSCloOB8/4uMaRQHnZX3Qtdz0B/W1wKrw2uuVhKL492vHScNTGVahKTYIqlOptMmHbReBeHKYh70hdm57FRi5u0tDCaX/VKGVk6pZzSKoCDsYpY1gYbqGcUPP6teiZm6elyFbLu2nFzz+Dtnk764yOheT7FYLgNBQA9Ll1LBpZBKWI6dVx7Po8kFLfd5d78xkdW9zSohQqn/CvfOt9ZwJ04nxTzZweMFzx3HxQMEa51TQN6yLV7a/c6JSa0rDi0w9Rey60fgx9i+b6ejiwq0bE9aQKCfn3eDLjM3rbRnfrfM8HymRVIyZZO1r2h7h9FfsnkY0O7JBrY4TwaaJOhMFWGQwko51+dGcSPB8I=}</password>
+            </com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl>
+          </java.util.concurrent.CopyOnWriteArrayList>
+        </entry>
+      </domainCredentialsMap>
+    </com.cloudbees.hudson.plugins.folder.properties.FolderCredentialsProvider_-FolderCredentialsProperty>
+  </properties>
+  <folderViews class="com.cloudbees.hudson.plugins.folder.views.DefaultFolderViewHolder">
+    <views>
+      <hudson.model.AllView>
+        <owner class="com.cloudbees.hudson.plugins.folder.Folder" reference="../../../.."/>
+        <name>all</name>
+        <description></description>
+        <filterExecutors>false</filterExecutors>
+        <filterQueue>false</filterQueue>
+        <properties class="hudson.model.View\$PropertyList"/>
+      </hudson.model.AllView>
+    </views>
+    <primaryView>all</primaryView>
+    <tabBar class="hudson.views.DefaultViewsTabBar"/>
+  </folderViews>
+  <healthMetrics>
+    <com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+      <nonRecursive>false</nonRecursive>
+    </com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+  </healthMetrics>
+  <icon class="com.cloudbees.hudson.plugins.folder.icons.StockFolderIcon"/>
+</com.cloudbees.hudson.plugins.folder.Folder>
+CONFIG_FILE_F
+fi
+}
+
 for LINE in $LINES; do
 
 	BLOCKING_JOBS="administrative/block_all_jobs"
@@ -47,6 +108,20 @@ for LINE in $LINES; do
 		JOB_DIR=$(dirname $JOB_DIR)
 	done
 	JOB_DIR_PROPER="$(basename $JOB_DIR)/jobs/${JOB_DIR_PROPER}"
+
+	# generate the job configs
+	JOB_DIR=$JOB_DIR_PROPER
+	while [ $(dirname $JOB_DIR) != "." ]; do
+		JOB_DIR_NAME=$(basename $JOB_DIR)
+		if [ $JOB_DIR_NAME == "jobs" ]; then
+			JOB_DIR_NAME=$(dirname $JOB_DIR)
+			[ $(basename $JOB_DIR_NAME) != "." ] && JOB_DIR_NAME=$(basename $JOB_DIR_NAME)
+
+			generate_folder_config $JOB_DIR_NAME ${JENKINS_JOB_DIR}/$(dirname $JOB_DIR)/config.xml
+		fi
+		echo
+		JOB_DIR=$(dirname $JOB_DIR)
+	done
 
 	JOB_BASE_NAME=${DIST_SHORT}-${DIST_VERSION}-${DEVICE_CODENAME}
 	CONFIG_PATH=${JENKINS_JOB_DIR}/${JOB_DIR_PROPER}/${JOB_BASE_NAME}/config.xml
