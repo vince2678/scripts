@@ -58,8 +58,9 @@ function print_end_build {
 			if [ "$BUILD_TARGET" == "recoveryimage" ]; then
 				str_rec="%0ARecovery: ${link}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar"
 			elif [ "$BUILD_TARGET" == "bootimage" ]; then
-				str_boot="%0ABoot zip package: ${link}/builds/boot/${bimg_name}.zip"
-				str_boot="%0ABoot (ODIN package): ${link}/builds/boot/${boot_tar_name}"
+				str_boot1="%0ABoot zip package: ${link}/builds/boot/${bimg_name}.zip"
+				str_boot2="%0ABoot (ODIN package): ${link}/builds/boot/${boot_tar_name}"
+				str_boot=${str_boot1}${str_boot2}
 			elif [ "$BUILD_TARGET" == "otapackage" ]; then
 				str_rom="%0A ROM: ${link}/builds/full/${arc_name}.zip"
 				str_rec="%0A Recovery: ${link}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar"
