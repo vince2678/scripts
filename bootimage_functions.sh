@@ -22,13 +22,17 @@ function copy_bootimage {
 			boot_pkg_zip=${BUILD_TEMP}/boot_aosp-based_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
 		fi
 
+		boot_tar_name=bootimage_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.tar
+
 		revert_pkg_dir=${BUILD_TEMP}/boot_pkg_revert
 		revert_zip=${BUILD_TEMP}/revert_boot_image_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.zip
-
 		binary_target_dir=META-INF/com/google/android
 		install_target_dir=install/bin
 		blob_dir=blobs
 		proprietary_dir=proprietary
+
+		# create odin package
+		tar -C ${ANDROID_PRODUCT_OUT}/ boot.img -c -f ${BUILD_TEMP}/${boot_tar_name}
 
 		# create the directories
 		exit_on_failure mkdir -p ${boot_pkg_dir}/${binary_target_dir}
@@ -75,6 +79,7 @@ function copy_bootimage {
 		cd ${revert_pkg_dir} && zip ${revert_zip} `find ${revert_pkg_dir} -type f | cut -c $(($(echo ${revert_pkg_dir}|wc -c)+1))-`
 		echoTextBlue "Copying boot image..."
 		rsync_cp ${boot_pkg_zip} ${OUTPUT_DIR}/builds/boot/
+		rsync_cp ${BUILD_TEMP}/${boot_tar_name} ${OUTPUT_DIR}/builds/boot/
 
 		echoTextBlue "Copying reversion zip..."
 		rsync_cp ${revert_zip} ${OUTPUT_DIR}/builds/boot/
