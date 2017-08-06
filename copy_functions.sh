@@ -60,7 +60,7 @@ function copy_recoveryimage {
 		fi
 
 		logb "\n\t\tCopying recovery image...\n"
-		tar cf ${rec_name}.tar recovery.img
+		tar -C ${ANDROID_PRODUCT_OUT}/ recovery.img -c -f ${rec_name}
 		rsync_cp ${rec_name}.tar ${OUTPUT_DIR}/builds/recovery/${DEVICE_NAME}/${rec_name}.tar
 	fi
 }
