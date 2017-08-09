@@ -43,7 +43,7 @@ function print_end_build {
 
 		target_str_len=$(echo /var/lib/jenkins | wc -c)
 		r_dir=$(echo $OUTPUT_DIR | cut -c ${target_str_len}-)
-		link="http://grandprime.ddns.net${r_dir}"
+		link="http://msm8916.ddns.net${r_dir}"
 
 		END_TIME=$( date +%s )
 		buildTime="%0ABuild time: $(format_time ${END_TIME} ${BUILD_START_TIME})"
