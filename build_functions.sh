@@ -16,11 +16,11 @@
 function make_targets {
 	#start building
 	if [ "x$ver" == "x13.0" ]; then
-		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://msm8916.ddns.net/OTA13/api" CM_BUILDTYPE=NIGHTLY
+		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://msm8916.com/OTA13/api" CM_BUILDTYPE=NIGHTLY
 	elif [ "x$ver" == "x14.1" ]; then
-		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://msm8916.ddns.net/OTA14/api" CM_BUILDTYPE=NIGHTLY
+		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://msm8916.com/OTA14/api" CM_BUILDTYPE=NIGHTLY
 	else
-		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://msm8916.ddns.net/OTA/api" CM_BUILDTYPE=NIGHTLY
+		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=http://msm8916.com/OTA/api" CM_BUILDTYPE=NIGHTLY
 	fi
 	#build su
 	#if [ $ver == "13.0" ] && [ "$BUILD_TARGET" != "recoveryimage" ] && [ "$BUILD_TARGET" != "bootimage" ]; then
