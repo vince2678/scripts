@@ -159,7 +159,7 @@ for LINE in $LINES; do
 		SHELL_COMMANDS+=${NEWLINE}
 		SHELL_COMMANDS+="-b \${BUILD_NUMBER} --type=${BUILD_TYPE} -v \\"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="--host jenkins@grandprime.ddns.net"
+		SHELL_COMMANDS+="--host jenkins@jenkins.msm8916.com"
 
 		if [ "$BUILD_TARGET" == "otapackage" ]; then
 			SHELL_COMMANDS+=" --clean"
@@ -192,19 +192,19 @@ for LINE in $LINES; do
 
 		SHELL_COMMANDS="htmlroot=/var/www/html/OTA${OTA_VER}/"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;find \${JENKINS_HOME}/jobs/${EXTRA}/jobs/\${JOB_BASE_NAME}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;find \${JENKINS_HOME}/jobs/${EXTRA}/jobs/\${JOB_BASE_NAME}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;find \${JENKINS_HOME}/jobs/${EXTRA}/jobs/\${JOB_BASE_NAME}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;find \${JENKINS_HOME}/jobs/${EXTRA}/jobs/\${JOB_BASE_NAME}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
 
 	elif [ "$BUILD_TARGET" == "demote" ]; then
 
@@ -224,9 +224,9 @@ for LINE in $LINES; do
 
 		SHELL_COMMANDS="htmlroot=/var/www/html/OTA${OTA_VER}/"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@grandprime.ddns.net &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
+		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
 
 	fi
 
