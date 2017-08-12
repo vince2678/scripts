@@ -262,7 +262,7 @@ for LINE in $LINES; do
 			OTA_VER=14
 		fi
 
-		SHELL_COMMANDS="htmlroot=/var/www/html/OTA${OTA_VER}/"
+		SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
 		SHELL_COMMANDS+=${NEWLINE}
 		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;find \${JENKINS_HOME}/jobs/${EXTRA}/jobs/\${JOB_BASE_NAME}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
@@ -294,7 +294,7 @@ for LINE in $LINES; do
 			OTA_VER=14
 		fi
 
-		SHELL_COMMANDS="htmlroot=/var/www/html/OTA${OTA_VER}/"
+		SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
 		SHELL_COMMANDS+=${NEWLINE}
 		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
 		SHELL_COMMANDS+=${NEWLINE}
