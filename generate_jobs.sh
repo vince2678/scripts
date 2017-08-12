@@ -6,17 +6,35 @@ COUNT=1
 NEWLINE="
 "
 
+function print_help() {
+    echo "Usage: `basename $0` [OPTIONS] "
+    echo "  -i | --input Path to job description file"
+    echo
+    echo "  -d | --path  Path to Jenkins' job directory"
+    echo "  -h | --help  Print this message"
+    exit 0
+}
+
 if [ "x$1" == "x" ]; then
-	echo "usage: $0 /path/to/job/file.txt [/path/to/job/dir]"
-	exit 1
+	print_help
 fi
 
-JOBS_FILE=$1
+while [ "$1" != "" ]; do
+    case $1 in
+        -i | --input)           shift
+                                JOBS_FILE=$1
+                                ;;
+        -d | --path )           shift
+                                JENKINS_JOB_DIR=$1
+                                ;;
+        *)                      print_help
+                                ;;
+    esac
+    shift
+done
 
-if [ "x$2" == "x" ]; then
+if [ "x$JENKINS_JOB_DIR" == "x" ]; then
 	JENKINS_JOB_DIR="/var/lib/jenkins/jobs"
-else
-	JENKINS_JOB_DIR=$2
 fi
 
 LINES=$(cat ${JOBS_FILE} | sed s"/ /${SEPARATOR}/"g | grep -v "#")
