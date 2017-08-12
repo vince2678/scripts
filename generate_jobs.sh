@@ -6,44 +6,6 @@ COUNT=1
 NEWLINE="
 "
 
-function print_help() {
-    echo "Usage: `basename $0` [OPTIONS] "
-    echo "  -i | --input Path to job description file"
-    echo
-    echo "  -d | --path  Path to Jenkins' job directory"
-    echo "  -h | --help  Print this message"
-    exit 0
-}
-
-if [ "x$1" == "x" ]; then
-	print_help
-fi
-
-while [ "$1" != "" ]; do
-    case $1 in
-        -i | --input)           shift
-                                JOBS_FILE=$1
-                                ;;
-        -d | --path )           shift
-                                JENKINS_JOB_DIR=$1
-                                ;;
-        *)                      print_help
-                                ;;
-    esac
-    shift
-done
-
-if [ "x$JENKINS_JOB_DIR" == "x" ]; then
-	JENKINS_JOB_DIR="/var/lib/jenkins/jobs"
-fi
-
-LINES=$(cat ${JOBS_FILE} | sed s"/ /${SEPARATOR}/"g | grep -v "#")
-
-function get_var {
-	eval $2="$(echo $1 | cut -d "${SEPARATOR}" -f $COUNT | sed s'/__/ /'g)"
-	COUNT=$((COUNT+1))
-}
-
 function generate_folder_config() {
 # generate_folder_config FOLDER_NAME CONFIG_PATH
 local FOLDER_NAME=$(echo $1 | sed s'/_/ /'g)
@@ -104,6 +66,98 @@ cat <<CONFIG_FILE_F > ${CONFIG_PATH}
 CONFIG_FILE_F
 fi
 }
+
+function generate_job_config() {
+# generate_job_config CONFIG_PATH
+local CONFIG_PATH=$1
+
+if [ "x$CONFIG_PATH" != "x" ]; then
+  mkdir -p $(dirname $CONFIG_PATH)
+  cat <<CONFIG_FILE_F > ${CONFIG_PATH}
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>${JOB_DESCRIPTION}</description>
+  <displayName>${DIST_LONG} ${DIST_VERSION}: ${DEVICE_CODENAME} [ ${DEVICE_MODEL} ]</displayName>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.buildblocker.BuildBlockerProperty plugin="build-blocker-plugin@1.7.3">
+      <useBuildBlocker>true</useBuildBlocker>
+      <blockLevel>GLOBAL</blockLevel>
+      <scanQueueFor>DISABLED</scanQueueFor>
+      <blockingJobs>${BLOCKING_JOBS}</blockingJobs>
+    </hudson.plugins.buildblocker.BuildBlockerProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>4</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>4</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+${ASSIGNED_NODE}
+  <canRoam>${CAN_ROAM}</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>${SHELL_COMMANDS}</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.0">
+      <colorMapName>xterm</colorMapName>
+    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
+  </buildWrappers>
+</project>
+CONFIG_FILE_F
+fi
+}
+
+function print_help() {
+    echo "Usage: `basename $0` [OPTIONS] "
+    echo "  -i | --input Path to job description file"
+    echo
+    echo "  -d | --path  Path to Jenkins' job directory"
+    echo "  -h | --help  Print this message"
+    exit 0
+}
+
+function get_var {
+	eval $2="$(echo $1 | cut -d "${SEPARATOR}" -f $COUNT | sed s'/__/ /'g)"
+	COUNT=$((COUNT+1))
+}
+
+if [ "x$1" == "x" ]; then
+	print_help
+fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -i | --input)           shift
+                                JOBS_FILE=$1
+                                ;;
+        -d | --path )           shift
+                                JENKINS_JOB_DIR=$1
+                                ;;
+        *)                      print_help
+                                ;;
+    esac
+    shift
+done
+
+if [ "x$JENKINS_JOB_DIR" == "x" ]; then
+	JENKINS_JOB_DIR="/var/lib/jenkins/jobs"
+fi
+
+LINES=$(cat ${JOBS_FILE} | sed s"/ /${SEPARATOR}/"g | grep -v "#")
 
 # clean up the dirs
 for jobs_folder in $(find $JENKINS_JOB_DIR  -name jobs | tac); do
@@ -249,51 +303,5 @@ for LINE in $LINES; do
 	fi
 
 	echo "Generating ${DIST_LONG} ${DIST_VERSION} job for $DEVICE_MODEL..."
-
-cat <<CONFIG_FILE_F > ${CONFIG_PATH}
-<?xml version='1.0' encoding='UTF-8'?>
-<project>
-  <actions/>
-  <description>${JOB_DESCRIPTION}</description>
-  <displayName>${DIST_LONG} ${DIST_VERSION}: ${DEVICE_CODENAME} [ ${DEVICE_MODEL} ]</displayName>
-  <keepDependencies>false</keepDependencies>
-  <properties>
-    <hudson.plugins.buildblocker.BuildBlockerProperty plugin="build-blocker-plugin@1.7.3">
-      <useBuildBlocker>true</useBuildBlocker>
-      <blockLevel>GLOBAL</blockLevel>
-      <scanQueueFor>DISABLED</scanQueueFor>
-      <blockingJobs>${BLOCKING_JOBS}</blockingJobs>
-    </hudson.plugins.buildblocker.BuildBlockerProperty>
-    <jenkins.model.BuildDiscarderProperty>
-      <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>-1</daysToKeep>
-        <numToKeep>4</numToKeep>
-        <artifactDaysToKeep>-1</artifactDaysToKeep>
-        <artifactNumToKeep>4</artifactNumToKeep>
-      </strategy>
-    </jenkins.model.BuildDiscarderProperty>
-  </properties>
-  <scm class="hudson.scm.NullSCM"/>
-${ASSIGNED_NODE}
-  <canRoam>${CAN_ROAM}</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers/>
-  <concurrentBuild>false</concurrentBuild>
-  <builders>
-    <hudson.tasks.Shell>
-      <command>${SHELL_COMMANDS}</command>
-    </hudson.tasks.Shell>
-  </builders>
-  <publishers/>
-  <buildWrappers>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
-    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.0">
-      <colorMapName>xterm</colorMapName>
-    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
-  </buildWrappers>
-</project>
-CONFIG_FILE_F
-
+	generate_job_config $CONFIG_PATH
 done
