@@ -1,14 +1,13 @@
 #!/bin/bash
 
-SEPARATOR="!"
-COUNT=1
-
 NEWLINE="
 "
 
+HOST=jenkins@jenkins.msm8916.com
+
 function generate_folder_config() {
 # generate_folder_config FOLDER_NAME CONFIG_PATH
-local FOLDER_NAME=$(echo $1 | sed s'/_/ /'g)
+local FOLDER_NAME=`remove_underscores $1`
 local CONFIG_PATH=$2
 
 if ! [ -f $CONFIG_PATH ]; then
@@ -73,12 +72,22 @@ local CONFIG_PATH=$1
 
 if [ "x$CONFIG_PATH" != "x" ]; then
   mkdir -p $(dirname $CONFIG_PATH)
+
+  display_extra=
+  if [ "x$JOB_DESCRIPTION" != "x" ]; then
+	display_extra="(${JOB_DESCRIPTION}) "
+  fi
+ 
+  if [ "x$DEVICE_EXTRA_DESC" != "x" ]; then
+	display_extra+="(${DEVICE_EXTRA_DESC}) "
+  fi
+
   cat <<CONFIG_FILE_F > ${CONFIG_PATH}
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>${JOB_DESCRIPTION}</description>
-  <displayName>${DIST_LONG} ${DIST_VERSION}: ${DEVICE_CODENAME} [ ${DEVICE_MODEL} ]</displayName>
+  <description>${JOB_EXTENDED_DESCRIPTION}</description>
+  <displayName>${DIST_LONG} ${DIST_VERSION}: ${DEVICE_CODENAME} [ ${DEVICE_MODEL} $display_extra]</displayName>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.plugins.buildblocker.BuildBlockerProperty plugin="build-blocker-plugin@1.7.3">
@@ -90,14 +99,14 @@ if [ "x$CONFIG_PATH" != "x" ]; then
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
         <daysToKeep>-1</daysToKeep>
-        <numToKeep>4</numToKeep>
+        <numToKeep>${BUILDS_TO_KEEP}</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
-        <artifactNumToKeep>4</artifactNumToKeep>
+        <artifactNumToKeep>${BUILDS_TO_KEEP}</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
-${ASSIGNED_NODE}
+  <assignedNode>${ASSIGNED_NODE}</assignedNode>
   <canRoam>${CAN_ROAM}</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -123,16 +132,12 @@ fi
 
 function print_help() {
     echo "Usage: `basename $0` [OPTIONS] "
-    echo "  -i | --input Path to job description file"
-    echo
+    echo "  -i | --input Path to job description file or directory"
+    echo "               containing decription files."
+
     echo "  -d | --path  Path to Jenkins' job directory"
     echo "  -h | --help  Print this message"
     exit 0
-}
-
-function get_var {
-	eval $2="$(echo $1 | cut -d "${SEPARATOR}" -f $COUNT | sed s'/__/ /'g)"
-	COUNT=$((COUNT+1))
 }
 
 if [ "x$1" == "x" ]; then
@@ -142,7 +147,7 @@ fi
 while [ "$1" != "" ]; do
     case $1 in
         -i | --input)           shift
-                                JOBS_FILE=$1
+                                JOB_FILE_INPUT=$1
                                 ;;
         -d | --path )           shift
                                 JENKINS_JOB_DIR=$1
@@ -157,36 +162,68 @@ if [ "x$JENKINS_JOB_DIR" == "x" ]; then
 	JENKINS_JOB_DIR="/var/lib/jenkins/jobs"
 fi
 
-LINES=$(cat ${JOBS_FILE} | sed s"/ /${SEPARATOR}/"g | grep -v "#")
-
 # clean up the dirs
-for jobs_folder in $(find $JENKINS_JOB_DIR  -name jobs | tac); do
-	for job_dir in $(find $jobs_folder -maxdepth 1 -type d); do
-		file_count=$(find $job_dir -type f | wc -l)
+for jobs_folder in $(find $JENKINS_JOB_DIR  -name jobs 2>/dev/null| tac); do
+	for job_dir in $(find $jobs_folder -maxdepth 1 -type d 2>/dev/null); do
+		file_count=$(find $job_dir -type f 2>/dev/null | wc -l)
 		if [ $file_count -le 3 ]; then
-			rm -r $job_dir
+			rm -rf $job_dir
 		fi
 	done
 done
 
-rmdir $(find $JENKINS_JOB_DIR -type d -empty)
+rmdir $(find $JENKINS_JOB_DIR -type d -empty 2>/dev/null) 2>/dev/null
 
-for LINE in $LINES; do
+# find the job description files
+if [ -f ${JOB_FILE_INPUT} ]; then
+	JOB_DESC_FILES=${JOB_FILE_INPUT}
+elif [ -d ${JOB_FILE_INPUT} ]; then
+	JOB_DESC_FILES=$(find ${JOB_FILE_INPUT} -type f)
+else
+	echo "Invalid --input argument specified"
+	exit 1
+fi
 
-	BLOCKING_JOBS="administrative/block_all_jobs"
-	BLOCKING_JOBS+="${NEWLINE}"
+function substitute_string {
+# substitute_string $string
+	new_string=`echo "$@" | sed s'/##/$/'g`
+	eval "echo $new_string"
+}
 
-	COUNT=1
+function split_variable {
+# split_variable $variable
+	echo $1 | sed s"/$SEPARATOR/ /"g
+}
 
-	# variables to be extracted from the job line. Order matters
-	VARIABLES="JOB_DIR DIST_LONG DIST DIST_SHORT BUILD_DIR_BASENAME DIST_VERSION DEVICE_CODENAME DEVICE_MODEL BUILD_TARGET BUILD_TYPE EXTRA"
+function extract_field {
+# extract_field string $field_num $separator
+	if [ "x$3" == "x" ]; then
+		separator=':'
+	else
+		separator=$3
+	fi
+	echo $1 | cut -d "$separator" -f $2
+}
 
-	for variable in ${VARIABLES}; do
-		get_var $LINE $variable
-	done
+function remove_underscores {
+	result=$(echo $@ | sed s'/__/ /'g)
+	result=$(echo $result | sed s'/_/ /'g)
+	echo $result
+}
 
+for file in $JOB_DESC_FILES; do
+
+	# clear some variables
+	BUILDS_TO_KEEP=4
+	DEVICES=
+	JOB_DESCRIPTION=
 	JOB_DIR_PROPER=
+	SHELL_COMMANDS_EXTRA=
 
+	# source the job description files
+	. $file
+
+	# generate the job dirs
 	while [ $(dirname $JOB_DIR) != "." ]; do
 		JOB_DIR_PROPER="$(basename $JOB_DIR)/jobs/${JOB_DIR_PROPER}"
 		JOB_DIR=$(dirname $JOB_DIR)
@@ -203,105 +240,96 @@ for LINE in $LINES; do
 
 			generate_folder_config $JOB_DIR_NAME ${JENKINS_JOB_DIR}/$(dirname $JOB_DIR)/config.xml
 		fi
-		echo
 		JOB_DIR=$(dirname $JOB_DIR)
 	done
 
-	JOB_BASE_NAME=${DIST_SHORT}-${DIST_VERSION}-${DEVICE_CODENAME}
-	JOB_DIR_PATH=${JENKINS_JOB_DIR}/${JOB_DIR_PROPER}/${JOB_BASE_NAME}/
-	CONFIG_PATH=${JOB_DIR_PATH}/config.xml
+	# save these variables for later use
+	JOB_EXTENDED_DESCRIPTION_OLD=$JOB_EXTENDED_DESCRIPTION
+	BUILD_DIR_OLD=$BUILD_DIR
 
-	mkdir -p $JOB_DIR_PATH
+	for DIST_VERSION in `split_variable $DIST_VERSION`; do
+		for DEVICE_LINE in `split_variable $DEVICES`; do
 
-	if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
+			DEVICE_CODENAME=`extract_field $DEVICE_LINE 1`
+			DEVICE_MODEL=`extract_field $DEVICE_LINE 2`
+			DEVICE_EXTRA_DESC=`extract_field $DEVICE_LINE 3`
+			DEVICE_EXTRA_DESC=`remove_underscores $DEVICE_EXTRA_DESC`
 
-		ASSIGNED_NODE="  <assignedNode>"
-		ASSIGNED_NODE+="!master"
-		ASSIGNED_NODE+="</assignedNode>"
+			JOB_EXTENDED_DESCRIPTION=`substitute_string $JOB_EXTENDED_DESCRIPTION_OLD`
+			BUILD_DIR=`substitute_string $BUILD_DIR_OLD`
 
-		CAN_ROAM=false
+			JOB_BASE_NAME=${JOB_PREFIX}-${DIST_VERSION}-${DEVICE_CODENAME}
+			JOB_DIR_PATH=${JENKINS_JOB_DIR}/${JOB_DIR_PROPER}/${JOB_BASE_NAME}/
+			CONFIG_PATH=${JOB_DIR_PATH}/config.xml
 
-		JOB_DESCRIPTION="${DIST_LONG} ${DIST_VERSION} for the $DEVICE_MODEL"
+			mkdir -p $JOB_DIR_PATH
 
-		SHELL_COMMANDS="\${BUILD_BIN_ROOT}/run_build.sh --path \${BUILD_ANDROID_ROOT}/${BUILD_DIR_BASENAME} --distro ${DIST} \\"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="--device ${DEVICE_CODENAME} --target ${BUILD_TARGET} -j \${MAX_JOB_NUMBER} \\"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="--output \${JENKINS_HOME}/jobs/${JOB_DIR_PROPER}\${JOB_BASE_NAME}/builds/\${BUILD_NUMBER}/archive/ \\"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="-b \${BUILD_NUMBER} --type=${BUILD_TYPE} -v \\"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="--host jenkins@jenkins.msm8916.com"
+			if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
 
-		if [ "$BUILD_TARGET" == "otapackage" ]; then
-			SHELL_COMMANDS+=" --clean"
-		fi
+				CAN_ROAM=false
 
-		if [ "$DIST_SHORT" == "oc" ]; then
-			SHELL_COMMANDS+=" --oc"
-		fi
+				SHELL_COMMANDS="\${BUILD_BIN_ROOT}/run_build.sh --path \${BUILD_ANDROID_ROOT}/${BUILD_DIR} --distro ${DIST} \\"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="--device ${DEVICE_CODENAME} --target ${BUILD_TARGET} -j \${MAX_JOB_NUMBER} \\"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="--output \${JENKINS_HOME}/jobs/${JOB_DIR_PROPER}\${JOB_BASE_NAME}/builds/\${BUILD_NUMBER}/archive/ \\"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="-b \${BUILD_NUMBER} --type=${BUILD_TYPE} -v \\"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="--host ${HOST} ${SHELL_COMMANDS_EXTRA}"
 
-		if [ "$EXTRA" != "x" ]; then
-			SHELL_COMMANDS+=" $EXTRA"
-		fi
-	elif [ "$BUILD_TARGET" == "promote" ]; then
-		
-		ASSIGNED_NODE=
+			elif [ "$BUILD_TARGET" == "promote" ]; then
+				CAN_ROAM=true
 
-		BLOCKING_JOBS+="$EXTRA/${JOB_BASE_NAME}"
+				if [ "$DIST_VERSION" == "13.0" ]; then
+					OTA_VER=13
+				elif [ "$DIST_VERSION" == "14.1" ]; then
+					OTA_VER=14
+				else
+					OTA_VER=
+				fi
 
-		CAN_ROAM=true
+				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
+				SHELL_COMMANDS="JOB_DIR=\`ssh ${HOST} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
 
-		JOB_DESCRIPTION="Promote Latest ${DIST_LONG} ${DIST_VER} build for ${DEVICE_MODEL}"
+			elif [ "$BUILD_TARGET" == "demote" ]; then
 
-		DIST_LONG="Promote ${DIST_LONG}"
+				CAN_ROAM=true
 
-		if [ "$DIST_VERSION" == "13.0" ]; then
-			OTA_VER=13
-		elif [ "$DIST_VERSION" == "14.1" ]; then
-			OTA_VER=14
-		fi
+				if [ "$DIST_VERSION" == "13.0" ]; then
+					OTA_VER=13
+				elif [ "$DIST_VERSION" == "14.1" ]; then
+					OTA_VER=14
+				else
+					OTA_VER=
+				fi
 
-		SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;find \${JENKINS_HOME}/jobs/${EXTRA}/jobs/\${JOB_BASE_NAME}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;find \${JENKINS_HOME}/jobs/${EXTRA}/jobs/\${JOB_BASE_NAME}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
+				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
+				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="ssh ${HOST} &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
 
-	elif [ "$BUILD_TARGET" == "demote" ]; then
+			fi
 
-		ASSIGNED_NODE=
-
-		CAN_ROAM=true
-
-		JOB_DESCRIPTION="Demote ${DIST_LONG} ${DIST_VER} build for ${DEVICE_MODEL}"
-
-		DIST_LONG="Demote ${DIST_LONG}"
-
-		if [ "$DIST_VERSION" == "13.0" ]; then
-			OTA_VER=13
-		elif [ "$DIST_VERSION" == "14.1" ]; then
-			OTA_VER=14
-		fi
-
-		SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
-		SHELL_COMMANDS+=${NEWLINE}
-		SHELL_COMMANDS+="ssh jenkins@jenkins.msm8916.com &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
-
-	fi
-
-	echo "Generating ${DIST_LONG} ${DIST_VERSION} job for $DEVICE_MODEL..."
-	generate_job_config $CONFIG_PATH
+			echo "Generating job \"$JOB_EXTENDED_DESCRIPTION\"..."
+			generate_job_config $CONFIG_PATH
+		done
+		echo
+	done
 done
