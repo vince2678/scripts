@@ -34,4 +34,4 @@ DEVICES+=gprimelte:SM-G530T/T1/W,
 DEVICES+=j7ltespr:SM-J700P
 
 # extra commands to pass to build script
-SHELL_COMMANDS_EXTRA="--branch-map=kernel/samsung/msm8916:cm-14.1-wifi"
+SHELL_COMMANDS_EXTRA="--branch-map=kernel/samsung/msm8916:cm-14.1-wifi --silent"

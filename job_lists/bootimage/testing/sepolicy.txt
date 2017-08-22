@@ -37,4 +37,4 @@ DEVICES+=j5nlte:SM-J500FN,
 DEVICES+=j7ltespr:SM-J700P
 
 # extra commands to pass to build script
-SHELL_COMMANDS_EXTRA="--branch-map=device/samsung/msm8916-common:cm-14.1-sepolicy"
+SHELL_COMMANDS_EXTRA="--branch-map=device/samsung/msm8916-common:cm-14.1-sepolicy --silent"

@@ -36,4 +36,4 @@ DEVICES+=j5ltechn:SM-J5008,
 DEVICES+=j5nlte:SM-J500FN
 
 # extra commands to pass to build script
-SHELL_COMMANDS_EXTRA="--branch-map=kernel/samsung/msm8916:cm-14.1-j5-camera"
+SHELL_COMMANDS_EXTRA="--branch-map=kernel/samsung/msm8916:cm-14.1-j5-camera --silent"
