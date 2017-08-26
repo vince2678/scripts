@@ -57,8 +57,15 @@ RR"
 function get_platform_info {
 	#move into the build dir
 	cd $BUILD_TOP
+
 	#get the platform version
-	platform_version=$(grep 'PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk  | cut -d '=' -f 2)
+	default_plat_version=$(grep 'DEFAULT_PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk|cut -d'=' -f 2 | sed s'/ //'g)
+	platform_version=$(grep "PLATFORM_VERSION.${default_plat_version}[ ]*:" build/core/version_defaults.mk|cut -d'=' -f 2)
+
+	if [ "x$platform_version" == "x" ]; then
+		platform_version=$(grep 'PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk  | cut -d '=' -f 2)
+	fi
+
 	export WITH_SU
 
 	# try to get distribution version from path
