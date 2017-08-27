@@ -285,6 +285,8 @@ for file in $JOB_DESC_FILES; do
 					OTA_VER=13
 				elif [ "$DIST_VERSION" == "14.1" ]; then
 					OTA_VER=14
+				elif [ "$DIST_VERSION" == "15.0" ]; then
+					OTA_VER=15
 				else
 					OTA_VER=
 				fi
@@ -315,6 +317,8 @@ for file in $JOB_DESC_FILES; do
 					OTA_VER=13
 				elif [ "$DIST_VERSION" == "14.1" ]; then
 					OTA_VER=14
+				elif [ "$DIST_VERSION" == "15.0" ]; then
+					OTA_VER=15
 				else
 					OTA_VER=
 				fi
