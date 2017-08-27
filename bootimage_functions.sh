@@ -51,14 +51,14 @@ function copy_bootimage {
 
 		# download the update binary
 		echoTextBlue "Fetching update binary..."
-		${CURL} ${url}/updater/update-binary 1>${BUILD_TEMP}/update-binary 2>/dev/null
+		${CURL} ${SCRIPT_REPO_URL}/updater/update-binary 1>${BUILD_TEMP}/update-binary 2>/dev/null
 		cp ${BUILD_TEMP}/update-binary ${revert_pkg_dir}/${binary_target_dir}
 
 		echoTextBlue "Fetching mkbootimg..."
-		${CURL} ${url}/bootimg-tools/mkbootimg 1>${BUILD_TEMP}/mkbootimg 2>/dev/null
+		${CURL} ${SCRIPT_REPO_URL}/bootimg-tools/mkbootimg 1>${BUILD_TEMP}/mkbootimg 2>/dev/null
 
 		echoTextBlue "Fetching unpackbootimg..."
-		${CURL} ${url}/bootimg-tools/unpackbootimg 1>${BUILD_TEMP}/unpackbootimg 2>/dev/null
+		${CURL} ${SCRIPT_REPO_URL}/bootimg-tools/unpackbootimg 1>${BUILD_TEMP}/unpackbootimg 2>/dev/null
 
 		if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
 			echoTextBlue "Copying wifi module..."

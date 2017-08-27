@@ -80,9 +80,9 @@ fi
 function sync_script {
 	logb "Updating build script..."
 	if [ -z "$UPDATE_SCRIPT" ]; then
-		${CURL} ${url}/$(basename $0) | tee $0 > /dev/null
+		${CURL} ${SCRIPT_REPO_URL}/$(basename $0) | tee $0 > /dev/null
 	else
-		${CURL} ${url}/$(basename $0) | tee $0 > /dev/null && exit || exit
+		${CURL} ${SCRIPT_REPO_URL}/$(basename $0) | tee $0 > /dev/null && exit || exit
 	fi
 	logb "Done."
 }

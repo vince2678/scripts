@@ -44,7 +44,7 @@ POST_COPY_FUNCTIONS=();
 
 REPO_BRANCH_MAP=();
 
-url="https://git.msm8916.com/Galaxy-MSM8916/build_script.git/plain"
+SCRIPT_REPO_URL="https://git.msm8916.com/Galaxy-MSM8916/build_script.git/plain"
 
 SILENT=0
 
@@ -210,7 +210,7 @@ fi
 # fetch the critical build scripts
 logb "Getting build script list..."
 script_dir=${BUILD_TEMP}/scripts
-file_list=$(${CURL} ${url}/list.txt 2>/dev/null)
+file_list=$(${CURL} ${SCRIPT_REPO_URL}/list.txt 2>/dev/null)
 
 if [ $? -ne 0 ]; then
 	logr "Failed! Checking for local version.."
@@ -220,7 +220,7 @@ if [ $? -ne 0 ]; then
 		exit 1
 	fi
 else
-	${CURL} ${url}/list.txt 1>$(dirname $0)/list.txt 2>/dev/null
+	${CURL} ${SCRIPT_REPO_URL}/list.txt 1>$(dirname $0)/list.txt 2>/dev/null
 fi
 
 mkdir -p ${script_dir}
@@ -228,7 +228,7 @@ mkdir -p ${script_dir}
 # source the files
 for source_file in ${file_list}; do
 	logb "Fetching $source_file ..."
-	${CURL} ${url}/${source_file} 1>${script_dir}/${source_file} 2>/dev/null
+	${CURL} ${SCRIPT_REPO_URL}/${source_file} 1>${script_dir}/${source_file} 2>/dev/null
 
 	if [ $? -eq 0 ]; then
 		logb "Sourcing $source_file ..."
