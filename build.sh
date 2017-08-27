@@ -74,6 +74,8 @@ function validate_arg {
 function print_help {
                 log "Usage: `basename $0` [OPTION]";
                 log "  -d, --distribution\tdistribution name" ;
+                log "  --description\tDescription for use in notifications" ;
+                log "  --job-url\tURL to the job on jenkins" ;
                 log "  -t, --target\twhere target is one of bootimage|recoveryimage|otapackage" ;
                 log "  -e, --type\twhere type is one of user|userdebug|eng" ;
                 log "  --device\tdevice name" ;
@@ -144,10 +146,12 @@ for index in `seq 1 ${#}`; do
 			;;
 		--clean)    CLEAN_TARGET_OUT=1 ;;
 		--device)   DEVICE_NAME=$nextarg ;;
+		--description)   JOB_DESCRIPTION=$nextarg ;;
 		--distro)   DISTRIBUTION=$nextarg ;;
 		--help)     print_help ;;
 		--host)     SYNC_HOST=$nextarg ;;
 		--jobs)     JOB_NUMBER=$nextarg ;;
+		--job-url)  JOB_URL=$nextarg ;;
 
 		--no-pack-bootimage) NO_PACK_BOOTIMAGE=1 ;;
 		--odin)     MAKE_ODIN_PACKAGE=1 ;;

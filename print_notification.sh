@@ -16,20 +16,37 @@ BUILD_START_TIME=
 function print_start_build {
 	if [ "x${JOB_BUILD_NUMBER}" != "x" ] && [ ${JOB_BUILD_NUMBER} -ge 1 ]; then
 		logb "\n==========================================================="
-		logb "Build started on Jenkins on ${ROUTEID}.\n"
-		logb "BUILDING #${JOB_BUILD_NUMBER} FROM ${USER}@${HOSTNAME}\n"
+		logb "Building: $JOB_DESCRIPTION\n"
+		logb "Build target: $BUILD_TARGET\n"
 		logb "Release type: ${release_type} \n"
+		logb "Start time: ${dateStr}\n"
+		logb "Build host: ${USER}@${HOSTNAME}\n"
 		arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
 		logb "Archive prefix is: ${arc_name} \n"
 		logb "Output Directory: ${OUTPUT_DIR}\n"
 		logb "============================================================\n"
 
 		if [ "x$SILENT" != "x1" ]; then
-			dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
+			dateStr=`TZ='UTC' date`
 
+			BUILD_START_TIME=$(date +%s)
 
-			BUILD_START_TIME=$( date +%s)
-			textStr="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} started for device ${DEVICE_NAME} via Jenkins, running on ${USER}@${HOSTNAME}."
+			if [ "x$JOB_DESCRIPTION" != "x" ]; then
+				textStr="Building: $JOB_DESCRIPTION"
+				textStr+="%0ADevice codename: $DEVICE_NAME"
+			else
+				textStr="Building: ${distroTxt} ${ver} for the ${DEVICE_NAME}"
+				textStr+="%0ABuild target: $BUILD_TARGET"
+			fi
+
+			textStr+="%0ABuild number: $JOB_BUILD_NUMBER"
+			textStr+="%0ABuild host: ${USER}@${HOSTNAME}"
+			textStr+="%0AStart time: ${dateStr}"
+
+			if [ "x${JOB_URL}" != "x" ]; then
+				textStr+="%0A%0AYou can monitor this build's progress at:"
+				textStr+="%0A${JOB_URL}/console"
+			fi
 
 			print_to_telegram $textStr
 		fi
@@ -39,8 +56,6 @@ function print_start_build {
 function print_end_build {
 	logb "Done."
 	if [ "x$SILENT" != "x1" ]; then
-		dateStr=`TZ='UTC' date +'[%H:%M:%S UTC]'`
-
 		target_str_len=$(echo /var/lib/jenkins/jobs | wc -c)
 		r_dir=$(echo $OUTPUT_DIR | cut -c ${target_str_len}-)
 		link="https://jobs.msm8916.com${r_dir}"
@@ -71,10 +86,21 @@ function print_end_build {
 			str_blurb="%0A%0AYou can flash boot/recovery images using ODIN or you can extract them using 7zip or tar under Linux and flash using TWRP."
 		fi
 
-		str_main="${dateStr}[${BUILD_TARGET}] ${distroTxt} ${ver} build %23${JOB_BUILD_NUMBER} for device ${DEVICE_NAME} on ${USER}@${HOSTNAME} completed successfully."
-		textStr="${str_main}${str_rom}${str_rec}${str_boot}${str_changelog}${str_blurb}${buildTime}${totalTime}"
+		if [ "x$JOB_DESCRIPTION" != "x" ]; then
+			str_main="$JOB_DESCRIPTION"
+		else
+			str_main="${distroTxt} ${ver} ${BUILD_TARGET} for the ${DEVICE_NAME}"
+		fi
+
+		str_main+=" completed successfully."
+		str_main+="%0A%0ABuild number: $JOB_BUILD_NUMBER"
+		str_main+="%0ABuild host: ${USER}@${HOSTNAME}"
+
 		textStr=$(echo $textStr |sed s'/\/\//\//'g)
 		textStr=$(echo $textStr |sed s'/http:\//http:\/\//'g)
+		textStr=$(echo $textStr |sed s'/https:\//https:\/\//'g)
+
+		textStr="${str_main}${str_rom}${str_rec}${str_boot}${str_changelog}${str_blurb}${buildTime}${totalTime}"
 
 		print_to_telegram $textStr
 	fi
