@@ -268,7 +268,7 @@ for file in $JOB_DESC_FILES; do
 
 				CAN_ROAM=false
 
-				SHELL_COMMANDS="\${BUILD_BIN_ROOT}/run_build.sh --path \${BUILD_ANDROID_ROOT}/${BUILD_DIR} --distro ${DIST} \\"
+				SHELL_COMMANDS="\${BUILD_BIN_ROOT}/build.sh --path \${BUILD_ANDROID_ROOT}/${BUILD_DIR} --distro ${DIST} \\"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="--device ${DEVICE_CODENAME} --target ${BUILD_TARGET} -j \${MAX_JOB_NUMBER} \\"
 				SHELL_COMMANDS+=${NEWLINE}
