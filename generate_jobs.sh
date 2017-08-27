@@ -3,7 +3,8 @@
 NEWLINE="
 "
 
-HOST=jenkins@jenkins.msm8916.com
+HOST_USER=jenkins
+HOST_NAME=jenkins.msm8916.com
 
 function generate_folder_config() {
 # generate_folder_config FOLDER_NAME CONFIG_PATH
@@ -276,7 +277,7 @@ for file in $JOB_DESC_FILES; do
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="-b \${BUILD_NUMBER} --type=${BUILD_TYPE} -v \\"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="--host ${HOST} ${SHELL_COMMANDS_EXTRA}"
+				SHELL_COMMANDS+="--host ${HOST_USER}@${HOST_NAME} ${SHELL_COMMANDS_EXTRA}"
 
 			elif [ "$BUILD_TARGET" == "promote" ]; then
 				CAN_ROAM=true
@@ -292,22 +293,22 @@ for file in $JOB_DESC_FILES; do
 				fi
 
 				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
-				SHELL_COMMANDS="JOB_DIR=\`ssh ${HOST} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
+				SHELL_COMMANDS="JOB_DIR=\`ssh ${HOST_USER}@${HOST_NAME} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
 
 			elif [ "$BUILD_TARGET" == "demote" ]; then
 
@@ -325,9 +326,9 @@ for file in $JOB_DESC_FILES; do
 
 				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST} &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
+				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
 
 			fi
 
