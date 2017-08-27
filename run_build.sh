@@ -44,7 +44,7 @@ POST_COPY_FUNCTIONS=();
 
 REPO_BRANCH_MAP=();
 
-url="https://raw.githubusercontent.com/Galaxy-MSM8916/build_script/master"
+url="https://git.msm8916.com/Galaxy-MSM8916/build_script.git/plain"
 
 SILENT=0
 
