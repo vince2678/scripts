@@ -61,7 +61,8 @@ function save_build_state {
 function restore_saved_build_state {
 	if [ -z "${RESTORED_BUILD_STATE}" ] && [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
 		for state_file in `find ${SAVED_BUILD_JOBS_DIR} -type f`; do
-			while [ -f "$state_file" ]; do
+			launch_count=1
+			while [ -f "$state_file" ] && [ $launch_count -le $RETRY_COUNT ]; do
 				echoText "Starting previously terminated build from saved build state.."
 
 				new_build_exec=$(mktemp)
@@ -75,6 +76,9 @@ function restore_saved_build_state {
 
 				# clean up
 			        rm $new_build_exec
+
+				# increment counter
+				launch_count=$((launch_count+1))
 			done
 		done
 	fi

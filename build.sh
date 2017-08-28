@@ -27,7 +27,7 @@ NC='\033[0m' # No Color
 RED="\033[01;31m"
 RESTORE=$NC
 
-# file transfer retry count
+# file transfer/build retry count
 RETRY_COUNT=3
 
 # create a temprary working dir
@@ -97,7 +97,7 @@ function print_help {
                 log "  -c, --odin\tbuild compressed (ODIN) images";
                 log "  -r, --clean\tclean build directory on completion";
                 log "  -N, --no-pack-bootimage\tDon't pack the bootimage into a zip.\n";
-                log "  -R, --retry\tRetry upload this many times upon failure before giving up.";
+                log "  -R, --retry\tRetry build resume/file upload this many times upon failure before giving up.";
                 log "              \tDefault is 3 ";
                 log "  -a, --sync_all\tSync entire build tree";
                 log "  -v, --sync\tSync device/kernel/vendor trees";
