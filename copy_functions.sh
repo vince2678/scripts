@@ -115,16 +115,18 @@ function copy_bootimage {
 }
 
 function copy_recoveryimage {
-	if [ -e ${ANDROID_PRODUCT_OUT}/recovery.img ]; then
-		#define some variables
-		if [ -z ${JOB_BUILD_NUMBER} ]; then
-			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${DEVICE_NAME}
-		else
-			rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
-		fi
+	if [ "x$BUILD_TARGET" == "xrecoveryimage" ] || [ "x$BUILD_TARGET" == "xotapackage" ]; then
+		if [ -e ${ANDROID_PRODUCT_OUT}/recovery.img ]; then
+			#define some variables
+			if [ -z ${JOB_BUILD_NUMBER} ]; then
+				rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${DEVICE_NAME}
+			else
+				rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
+			fi
 
-		logb "\n\t\tCopying recovery image...\n"
-		tar -C ${ANDROID_PRODUCT_OUT}/ recovery.img -c -f ${ARTIFACT_OUT_DIR}/${rec_name}.tar
+			logb "\n\t\tCopying recovery image...\n"
+			tar -C ${ANDROID_PRODUCT_OUT}/ recovery.img -c -f ${ARTIFACT_OUT_DIR}/${rec_name}.tar
+		fi
 	fi
 }
 
