@@ -105,6 +105,15 @@ if [ "x$CONFIG_PATH" != "x" ]; then
         <artifactNumToKeep>${BUILDS_TO_KEEP}</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>EXTRA_ARGS</name>
+          <description>Extra arguments to pass to the build script.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   <assignedNode>${ASSIGNED_NODE}</assignedNode>
@@ -286,7 +295,7 @@ for file in $JOB_DESC_FILES; do
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="--description \"\${JOB_DESCRIPTION}\" \\"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="--host ${HOST_USER}@${HOST_NAME} ${SHELL_COMMANDS_EXTRA}"
+				SHELL_COMMANDS+="--host ${HOST_USER}@${HOST_NAME} ${SHELL_COMMANDS_EXTRA} \$EXTRA_ARGS"
 
 			elif [ "$BUILD_TARGET" == "promote" ]; then
 				CAN_ROAM=true
