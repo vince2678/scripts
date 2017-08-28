@@ -115,33 +115,33 @@ function echoText() {
 
 function echoTextRed() {
     echo -e ${RED}
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e "==  ${@}  =="
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e ${RESTORE}
 }
 
 function echoTextBlue() {
     echo -e ${BLUE}
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e "==  ${@}  =="
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e ${RESTORE}
 }
 
 function echoTextGreen() {
     echo -e ${GREEN}
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e "==  ${@}  =="
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e ${RESTORE}
 }
 
 function echoTextBold() {
     echo -e ${BOLD}
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e "==  ${@}  =="
-    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c` ); do echo -e "=\c"; done )===="
+    echo -e "====$( for i in $( seq 1 `echo $@ | wc -c | sed s/[0-9]../100/g` ); do echo -e "=\c"; done )===="
     echo -e ${RESTORE}
 }
 
