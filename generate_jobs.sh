@@ -112,6 +112,7 @@ if [ "x$CONFIG_PATH" != "x" ]; then
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>${BUILD_TRIGGER_TOKEN}</authToken>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
