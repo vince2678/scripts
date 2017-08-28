@@ -21,13 +21,13 @@ function rsync_cp {
 	else
 		remote_mkdir $(dirname $2)
 		echoTextBlue "Using rsync to copy $1 -> ${SYNC_HOST}:$2"
-		${RSYNC} $1 ${SYNC_HOST}:$2
+		rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' $1 ${SYNC_HOST}:$2
 
 		sync_exit_error=$?
 
 		while [ $sync_exit_error -ne 0 ] && [ $sync_count -le $RETRY_COUNT ]; do
 			echoTextRed "[${sync_count}/${RETRY_COUNT}] Retrying copy of $1 -> ${SYNC_HOST}:$2"
-			${RSYNC} $1 ${SYNC_HOST}:$2
+			rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' $1 ${SYNC_HOST}:$2
 			sync_exit_error=$?
 			sync_count=$((sync_count+1))
 		done
@@ -39,7 +39,7 @@ function rsync_cp {
 function remote_mkdir {
 	if [ "x${1}" != "x" ]; then
 		if [ "x${SYNC_HOST}" != "x" ]; then
-			exit_on_failure ${SSH} ${SYNC_HOST} mkdir -p $1
+			exit_on_failure ssh -o StrictHostKeyChecking=no ${SYNC_HOST} mkdir -p $1
 		else
 			exit_on_failure mkdir -p $1
 		fi

@@ -39,9 +39,6 @@ SAVED_BUILD_JOBS_DIR=/tmp/android_build_jobs
 
 CURL="curl --silent -connect-timeout=10"
 
-SSH="ssh -o StrictHostKeyChecking=no"
-RSYNC="rsync -av --append-verify -P -e \'$SSH\'"
-
 # file extraction function names
 PRE_PATCH_FUNCTIONS=();
 PATCH_FUNCTIONS=();

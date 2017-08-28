@@ -86,7 +86,7 @@ function fix_build_xml {
 		local_build_xml=${BUILD_TEMP}/build.xml
 
 		echoText "Fixing build file on jenkins to reflect success.."
-		${RSYNC} ${SYNC_HOST}:${rmt_build_xml} ${local_build_xml}
+		rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' ${SYNC_HOST}:${rmt_build_xml} ${local_build_xml}
 
 		sed -i s/FAILURE/SUCCESS/g ${local_build_xml}
 
