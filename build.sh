@@ -35,6 +35,9 @@ BUILD_TEMP=$(mktemp -d)
 
 CURL="curl --silent -connect-timeout=10"
 
+SSH="ssh -o StrictHostKeyChecking=no"
+RSYNC="rsync -av --append-verify -P -e \'$SSH\'"
+
 # file extraction function names
 PRE_PATCH_FUNCTIONS=();
 PATCH_FUNCTIONS=();
