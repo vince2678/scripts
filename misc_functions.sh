@@ -43,19 +43,26 @@ function check_if_build_running {
 }
 
 function clean_target {
-	#start cleaning up
-	echoText "Removing temp dir..."
-	rm -r $BUILD_TEMP
-	echoText "Cleaning build dir..."
-	cd ${ANDROID_BUILD_TOP}/
-	echoText "Removing lock..."
-		exec 200>&-
-	rm ${lock}
-
 	if [ "x${CLEAN_TARGET_OUT}" != "x" ] && [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
+		echoText "Cleaning build dir..."
 		if [ "x$BUILD_TARGET" == "xotapackage" ]; then
 			make clean
 		fi
+	fi
+}
+
+function remove_temp_dir {
+	#start cleaning up
+	echoText "Removing temp dir..."
+	rm -rf $BUILD_TEMP
+}
+
+function remove_build_lock {
+	if [ -z "$BUILD_LOCK_REMOVED" ]; then
+		echoText "Removing lock..."
+		exec 200>&-
+		rm ${lock}
+		BUILD_LOCK_REMOVED=1
 	fi
 }
 
@@ -98,12 +105,8 @@ function exit_error {
 				timeout -s 9 10 wget "https://api.telegram.org/bot${BUILD_TELEGRAM_TOKEN}/sendMessage?chat_id=${BUILD_TELEGRAM_CHATID}&text=$textStr" -O - > /dev/null 2>/dev/null
 			fi
 		fi
-		# remove the temp dir
-		echoText "Removing temp dir..."
-		rm -rf $BUILD_TEMP
-		echoText "Removing lock..."
-		exec 200>&-
-		rm ${lock}
+		remove_temp_dir
+		remove_build_lock
 		exit 1
 	fi
 }
