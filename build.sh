@@ -35,6 +35,8 @@ BUILD_TEMP=$(mktemp -d)
 
 ARTIFACT_OUT_DIR=${BUILD_TEMP}/builds
 
+SAVED_BUILD_JOBS_DIR=/tmp/android_build_jobs
+
 CURL="curl --silent -connect-timeout=10"
 
 SSH="ssh -o StrictHostKeyChecking=no"
@@ -164,6 +166,7 @@ for index in `seq 1 ${#}`; do
 		--path)     BUILD_TOP=`realpath $nextarg` ;;
 		--print-via-proxy) PRINT_VIA_PROXY=y ;;
 		--retry)    RETRY_COUNT=$nextarg;;
+		--restored-state) RESTORED_BUILD_STATE=1 ;;
 		--silent)   SILENT=1 ;;
 		--su)       WITH_SU=true ;;
 		--sync)     SYNC_VENDOR=1 ;;
@@ -256,6 +259,8 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 	extract_patches $@
 	# setup env vars
 	bootstrap "$@"
+	# restore a terminated build
+	restore_saved_build_state
 	# check if any other builds are running
 	check_if_build_running
 	# reverse any previously applied patch
@@ -277,6 +282,8 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 		setup_env "$@"
 		# print the build start text
 		print_start_build
+		#save build state
+		save_build_state "$@"
 		# make the targets
 		make_targets
 		# copy the files
@@ -295,6 +302,8 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 		remove_build_lock
 		# upload build artifacts
 		upload_artifacts
+		# fix build info
+		fix_build_xml
 		# end the build
 		print_end_build
 	fi

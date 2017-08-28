@@ -209,5 +209,5 @@ function setup_env {
 
 	# make the artifact dir
 	exit_on_failure mkdir -p $ARTIFACT_OUT_DIR
-
+	exit_on_failure mkdir -p ${SAVED_BUILD_JOBS_DIR}
 }

@@ -42,7 +42,64 @@ function check_if_build_running {
 	echoTextBlue "Lock acquired. PID is ${pid}"
 }
 
+function save_build_state {
+	# save build state in the event a build terminates and another is enqueued
+	if [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
+		BUILD_STATE_FILE=$(mktemp -p ${SAVED_BUILD_JOBS_DIR})
+		echoTextBlue "Saving build state..."
+		# remove and re-add --description arg to properly enclose in quotes
+		args=`echo $@ | sed s'/--description[ a-zA-Z0-9\/\.\-]*\ \-/ -/'g`
+		args+=" --restored-state"
+		[ -n "$JOB_DESCRIPTION" ] && args+=" --description '$JOB_DESCRIPTION'"
+
+		# saves a file with the exact arguments used to launch the build
+		echo $0 $args > ${BUILD_STATE_FILE}
+		echoTextBlue "Saved args: \n$args"
+	fi
+}
+
+function restore_saved_build_state {
+	if [ -z "${RESTORED_BUILD_STATE}" ] && [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
+		for state_file in `find ${SAVED_BUILD_JOBS_DIR} -type f`; do
+			while [ -f "$state_file" ]; do
+				echoText "Starting previously terminated build from saved build state.."
+
+				new_build_exec=$(mktemp)
+
+				# prepare to launch the build
+				cp $state_file $new_build_exec
+				chmod +x $new_build_exec
+
+				echoTextBlue "Launching terminated build with args:\n $(cat $new_build_exec)"
+				$new_build_exec && rm $state_file
+
+				# clean up
+			        rm $new_build_exec
+			done
+		done
+	fi
+}
+
+function fix_build_xml {
+	if [ -n "${RESTORED_BUILD_STATE}" ]; then
+		rmt_build_xml=$OUTPUT_DIR/../build.xml
+		local_build_xml=${BUILD_TEMP}/build.xml
+
+		echoText "Fixing build file on jenkins to reflect success.."
+		${RSYNC} ${SYNC_HOST}:${rmt_build_xml} ${local_build_xml}
+
+		sed -i s/FAILURE/SUCCESS/g ${local_build_xml}
+
+		rsync_cp ${local_build_xml} ${rmt_build_xml}
+	fi
+}
+
 function clean_target {
+	echoText "Removing saved build state info.."
+	rm -f ${BUILD_STATE_FILE}
+	rmdir --ignore-fail-on-non-empty ${SAVED_BUILD_JOBS_DIR}
+
+	cd ${ANDROID_BUILD_TOP}/
 	if [ "x${CLEAN_TARGET_OUT}" != "x" ] && [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
 		echoText "Cleaning build dir..."
 		if [ "x$BUILD_TARGET" == "xotapackage" ]; then
