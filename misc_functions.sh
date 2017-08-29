@@ -14,7 +14,6 @@
 # limitations under the License.
 
 lock_name="android_build_lock"
-lock=
 
 function acquire_build_lock {
 
@@ -144,12 +143,8 @@ function remove_temp_dir {
 }
 
 function remove_build_lock {
-	if [ -z "$BUILD_LOCK_REMOVED" ]; then
-		echoText "Removing lock..."
-		exec 200>&-
-		rm ${lock}
-		BUILD_LOCK_REMOVED=1
-	fi
+	echoText "Removing lock..."
+	exec 200>&-
 }
 
 function exit_on_failure {

@@ -312,9 +312,9 @@ remove_temp_dir
 if [ "x${BUILD_TARGET}" == "x" ] || [ "x${BUILD_VARIANT}" == "x" ] || [ "x${DEVICE_NAME}" == "x" ]; then
 	# sync the build script
 	sync_script "$@"
-	# remove lock
-	remove_build_lock
 fi
+# remove lock
+remove_build_lock
 
 END_TIME=$( date +%s )
 
