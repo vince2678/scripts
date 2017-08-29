@@ -57,17 +57,34 @@ function restore_saved_build_state {
 	local SSH="ssh ${SYNC_HOST} -p 53801 -o StrictHostKeyChecking=no"
 	build_error=0
 	if [ -z "${RESTORED_BUILD_STATE}" ] && [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
+		seen_job_names=${JOB_NAME}
 		for state_file in `find ${SAVED_BUILD_JOBS_DIR} -type f 2>/dev/null`; do
 			launch_count=1
+			target_job_name=$(cat $state_file)
+
 			while [ -f "$state_file" ] && [ $launch_count -le $RETRY_COUNT ]; do
-				echoText "[${launch_count}/${RETRY_COUNT}] Starting previously terminated build from saved build info.."
-                                ${SSH} build $(cat $state_file) -s \
-                                      -p "\"EXTRA_ARGS=--restored-state --node=$NODE_NAME\"" && rm -f $state_file
+				matched=0
+				for i in $seen_job_names; do
+					if [ "$i" == "$target_job_name" ]; then
+						echoText "Job $target_job_name previously run or same as current job."
+						rm -f $state_file
+						matched=1
+						break
+					fi
+				done
+				if [ "$matched" -eq 0 ]; then
+					echoText "[${launch_count}/${RETRY_COUNT}] Starting previously terminated build from saved build info.."
+					${SSH} build ${target_job_name} -s -v \
+					   -p "\"EXTRA_ARGS=--restored-state --node=$NODE_NAME\"" 1>/dev/null && rm -f $state_file
+				fi
 				build_error=$?
 
 				# increment counter
 				launch_count=$((launch_count+1))
 			done
+
+			seen_job_names+=" $target_job_name"
+
 			if [ "$build_error" -gt 0 ]; then
 				echoTextRed "Failed to launch terminated build."
 			fi
