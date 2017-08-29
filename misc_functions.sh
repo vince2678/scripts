@@ -16,7 +16,7 @@
 lock_name="android_build_lock"
 lock=
 
-function check_if_build_running {
+function acquire_build_lock {
 
 	lock="/var/lock/${lock_name}"
 

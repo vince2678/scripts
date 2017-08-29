@@ -261,7 +261,7 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 	# restore a terminated build
 	restore_saved_build_state
 	# check if any other builds are running
-	check_if_build_running
+	acquire_build_lock
 	# reverse any previously applied patch
 	reverse_patch
 	# get the platform info
