@@ -76,9 +76,11 @@ function restore_saved_build_state {
 					fi
 				done
 				if [ "$matched" -eq 0 ]; then
+					remove_build_lock
 					echoText "[${launch_count}/${RETRY_COUNT}] Starting previously terminated build from saved build info.."
 					${SSH} build ${target_job_name} -s -v \
 					   -p "\"EXTRA_ARGS=--restored-state --node=$NODE_NAME\"" 1>/dev/null && rm -f $state_file
+					acquire_build_lock
 				fi
 				build_error=$?
 
