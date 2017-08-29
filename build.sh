@@ -258,10 +258,10 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 	extract_patches $@
 	# setup env vars
 	bootstrap "$@"
-	# restore a terminated build
-	restore_saved_build_state
 	# check if any other builds are running
 	acquire_build_lock
+	# restore a terminated build
+	restore_saved_build_state
 	# reverse any previously applied patch
 	reverse_patch
 	# get the platform info
@@ -310,6 +310,8 @@ fi
 # remove temp dir
 remove_temp_dir
 if [ "x${BUILD_TARGET}" == "x" ] || [ "x${BUILD_VARIANT}" == "x" ] || [ "x${DEVICE_NAME}" == "x" ]; then
+	# check if any other builds are running
+	acquire_build_lock
 	# sync the build script
 	sync_script "$@"
 fi
