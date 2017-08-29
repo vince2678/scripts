@@ -29,7 +29,7 @@ function acquire_build_lock {
 			break
 		else
 			printf "%c" "."
-			sleep 10
+			sleep 5
 		fi
 	done
 
