@@ -39,22 +39,22 @@ function apply_repo_map {
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
 		if [ -d "${BUILD_TOP}/$repo" ]; then
+			local GIT="git -C ${BUILD_TOP}/$repo"
+
 			echoTextBlue "Repo is $repo. Reverting..."
 			cd ${BUILD_TOP} && repo sync $repo -d
 
-			cd ${BUILD_TOP}/$repo
 			echoTextBlue "Deleting repository branch $branch."
-			git branch -D $branch 2>/dev/null
+			${GIT} branch -D $branch 2>/dev/null
 			echoTextBlue "Fetching repository branch $branch..."
-			git fetch github $branch
+			${GIT} fetch github $branch
+			echoTextBlue "Removing rogue patches in $repo..."
+			${GIT} diff | patch -Rp1
 			echoTextBlue "Checking out repository branch $branch."
-			git checkout github/$branch
-			git -C ${BUILD_TOP}/$repo diff|patch -Rp1
-			cd ${BUILD_TOP}
+			${GIT} checkout github/$branch
 		else
 			echoTextRed "Directory $repo does not exist!!"
 			exit_error 1
-
 		fi
 		echo
 	done
@@ -73,14 +73,15 @@ function reverse_repo_map {
 		branch=`echo ${REPO_BRANCH_MAP[$ix]} | cut -d ':' -f 2`
 
 		if [ -d "${BUILD_TOP}/$repo" ]; then
+			local GIT="git -C ${BUILD_TOP}/$repo"
+
 			echoTextBlue "Repo is $repo.\n Reverting..."
 			cd ${BUILD_TOP} && repo sync $repo -d
 
-			cd ${BUILD_TOP}/$repo
 			echoTextBlue "Deleting repository branch $branch."
-			git branch -D $branch 2>/dev/null
-			git -C ${BUILD_TOP}/$repo diff|patch -Rp1
-			cd ${BUILD_TOP}
+			${GIT} branch -D $branch 2>/dev/null
+			echoTextBlue "Removing rogue patches in $repo..."
+			${GIT} diff | patch -Rp1
 		fi
 		echo
 	done
