@@ -13,15 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-lock_name="android_build_lock"
-
 function acquire_build_lock {
 
-	lock="/var/lock/${lock_name}"
+	local lock_name="android_build_lock"
+	local lock="/var/lock/${lock_name}"
 
 	exec 200>${lock}
 
-	echoTextBlue "Attempting to acquire lock..."
+	echoTextBlue "Attempting to acquire lock $lock..."
 
 	# loop if we can't get the lock
 	while true; do
@@ -38,7 +37,12 @@ function acquire_build_lock {
 	pid=$$
 	echo ${pid} 1>&200
 
-	echoTextBlue "Lock acquired. PID is ${pid}"
+	echoTextBlue "Lock ${lock} acquired. PID is ${pid}"
+}
+
+function remove_build_lock {
+	echoText "Removing lock..."
+	exec 200>&-
 }
 
 function save_build_state {
@@ -140,11 +144,6 @@ function remove_temp_dir {
 	#start cleaning up
 	echoText "Removing temp dir..."
 	rm -rf $BUILD_TEMP
-}
-
-function remove_build_lock {
-	echoText "Removing lock..."
-	exec 200>&-
 }
 
 function exit_on_failure {
