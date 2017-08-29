@@ -44,58 +44,50 @@ function check_if_build_running {
 
 function save_build_state {
 	# save build state in the event a build terminates and another is enqueued
-	if [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
+	if [ -n "${JOB_NAME}" ] && [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
 		BUILD_STATE_FILE=$(mktemp -p ${SAVED_BUILD_JOBS_DIR})
-		echoTextBlue "Saving build state..."
-		# remove and re-add --description arg to properly enclose in quotes
-		args=`echo $@ | sed s'/--description[ a-zA-Z0-9\/\.\-]*\ \-/ -/'g`
-		args+=" --restored-state"
-		[ -n "$JOB_DESCRIPTION" ] && args+=" --description '$JOB_DESCRIPTION'"
+		echoTextBlue "Saving build job name: \n${JOB_NAME}"
 
 		# saves a file with the exact arguments used to launch the build
-		echo $0 $args > ${BUILD_STATE_FILE}
-		echoTextBlue "Saved args: \n$args"
+		echo ${JOB_NAME} > ${BUILD_STATE_FILE}
 	fi
 }
 
 function restore_saved_build_state {
+	local SSH="ssh ${SYNC_HOST} -p 53801 -o StrictHostKeyChecking=no"
+	build_error=0
 	if [ -z "${RESTORED_BUILD_STATE}" ] && [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
-		for state_file in `find ${SAVED_BUILD_JOBS_DIR} -type f`; do
+		for state_file in `find ${SAVED_BUILD_JOBS_DIR} -type f 2>/dev/null`; do
 			launch_count=1
 			while [ -f "$state_file" ] && [ $launch_count -le $RETRY_COUNT ]; do
-				echoText "Starting previously terminated build from saved build state.."
-
-				new_build_exec=$(mktemp)
-
-				# prepare to launch the build
-				cp $state_file $new_build_exec
-				chmod +x $new_build_exec
-
-				echoTextBlue "Launching terminated build with args:\n $(cat $new_build_exec)"
-				$new_build_exec && rm $state_file
-
-				# clean up
-			        rm $new_build_exec
+				echoText "[${launch_count}/${RETRY_COUNT}] Starting previously terminated build from saved build info.."
+				${SSH} build $(cat $state_file) -s -p EXTRA_ARGS=--restored-state && rm -f $state_file
+				build_error=$?
 
 				# increment counter
 				launch_count=$((launch_count+1))
 			done
+			if [ "$build_error" -gt 0 ]; then
+				echoTextRed "Failed to launch terminated build."
+			fi
+			rm -f $state_file
 		done
 	fi
 }
 
 function fix_build_xml {
-	if [ -n "${RESTORED_BUILD_STATE}" ]; then
-		rmt_build_xml=$OUTPUT_DIR/../build.xml
-		local_build_xml=${BUILD_TEMP}/build.xml
+       rmt_build_xml=$OUTPUT_DIR/../build.xml
+       local_build_xml=${BUILD_TEMP}/build.xml
 
-		echoText "Fixing build file on jenkins to reflect success.."
-		rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' ${SYNC_HOST}:${rmt_build_xml} ${local_build_xml}
+       rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' ${SYNC_HOST}:${rmt_build_xml} ${local_build_xml}
 
-		sed -i s/FAILURE/SUCCESS/g ${local_build_xml}
+       failed="$(grep -o FAILURE ${local_build_xml} | head -1)"
 
-		rsync_cp ${local_build_xml} ${rmt_build_xml}
-	fi
+       if [ "$failed" == "FAILURE" ]; then
+	       echoText "Fixing build file on jenkins to reflect success.."
+	       sed -i s/FAILURE/SUCCESS/g ${local_build_xml}
+	       rsync_cp ${local_build_xml} ${rmt_build_xml}
+       fi
 }
 
 function clean_target {
