@@ -158,6 +158,8 @@ for index in `seq 1 ${#}`; do
 		--job-url)  JOB_URL=$nextarg ;;
 
 		--no-pack-bootimage) NO_PACK_BOOTIMAGE=1 ;;
+		--node)     TARGET_NODE=$nextarg ;;
+		--node-unavail-count)  NODE_UNAVAILABLE_COUNT=$nextarg ;;
 		--odin)     MAKE_ODIN_PACKAGE=1 ;;
 		--output)   OUTPUT_DIR=$nextarg ;;
 		--path)     BUILD_TOP=`realpath $nextarg` ;;
