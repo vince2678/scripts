@@ -123,7 +123,7 @@ if [ "x$CONFIG_PATH" != "x" ]; then
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <authToken>${BUILD_TRIGGER_TOKEN}</authToken>
   <triggers/>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
       <command>${SHELL_COMMANDS}</command>
