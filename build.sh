@@ -301,8 +301,6 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 		remove_build_lock
 		# upload build artifacts
 		upload_artifacts
-		# fix build info
-		fix_build_xml
 		# end the build
 		print_end_build
 	fi

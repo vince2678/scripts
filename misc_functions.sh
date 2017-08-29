@@ -113,21 +113,6 @@ function restore_saved_build_state {
 	fi
 }
 
-function fix_build_xml {
-       rmt_build_xml=$OUTPUT_DIR/../build.xml
-       local_build_xml=${BUILD_TEMP}/build.xml
-
-       rsync -av --append-verify -P -e 'ssh -o StrictHostKeyChecking=no' ${SYNC_HOST}:${rmt_build_xml} ${local_build_xml}
-
-       failed="$(grep -o FAILURE ${local_build_xml} | head -1)"
-
-       if [ "$failed" == "FAILURE" ]; then
-	       echoText "Fixing build file on jenkins to reflect success.."
-	       sed -i s/FAILURE/SUCCESS/g ${local_build_xml}
-	       rsync_cp ${local_build_xml} ${rmt_build_xml}
-       fi
-}
-
 function clean_target {
 	echoText "Removing saved build state info.."
 	rm -f ${BUILD_STATE_FILE}
