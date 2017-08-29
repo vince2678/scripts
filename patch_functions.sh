@@ -49,6 +49,7 @@ function apply_repo_map {
 			git fetch github $branch
 			echoTextBlue "Checking out repository branch $branch."
 			git checkout github/$branch
+			git -C ${BUILD_TOP}/$repo diff|patch -Rp1
 			cd ${BUILD_TOP}
 		else
 			echoTextRed "Directory $repo does not exist!!"
@@ -78,6 +79,7 @@ function reverse_repo_map {
 			cd ${BUILD_TOP}/$repo
 			echoTextBlue "Deleting repository branch $branch."
 			git branch -D $branch 2>/dev/null
+			git -C ${BUILD_TOP}/$repo diff|patch -Rp1
 			cd ${BUILD_TOP}
 		fi
 		echo
