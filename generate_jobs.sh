@@ -316,15 +316,15 @@ for file in $JOB_DESC_FILES; do
 				SHELL_COMMANDS+="JOB_DIR=\`${SSH} ${HOST_USER}@${HOST_NAME} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*txt&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*txt&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*md5&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*md5&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm \${htmlroot}/builds/full/boot*zip&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/full/boot*zip&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
@@ -336,7 +336,7 @@ for file in $JOB_DESC_FILES; do
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot; || true"
 
 			elif [ "$BUILD_TARGET" == "demote" ]; then
 
