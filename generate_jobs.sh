@@ -313,6 +313,7 @@ for file in $JOB_DESC_FILES; do
 				fi
 
 				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
+				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="JOB_DIR=\`${SSH} ${HOST_USER}@${HOST_NAME} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+=${NEWLINE}
