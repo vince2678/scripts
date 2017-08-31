@@ -329,9 +329,7 @@ for file in $JOB_DESC_FILES; do
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${htmlroot}/builds/full/ -type f -execdir rename s&apos;/_/-/&apos;g &apos;{}&apos; \;&quot; || true"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
