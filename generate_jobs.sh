@@ -258,6 +258,8 @@ for file in $JOB_DESC_FILES; do
 	JOB_EXTENDED_DESCRIPTION_OLD=$JOB_EXTENDED_DESCRIPTION
 	BUILD_DIR_OLD=$BUILD_DIR
 
+	SSH="ssh -o StrictHostKeyChecking=no"
+
 	for DIST_VERSION in `split_variable $DIST_VERSION`; do
 		for DEVICE_LINE in `split_variable $DEVICES`; do
 
@@ -311,30 +313,30 @@ for file in $JOB_DESC_FILES; do
 				fi
 
 				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
-				SHELL_COMMANDS="JOB_DIR=\`ssh ${HOST_USER}@${HOST_NAME} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
+				SHELL_COMMANDS="JOB_DIR=\`${SSH} ${HOST_USER}@${HOST_NAME} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*txt&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*txt&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*md5&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*md5&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rm \${htmlroot}/builds/full/boot*zip&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm \${htmlroot}/builds/full/boot*zip&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/--/-/&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot;"
 
 			elif [ "$BUILD_TARGET" == "demote" ]; then
 
@@ -352,9 +354,9 @@ for file in $JOB_DESC_FILES; do
 
 				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/recovery/${DEVICE_CODENAME}/*&quot;"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="ssh ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
 
 			fi
 
