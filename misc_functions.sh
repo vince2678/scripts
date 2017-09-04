@@ -98,18 +98,17 @@ function restore_saved_build_state {
 	fi
 
 	if [ -n "$TARGET_NODE" ] && [ "$TARGET_NODE" != "$NODE_NAME" ]; then
-		if [ -n "$NODE_UNAVAIL_COUNT" ] && [ "$NODE_UNAVAIL_COUNT" -lt $RETRY_COUNT ]; then
+		if [ -n "$NODE_UNAVAILABLE_COUNT" ] && [ "$NODE_UNAVAILABLE_COUNT" -lt $RETRY_COUNT ]; then
 			echoTextRed "Build not running on same node as it was originally. Relaunching..."
+			${SSH} build ${JOB_NAME} -w \
+			     -p "\"EXTRA_ARGS=--restored-state --node-unavail-count=$((NODE_UNAVAILABLE_COUNT+1)) --node=$TARGET_NODE\"" && rm -f $BUILD_STATE_FILE
+			${SSH} set-build-description ${JOB_NAME} $JOB_BUILD_NUMBER "\"Cancelled build to try running on node $TARGET_NODE.\""
+			${SSH} set-build-description ${JOB_NAME} $((JOB_BUILD_NUMBER+1)) "\"Cancelled build  #${JOB_BUILD_NUMBER} to try running on node $TARGET_NODE.\""
+			remove_temp_dir
+			exit 1
 		else
-			echoTextRed "Build failed to run on target node. Using any available node..."
+			echoTextRed "Build failed to run on target node. Using current node..."
 		fi
-		${SSH} build ${JOB_NAME} -w \
-                     -p "\"EXTRA_ARGS=--restored-state --node-unavail-count=$((NODE_UNAVAILABLE_COUNT+1)) --node=$TARGET_NODE\"" && rm -f $BUILD_STATE_FILE
-
-		${SSH} set-build-description ${JOB_NAME} $JOB_BUILD_NUMBER "\"Cancelled build to try running on node $TARGET_NODE.\""
-		${SSH} set-build-description ${JOB_NAME} $((JOB_BUILD_NUMBER+1)) "\"Cancelled build  #${JOB_BUILD_NUMBER} to try running on node $TARGET_NODE.\""
-		remove_temp_dir
-		exit 1
 	fi
 }
 
