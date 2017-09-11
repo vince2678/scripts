@@ -22,7 +22,7 @@ function sync_manifests {
 		manifest_name=los-15.0_manifest.xml
 	fi
 	manifest_dir=${BUILD_TOP}/.repo/local_manifests
-	manifest_url="https://raw.githubusercontent.com/Galaxy-MSM8916/local_manifests/master"
+	manifest_url="https://git.msm8916.com/Galaxy-MSM8916/local_manifests.git/plain"
 
 	if [ "x${manifest_name}" != "x" ]; then
 		mkdir -p ${manifest_dir}
