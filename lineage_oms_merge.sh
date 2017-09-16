@@ -47,6 +47,10 @@ packages/apps/Settings
 system/sepolicy
 vendor/cm"
 
+LOCAL_SUBS_REPOS="
+packages/apps/Settings
+vendor/cm"
+
 unset RESULT_STRING
 
 
@@ -82,7 +86,11 @@ function sync_substratum() {
         BRANCH=cm-14.1
 
         # FETCH THE REPO
-        git fetch https://github.com/LineageOMS/${URL} ${BRANCH}
+	if [ -n "$(echo $LOCAL_SUBS_REPOS | grep -o $FOLDER)" ]; then
+		git fetch https://github.com/Galaxy-MSM8916/${URL} ${BRANCH}
+	else
+		git fetch https://github.com/LineageOMS/${URL} ${BRANCH}
+	fi
 
         # GIT GYMNASTICS (GETS MESSY, BEWARE)
         # FIRST HASH WILL ALWAYS BE THE FETCH HEAD
