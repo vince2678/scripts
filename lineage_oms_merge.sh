@@ -88,8 +88,10 @@ function sync_substratum() {
         # FETCH THE REPO
 	if [ -n "$(echo $LOCAL_SUBS_REPOS | grep -o $FOLDER)" ]; then
 		git fetch https://github.com/Galaxy-MSM8916/${URL} ${BRANCH}
+		COMMITTER="Zvikaramba"
 	else
 		git fetch https://github.com/LineageOMS/${URL} ${BRANCH}
+		COMMITTER="Nathan Chancellor"
 	fi
 
         # GIT GYMNASTICS (GETS MESSY, BEWARE)
@@ -97,8 +99,8 @@ function sync_substratum() {
         FIRST_HASH=$(git log --format=%H -1 FETCH_HEAD)
 
         # SECOND HASH WILL BE THE LAST THING I COMMITTED
-        NUMBER_OF_COMMITS=$(( $( git log --format=%H --committer="Nathan Chancellor" FETCH_HEAD | wc -l ) - 1 ))
-        SECOND_HASH=$( git log --format=%H --committer="Nathan Chancellor" FETCH_HEAD~${NUMBER_OF_COMMITS}^..FETCH_HEAD~${NUMBER_OF_COMMITS} )
+        NUMBER_OF_COMMITS=$(( $( git log --format=%H --committer="$COMMITTER" FETCH_HEAD | wc -l ) - 1 ))
+        SECOND_HASH=$( git log --format=%H --committer="$COMMITTER" FETCH_HEAD~${NUMBER_OF_COMMITS}^..FETCH_HEAD~${NUMBER_OF_COMMITS} )
 
         # NOW THAT WE HAVE THE HASHES, WE WANT TO TRY AND SEE IF OMS ALREADY EXISTS
         # THIS SCRIPT NEEDS TO BE RUN ON A CLEAN REPO
