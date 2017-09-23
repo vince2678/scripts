@@ -50,7 +50,7 @@ function apply_repo_map {
 			echoTextBlue "Removing rogue patches in $repo..."
 			${GIT} diff | patch -Rp1
 			echoTextBlue "Fetching and checking out ref $ref..."
-			${GIT} fetch github $ref:$ref && ${GIT} checkout $ref || exit_error $?
+			${GIT} fetch $($GIT remote show) $ref:$ref && ${GIT} checkout $ref || exit_error $?
 		else
 			echoTextRed "Directory $repo does not exist!!"
 			exit_error 1
