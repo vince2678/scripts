@@ -31,6 +31,7 @@ BUILD_TARGET=recoveryimage
 DEVICES=a33g:SM-A300H,
 DEVICES+=a3lte:SM-A300F,
 DEVICES+=a3ulte:SM-A300FU,
+DEVICES+=coreprimeltespr:SM-G360P,
 DEVICES+=fortuna3g:SM-G530H:XX_Variant,
 DEVICES+=fortunalteub:SM-G530M,
 DEVICES+=fortunave3g:SM-G530H:XC_Variant,
