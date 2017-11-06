@@ -53,6 +53,14 @@ if [ -n "$SYNC_VENDOR" ]; then
 			repo sync ${dir}/${vendor}/* --force-sync --prune
 		done
 	done
+	if [ "x$ver" == "x15.0" ]; then
+		REPOPICK_FILE=${BUILD_TEMP}/repopicks.sh
+		wget https://msm8916.com/~vincent/repopicks.sh -O $REPOPICK_FILE
+		if [ "$?" -eq 0 ]; then
+			echoText "Picking Lineage gerrit changes..."
+			. $REPOPICK_FILE
+		fi
+	fi
 fi
 }
 
@@ -69,19 +77,9 @@ if [ -n "$SYNC_ALL" ]; then
 	repo sync --force-sync --prune
 
 	# sync substratum if we're on LOS 14.1
-	case $ver in
-		14*)
-			sync_substratum;
-		;;
-		15*)
-			REPOPICK_FILE=${BUILD_TEMP}/repopicks.sh
-			wget https://msm8916.com/~vincent/repopicks.sh -O $REPOPICK_FILE
-			if [ "$?" -eq 0 ]; then
-				echoText "Picking Lineage gerrit changes..."
-				. $REPOPICK_FILE
-			fi
-		;;
-	esac
+	if [ "x$ver" == "x14.1" ]; then
+		sync_substratum;
+	fi
 
 	cd $OLDPWD
 fi
