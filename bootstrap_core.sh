@@ -30,7 +30,7 @@ vendors[1]="qcom"
 function bootstrap {
 	# set the common dir
 	platform_common_dir="$BUILD_TOP/device/${vendors[0]}/msm8916-common/"
-	if [ "$(echo $DEVICE_NAME | cut -c -3)" == "a3" ]; then
+	if [ "$(echo $DEVICE_NAME | cut -c -2)" == "a3" ]; then
 		common_dir="$BUILD_TOP/device/${vendors[0]}/a3-common/"
 	elif [ "$(echo $DEVICE_NAME | cut -c -4)" == "core" ]; then
 		common_dir="$BUILD_TOP/device/${vendors[0]}/coreprimelte-common/"
