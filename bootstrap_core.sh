@@ -40,6 +40,8 @@ function bootstrap {
 		common_dir="$BUILD_TOP/device/${vendors[0]}/j5-common/"
 	elif [ "$(echo $DEVICE_NAME | cut -c -2)" == "j7" ]; then
 		common_dir="$BUILD_TOP/device/${vendors[0]}/j7lte-common/"
+	elif [ "$(echo $DEVICE_NAME | cut -c -9)" == "serranove" ]; then
+		common_dir="$BUILD_TOP/device/${vendors[0]}/serranovexx-common/"
 	else
 		common_dir="$BUILD_TOP/device/${vendors[0]}/gprimelte-common/"
 	fi
