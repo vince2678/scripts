@@ -43,4 +43,4 @@ DEVICES+=j5nlte:SM-J500FN,
 DEVICES+=j7ltespr:SM-J700P,
 DEVICES+=j7ltechn:SM-J7008,
 DEVICES+=j7ltechn:SM-J7008,
-DEVICES=serranovelte:SM-I9195I
+DEVICES+=serranovelte:SM-I9195I
