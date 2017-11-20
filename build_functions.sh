@@ -63,7 +63,7 @@ function generate_changes {
 
 	if [ "x$BUILD_TARGET" == "xotapackage" ]; then
 		echo -e "\nVENDOR\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
-		vendor_dir=${ANDROID_BUILD_TOP}/vendor/${vendors[0]}/${DEVICE_NAME}
+		vendor_dir=${ANDROID_BUILD_TOP}/vendor/${vendors[0]}
 		generate_log ${vendor_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
 	fi
 }
