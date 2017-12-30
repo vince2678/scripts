@@ -20,7 +20,7 @@ function make_targets {
 	elif [ "x$ver" == "x14.1" ]; then
 		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=https://ota14.msm8916.com/api" CM_BUILDTYPE=NIGHTLY
 	elif [ "x$ver" == "x15.0" ]; then
-		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=https://ota15.msm8916.com/api" LINEAGE_BUILDTYPE=NIGHTLY
+		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="lineage.updater.uri=https://ota15.msm8916.com/api" LINEAGE_BUILDTYPE=NIGHTLY
 	else
 		exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET CM_UPDATER_OTA_URI="cm.updater.uri=https://ota.msm8916.com/api" CM_BUILDTYPE=NIGHTLY
 	fi
