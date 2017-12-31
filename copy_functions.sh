@@ -154,6 +154,12 @@ function copy_otapackage {
 			logb "\n\t\tCopying zip image..."
 			cp ${OTA_FILE} ${ARTIFACT_OUT_DIR}/${arc_name}.zip
 
+			if [ "x$ver" == "x15.0" ]; then
+				logb "\n\t\tCopying system prop..."
+				prop=${ANDROID_PRODUCT_OUT}/system/build.prop
+				[ -e ${prop} ] && cp ${prop} ${ARTIFACT_OUT_DIR}/${arc_name}.zip.prop
+			fi
+
 			#calculate md5sums
 			md5sums=$(md5sum ${OTA_FILE} | cut -d " " -f 1)
 			echo "${md5sums} ${arc_name}.zip" > ${ARTIFACT_OUT_DIR}/${arc_name}.zip.md5 || exit_error 1
