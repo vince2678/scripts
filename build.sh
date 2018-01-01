@@ -50,6 +50,12 @@ SCRIPT_REPO_URL="https://git.msm8916.com/Galaxy-MSM8916/build_script.git/plain"
 
 SILENT=0
 
+LOCAL_REPO_PICKS=
+LINEAGE_REPO_PICKS=
+
+LOCAL_REPO_TOPICS=
+LINEAGE_REPO_TOPICS=
+
 function logr {
 	echo -e ${RED} "$@" ${NC}
 }
@@ -91,6 +97,10 @@ function print_help {
                 log "              \tin the form repo directory:branch, for example,";
                 log "              \t--branch-map vendor/samsung:cm-14.1-experimental ";
                 log "              \tThis option can be specified multiple times.\n ";
+                log "--pick-lineage --pick-lineage-topic \t Pick specified lineage gerrit changes.";
+                log "--pick  --pick-topic \t Pick specified local (msm8916) gerrit changes.";
+                log "              \tChanges can be comma separated, or the flag";
+                log "              \tcan be called repeatedly with each change. ";
                 log "  -s, --silent\tdon't publish to Telegram";
                 log "  -c, --odin\tbuild compressed (ODIN) images";
                 log "  -r, --clean\tclean build directory on completion";
@@ -164,6 +174,22 @@ for index in `seq 1 ${#}`; do
 		--odin)     MAKE_ODIN_PACKAGE=1 ;;
 		--output)   OUTPUT_DIR=$nextarg ;;
 		--path)     BUILD_TOP=`realpath $nextarg` ;;
+		--pick)
+			logb "\t\tChange(s) $nextarg specified"
+			LOCAL_REPO_PICKS="${LOCAL_REPO_PICKS} `echo $nextarg|sed s'/,/ /'g`"
+			;;
+		--pick-topic)
+			logb "\t\tTopic(s) $nextarg specified"
+			LOCAL_REPO_TOPICS="${LOCAL_REPO_TOPICS} `echo $nextarg|sed s'/,/ /'g`"
+			;;
+		--pick-lineage)
+			logb "\t\tLineage change(s) $nextarg specified"
+			LINEAGE_REPO_PICKS="${LINEAGE_REPO_PICKS} `echo $nextarg|sed s'/,/ /'g`"
+			;;
+		--pick-lineage-topic)
+			logb "\t\tLineage topic(s) $nextarg specified"
+			LINEAGE_REPO_TOPICS="${LINEAGE_REPO_TOPICS} `echo $nextarg|sed s'/,/ /'g`"
+			;;
 		--print-via-proxy) PRINT_VIA_PROXY=y ;;
 		--ref-map)
 			logb "\t\tRef map $nextarg specified"
@@ -279,6 +305,8 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 		apply_repo_map
 		# setup the build environment
 		setup_env "$@"
+		# apply repopicks
+		apply_repopicks
 		# print the build start text
 		print_start_build
 		#save build state
