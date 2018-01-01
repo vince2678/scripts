@@ -321,6 +321,8 @@ for file in $JOB_DESC_FILES; do
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
 				SHELL_COMMANDS+=${NEWLINE}
+				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip.prop&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
+				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
 				SHELL_COMMANDS+=${NEWLINE}
 				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*txt&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
