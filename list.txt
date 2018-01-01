@@ -1,4 +1,3 @@
-patch_functions.sh
 sync_functions.sh
 misc_functions.sh
 bootstrap_core.sh
