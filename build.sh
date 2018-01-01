@@ -117,101 +117,131 @@ function print_help {
 
 		exit
 }
+
 prev_arg=
-for index in `seq 1 ${#}`; do
-	nexti=$((index+1))
+while [ "$1" != "" ]; do
+	cur_arg=$1
 
 	# find arguments of the form --arg=val and split to --arg val
-	if [ -n "`echo ${!index} | grep -o =`" ]; then
-		cur_arg=`echo ${!index} | cut -d'=' -f 1`
-		nextarg=`echo ${!index} | cut -d'=' -f 2`
+	if [ -n "`echo $cur_arg | grep -o =`" ]; then
+		cur_arg=`echo $1 | cut -d'=' -f 1`
+		next_arg=`echo $1 | cut -d'=' -f 2`
 	else
-		cur_arg=${!index}
-		nextarg=${!nexti}
+		cur_arg=$1
+		next_arg=$2
 	fi
 
 	case $cur_arg in
-		-a) SYNC_ALL=1 ;;
-		-b) JOB_BUILD_NUMBER=$nextarg ;;
-		-d) DISTRIBUTION=$nextarg ;;
-		-e) BUILD_VARIANT=$nextarg ;;
-		-j) JOB_NUMBER=$nextarg ;;
-		-h) print_help ;;
-		-H) SYNC_HOST=$nextarg ;;
-		-o) OUTPUT_DIR=$nextarg ;;
-		-p) BUILD_TOP=`realpath $nextarg` ;;
-		-P) PRINT_VIA_PROXY=y ;;
-		-N) NO_PACK_BOOTIMAGE=1 ;;
-		-r) CLEAN_TARGET_OUT=1;;
-		-R) BUILD_RETRY_COUNT=$nextarg;;
-		-U) UPLOAD_RETRY_COUNT=$nextarg;;
-		-s) SILENT=1 ;;
-		-t) BUILD_TARGET=$nextarg ;;
-		-u) WITH_SU=true ;;
-		-v) SYNC_VENDOR=1 ;;
-		-w)
-		    logb "\t\tBuilding separate wlan module";
-		    SEPARATE_WLAN_MODULE=y
-		    ;;
 
-		# long options
-		--branch-map)
-			logb "\t\tRef map $nextarg specified"
-			REPO_REF_MAP=("${REPO_REF_MAP[@]}" "$nextarg")
+		-a | --sync-all )
+			SYNC_ALL=1
 			;;
-		--clean)    CLEAN_TARGET_OUT=1 ;;
-		--device)   DEVICE_NAME=$nextarg ;;
-		--description)   JOB_DESCRIPTION=$nextarg ;;
-		--distro)   DISTRIBUTION=$nextarg ;;
-		--help)     print_help ;;
-		--host)     SYNC_HOST=$nextarg ;;
-		--jobs)     JOB_NUMBER=$nextarg ;;
-		--job-url)  JOB_URL=$nextarg ;;
-
-		--no-pack-bootimage) NO_PACK_BOOTIMAGE=1 ;;
-		--node)     TARGET_NODE=$nextarg ;;
-		--node-unavail-count)  NODE_UNAVAILABLE_COUNT=$nextarg ;;
-		--odin)     MAKE_ODIN_PACKAGE=1 ;;
-		--output)   OUTPUT_DIR=$nextarg ;;
-		--path)     BUILD_TOP=`realpath $nextarg` ;;
-		--pick)
-			logb "\t\tChange(s) $nextarg specified"
-			LOCAL_REPO_PICKS="${LOCAL_REPO_PICKS} `echo $nextarg|sed s'/,/ /'g`"
+		-b )
+			JOB_BUILD_NUMBER=$next_arg
 			;;
-		--pick-topic)
-			logb "\t\tTopic(s) $nextarg specified"
-			LOCAL_REPO_TOPICS="${LOCAL_REPO_TOPICS} `echo $nextarg|sed s'/,/ /'g`"
+		--branch-map | --ref-map )
+			logb "\t\tRef map $next_arg specified"
+			REPO_REF_MAP=("${REPO_REF_MAP[@]}" "$next_arg")
 			;;
-		--pick-lineage)
-			logb "\t\tLineage change(s) $nextarg specified"
-			LINEAGE_REPO_PICKS="${LINEAGE_REPO_PICKS} `echo $nextarg|sed s'/,/ /'g`"
+		--clean )
+			CLEAN_TARGET_OUT=1
 			;;
-		--pick-lineage-topic)
-			logb "\t\tLineage topic(s) $nextarg specified"
-			LINEAGE_REPO_TOPICS="${LINEAGE_REPO_TOPICS} `echo $nextarg|sed s'/,/ /'g`"
+		-d )
+			DISTRIBUTION=$next_arg
 			;;
-		--print-via-proxy) PRINT_VIA_PROXY=y ;;
-		--ref-map)
-			logb "\t\tRef map $nextarg specified"
-			REPO_REF_MAP=("${REPO_REF_MAP[@]}" "$nextarg")
+		--device )
+			DEVICE_NAME=$next_arg
 			;;
-		--retry)    BUILD_RETRY_COUNT=$nextarg;;
-		--restored-state) RESTORED_BUILD_STATE=1 ;;
-		--silent)   SILENT=1 ;;
-		--su)       WITH_SU=true ;;
-		--sync)     SYNC_VENDOR=1 ;;
-		--sync-all) SYNC_ALL=1 ;;
-		--sync_all) SYNC_ALL=1 ;;
-		--target)   BUILD_TARGET=$nextarg ;;
-		--type)     BUILD_VARIANT=$nextarg ;;
-		--update-script)  UPDATE_SCRIPT=1;;
-                --upload-retry) UPLOAD_RETRY_COUNT=$nextarg;;
-		--wifi-fix)
-			logb "\t\tBuilding separate wlan module";
-			SEPARATE_WLAN_MODULE=y
+		--description )
+			JOB_DESCRIPTION=$next_arg
 			;;
-
-		*) validate_arg $cur_arg;
+		--distro )
+			DISTRIBUTION=$next_arg
+			;;
+		--job-url )
+			JOB_URL=$next_arg
+			;;
+		-e | --type )
+			BUILD_VARIANT=$next_arg
+			;;
+		-j | --jobs )
+			JOB_NUMBER=$next_arg
+			;;
+		-h | --help )
+			print_help
+			;;
+		-H | --host )
+			SYNC_HOST=$next_arg
+			;;
+		-N | --no-pack-bootimage)
+			NO_PACK_BOOTIMAGE=1
+			;;
+		--node)
+			TARGET_NODE=$next_arg
+			;;
+		--node-unavail-count)
+			NODE_UNAVAILABLE_COUNT=$next_arg
+			;;
+		-o | --output )
+			OUTPUT_DIR=$next_arg
+			;;
+		--odin)
+			MAKE_ODIN_PACKAGE=1
+			;;
+		-p | --path )
+			BUILD_TOP=`realpath $next_arg`
+			;;
+		-P)
+			PRINT_VIA_PROXY=y
+			;;
+		--pick )
+			logb "\t\tChange(s) $next_arg specified"
+			LOCAL_REPO_PICKS="${LOCAL_REPO_PICKS} `echo $next_arg|sed s'/,/ /'g`"
+			;;
+		--pick-lineage )
+			logb "\t\tLineage change(s) $next_arg specified"
+			LINEAGE_REPO_PICKS="${LINEAGE_REPO_PICKS} `echo $next_arg|sed s'/,/ /'g`"
+			;;
+		--pick-lineage-topic )
+			logb "\t\tLineage topic(s) $next_arg specified"
+			LINEAGE_REPO_TOPICS="${LINEAGE_REPO_TOPICS} `echo $next_arg|sed s'/,/ /'g`"
+			;;
+		--pick-topic )
+			logb "\t\tTopic(s) $next_arg specified"
+			LOCAL_REPO_TOPICS="${LOCAL_REPO_TOPICS} `echo $next_arg|sed s'/,/ /'g`"
+			;;
+		--print-via-proxy ) PRINT_VIA_PROXY=y
+			;;
+		-R | --retry )
+			BUILD_RETRY_COUNT=$next_arg
+			;;
+		-r)
+			CLEAN_TARGET_OUT=1
+			;;
+		--restored-state ) RESTORED_BUILD_STATE=1
+			;;
+		-s | --silent )
+			SILENT=1
+			;;
+		--sync)
+			SYNC_VENDOR=1
+			;;
+		-t | --target )
+			BUILD_TARGET=$next_arg
+			;;
+		-U | --upload-retry )
+			UPLOAD_RETRY_COUNT=$next_arg
+			;;
+		-u | --su )
+			WITH_SU=true
+			;;
+		--update-script )  UPDATE_SCRIPT=1
+			;;
+		-v)
+			SYNC_VENDOR=1
+			;;
+		*)
+			validate_arg $cur_arg;
 			if [ $? -eq 0 ]; then
 				logr "Unrecognised option $cur_arg passed"
 				print_help
@@ -224,7 +254,8 @@ for index in `seq 1 ${#}`; do
 			fi
 			;;
 	esac
-	prev_arg=$cur_arg
+	prev_arg=$1
+	shift
 done
 
 if [ "x$UPDATE_SCRIPT" == "x" ]; then
