@@ -41,9 +41,6 @@ SAVED_BUILD_JOBS_DIR=/tmp/android_build_jobs
 CURL="curl --silent -connect-timeout=10"
 
 # file extraction function names
-PRE_PATCH_FUNCTIONS=();
-PATCH_FUNCTIONS=();
-
 COPY_FUNCTIONS=();
 POST_COPY_FUNCTIONS=();
 
@@ -263,16 +260,12 @@ for source_file in ${file_list}; do
 done
 
 if [ "x$UPDATE_SCRIPT" == "x" ]; then
-	# save the patches
-	extract_patches $@
 	# setup env vars
 	bootstrap "$@"
 	# check if any other builds are running
 	acquire_build_lock
 	# restore a terminated build
 	restore_saved_build_state
-	# reverse any previously applied patch
-	reverse_patch
 	# get the platform info
 	get_platform_info
 	# sync manifests
@@ -284,8 +277,6 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 	if [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ] && [ "x${DEVICE_NAME}" != "x" ]; then
 		# apply custom repo-branch maps
 		apply_repo_map
-		# apply the patch
-		apply_patch
 		# setup the build environment
 		setup_env "$@"
 		# print the build start text
@@ -298,8 +289,6 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
 		copy_files
 		# generate the changes
 		generate_changes
-		# reverse any previously applied patch
-		reverse_patch
 		# reverse repo maps
 		reverse_repo_map
 		# clean build top
