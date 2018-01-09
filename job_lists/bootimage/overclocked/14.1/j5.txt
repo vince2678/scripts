@@ -32,7 +32,8 @@ BUILD_DIR=lineage-##{DIST_VERSION}
 DEVICES=j5lte:SM-J500F/G/M/Y:Unified,
 DEVICES+=j53gxx:SM-J500H,
 DEVICES+=j5ltechn:SM-J5008,
-DEVICES+=j5nlte:SM-J500FN
+DEVICES+=j5nlte:SM-J500FN,
+DEVICES+=j5xnlte:SM-J510FN
 
 # extra commands to pass to build script
 SHELL_COMMANDS_EXTRA="--branch-map=device/samsung/msm8916-common:cm-14.1-experimental \\"
