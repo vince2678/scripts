@@ -17,7 +17,7 @@ BLOCKING_JOBS=administrative/block_all_jobs
 
 DIST=lineage
 DIST_LONG=LineageOS
-DIST_VERSION=15.0
+DIST_VERSION=15.0,15.1
 JOB_DIR=administrative/Demote_${DIST_LONG}_Builds
 JOB_EXTENDED_DESCRIPTION="Demote ${DIST_LONG} ##DIST_VERSION for the ##DEVICE_MODEL"
 JOB_PREFIX=los
