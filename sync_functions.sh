@@ -47,9 +47,9 @@ if [ -n "$SYNC_VENDOR" ]; then
 			repo sync ${dir}/${vendor}/* --force-sync --prune
 		done
 	done
-	if [ "x$ver" == "x15.0" ]; then
-		REPOPICK_FILE=${BUILD_TEMP}/repopicks.sh
-		wget https://msm8916.com/~vincent/repopicks.sh -O $REPOPICK_FILE
+	if [ "x$ver" == "x15.0" ] || [ "x$ver" == "x15.1" ]; then
+		REPOPICK_FILE=${BUILD_TEMP}/repopicks-${ver}.sh
+		wget https://msm8916.com/~vincent/repopicks-${ver}.sh -O $REPOPICK_FILE
 		if [ "$?" -eq 0 ]; then
 			echoText "Picking Lineage gerrit changes..."
 			. $REPOPICK_FILE

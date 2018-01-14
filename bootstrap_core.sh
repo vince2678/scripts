@@ -87,7 +87,13 @@ function get_platform_info {
 		exit_error 1
 	fi
 
-	if [ "`echo $platform_version | grep -o "8.0"`" == "8.0" ]; then
+	if [ "`echo $platform_version | grep -o "8.1"`" == "8.1" ]; then
+		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
+		if [ "x$DISTRIBUTION" == "xlineage" ]; then
+			ver="15.1"
+			distroTxt="LineageOS"
+		fi
+	elif [ "`echo $platform_version | grep -o "8.0"`" == "8.0" ]; then
 		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 		if [ "x$DISTRIBUTION" == "xlineage" ]; then
 			ver="15.0"
