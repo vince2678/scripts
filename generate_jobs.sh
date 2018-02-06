@@ -135,6 +135,7 @@ if [ "x$CONFIG_PATH" != "x" ]; then
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.0">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
+    <org.jenkinsci.plugins.builduser.BuildUser plugin="build-user-vars-plugin@1.5"/>
   </buildWrappers>
 </project>
 CONFIG_FILE_F
