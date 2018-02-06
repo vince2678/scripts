@@ -32,7 +32,11 @@ function print_start_build {
 			BUILD_START_TIME=$(date +%s)
 
 			if [ "x$JOB_DESCRIPTION" != "x" ]; then
-				textStr="${JOB_DESCRIPTION}, build %23${JOB_BUILD_NUMBER} started."
+				if [ -n "$BUILD_USER" ]; then
+				    textStr="${JOB_DESCRIPTION}, build %23${JOB_BUILD_NUMBER} started by ${BUILD_USER}."
+				else
+				    textStr="${JOB_DESCRIPTION}, build %23${JOB_BUILD_NUMBER} started."
+			        fi
 				textStr+="%0A%0AThe device's codename is ${DEVICE_NAME}."
 			else
 				textStr="Building: ${distroTxt} ${ver} for the ${DEVICE_NAME}"
