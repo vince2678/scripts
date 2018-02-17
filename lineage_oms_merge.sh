@@ -48,6 +48,7 @@ system/sepolicy
 vendor/cm"
 
 LOCAL_SUBS_REPOS="
+frameworks/base
 packages/apps/Settings
 vendor/cm"
 
