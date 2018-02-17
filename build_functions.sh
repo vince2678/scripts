@@ -14,62 +14,62 @@
 # limitations under the License.
 
 function make_targets {
-	#start building
-	if [ "x$ver" == "x13.0" ]; then
-		MAKE_ARGS+="CM_UPDATER_OTA_URI='cm.updater.uri=https://ota13.msm8916.com/api' CM_BUILDTYPE=NIGHTLY"
-	elif [ "x$ver" == "x14.1" ]; then
-		MAKE_ARGS+="CM_UPDATER_OTA_URI='cm.updater.uri=https://ota14.msm8916.com/api' CM_BUILDTYPE=NIGHTLY"
-	elif [ "x$ver" == "x15.0" ] || [ "x$ver" == "x15.1" ]; then
-		MAKE_ARGS+="CM_UPDATER_OTA_URI='lineage.updater.uri=https://ota15.msm8916.com/api' LINEAGE_BUILDTYPE=NIGHTLY"
-	else
-		MAKE_ARGS+="CM_UPDATER_OTA_URI='lineage.updater.uri=https://ota.msm8916.com/api' LINEAGE_BUILDTYPE=NIGHTLY"
-	fi
-	exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET $MAKE_ARGS
+    #start building
+    if [ "x$ver" == "x13.0" ]; then
+        MAKE_ARGS+="CM_UPDATER_OTA_URI='cm.updater.uri=https://ota13.msm8916.com/api' CM_BUILDTYPE=NIGHTLY"
+    elif [ "x$ver" == "x14.1" ]; then
+        MAKE_ARGS+="CM_UPDATER_OTA_URI='cm.updater.uri=https://ota14.msm8916.com/api' CM_BUILDTYPE=NIGHTLY"
+    elif [ "x$ver" == "x15.0" ] || [ "x$ver" == "x15.1" ]; then
+        MAKE_ARGS+="CM_UPDATER_OTA_URI='lineage.updater.uri=https://ota15.msm8916.com/api' LINEAGE_BUILDTYPE=NIGHTLY"
+    else
+        MAKE_ARGS+="CM_UPDATER_OTA_URI='lineage.updater.uri=https://ota.msm8916.com/api' LINEAGE_BUILDTYPE=NIGHTLY"
+    fi
+    exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET $MAKE_ARGS
 }
 
 function generate_log {
-	# generate_log /path/to/git/tree
+    # generate_log /path/to/git/tree
 
-	# try to use a preset time (7 days ago)
-	dates=$(date -d "`date` - $CHANGELOG_DAYS days" +%Y%m%d)
-	GIT_PATH=$1
-	LOG=`git -C $GIT_PATH log --decorate=full --since=$(date -d ${dates[0]} +%m-%d-%Y)`
+    # try to use a preset time (7 days ago)
+    dates=$(date -d "`date` - $CHANGELOG_DAYS days" +%Y%m%d)
+    GIT_PATH=$1
+    LOG=`git -C $GIT_PATH log --decorate=full --since=$(date -d ${dates[0]} +%m-%d-%Y)`
 
-	if [ "x$LOG" == "x" ]; then
-		# output the last 6 commits
-		git -C $GIT_PATH log --decorate=full -n 6
-	else
-		git -C $GIT_PATH log --decorate=full --since=$(date -d ${dates[0]} +%m-%d-%Y)
-	fi
+    if [ "x$LOG" == "x" ]; then
+        # output the last 6 commits
+        git -C $GIT_PATH log --decorate=full -n 6
+    else
+        git -C $GIT_PATH log --decorate=full --since=$(date -d ${dates[0]} +%m-%d-%Y)
+    fi
 }
 
 function generate_changes {
-	logb "Generating changes..."
+    logb "Generating changes..."
 
-	changelog_name=changelog-${arc_name}.txt
+    changelog_name=changelog-${arc_name}.txt
 
-	if [ -e ${ANDROID_BUILD_TOP}/CHANGELOG.mkdn ]; then
-		cp ${ANDROID_BUILD_TOP}/CHANGELOG.mkdn ${ARTIFACT_OUT_DIR}/${changelog_name}
-	else
-		echo -e "\nMSM8916-COMMON\n---------\n" > ${ARTIFACT_OUT_DIR}/${changelog_name}
-		generate_log ${platform_common_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+    if [ -e ${ANDROID_BUILD_TOP}/CHANGELOG.mkdn ]; then
+        cp ${ANDROID_BUILD_TOP}/CHANGELOG.mkdn ${ARTIFACT_OUT_DIR}/${changelog_name}
+    else
+        echo -e "\nMSM8916-COMMON\n---------\n" > ${ARTIFACT_OUT_DIR}/${changelog_name}
+        generate_log ${platform_common_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
 
-		echo -e "\nKERNEL\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
-		kernel_dir=${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
-		generate_log ${kernel_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+        echo -e "\nKERNEL\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+        kernel_dir=${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
+        generate_log ${kernel_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
 
-		echo -e "\nDEVICE\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
-		device_dir=${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
-		generate_log ${device_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+        echo -e "\nDEVICE\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+        device_dir=${ANDROID_BUILD_TOP}/device/${vendors[0]}/${DEVICE_NAME}
+        generate_log ${device_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
 
-		echo -e "\nDEVICE-COMMON\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
-		generate_log ${common_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+        echo -e "\nDEVICE-COMMON\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+        generate_log ${common_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
 
-		if [ "x$BUILD_TARGET" == "xotapackage" ]; then
-			echo -e "\nVENDOR\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
-			vendor_dir=${ANDROID_BUILD_TOP}/vendor/${vendors[0]}
-			generate_log ${vendor_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
-		fi
-	fi
+        if [ "x$BUILD_TARGET" == "xotapackage" ]; then
+            echo -e "\nVENDOR\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+            vendor_dir=${ANDROID_BUILD_TOP}/vendor/${vendors[0]}
+            generate_log ${vendor_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
+        fi
+    fi
 }
 

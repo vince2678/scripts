@@ -28,28 +28,28 @@ vendors[0]="samsung"
 vendors[1]="qcom"
 
 function bootstrap {
-	# set the common dir
-	platform_common_dir="$BUILD_TOP/device/${vendors[0]}/msm8916-common/"
-	if [ "$(echo $DEVICE_NAME | cut -c -2)" == "a3" ]; then
-		common_dir="$BUILD_TOP/device/${vendors[0]}/a3-common/"
-	elif [ "$(echo $DEVICE_NAME | cut -c -4)" == "core" ]; then
-		common_dir="$BUILD_TOP/device/${vendors[0]}/coreprimelte-common/"
-	elif [ "$(echo $DEVICE_NAME | cut -c -3)" == "gte" ]; then
-		common_dir="$BUILD_TOP/device/${vendors[0]}/gte-common/"
-	elif [ "$(echo $DEVICE_NAME | cut -c -2)" == "j5" ]; then
-		common_dir="$BUILD_TOP/device/${vendors[0]}/j5-common/"
-	elif [ "$(echo $DEVICE_NAME | cut -c -2)" == "j7" ]; then
-		common_dir="$BUILD_TOP/device/${vendors[0]}/j7lte-common/"
-	elif [ "$(echo $DEVICE_NAME | cut -c -9)" == "serranove" ]; then
-		common_dir="$BUILD_TOP/device/${vendors[0]}/serranovexx-common/"
-	else
-		common_dir="$BUILD_TOP/device/${vendors[0]}/gprimelte-common/"
-	fi
+    # set the common dir
+    platform_common_dir="$BUILD_TOP/device/${vendors[0]}/msm8916-common/"
+    if [ "$(echo $DEVICE_NAME | cut -c -2)" == "a3" ]; then
+        common_dir="$BUILD_TOP/device/${vendors[0]}/a3-common/"
+    elif [ "$(echo $DEVICE_NAME | cut -c -4)" == "core" ]; then
+        common_dir="$BUILD_TOP/device/${vendors[0]}/coreprimelte-common/"
+    elif [ "$(echo $DEVICE_NAME | cut -c -3)" == "gte" ]; then
+        common_dir="$BUILD_TOP/device/${vendors[0]}/gte-common/"
+    elif [ "$(echo $DEVICE_NAME | cut -c -2)" == "j5" ]; then
+        common_dir="$BUILD_TOP/device/${vendors[0]}/j5-common/"
+    elif [ "$(echo $DEVICE_NAME | cut -c -2)" == "j7" ]; then
+        common_dir="$BUILD_TOP/device/${vendors[0]}/j7lte-common/"
+    elif [ "$(echo $DEVICE_NAME | cut -c -9)" == "serranove" ]; then
+        common_dir="$BUILD_TOP/device/${vendors[0]}/serranovexx-common/"
+    else
+        common_dir="$BUILD_TOP/device/${vendors[0]}/gprimelte-common/"
+    fi
 
-	#setup the path
-	if [ -n ${BUILD_BIN_ROOT} ]; then
-		export PATH=$PATH:${BUILD_BIN_ROOT}
-	fi
+    #setup the path
+    if [ -n ${BUILD_BIN_ROOT} ]; then
+        export PATH=$PATH:${BUILD_BIN_ROOT}
+    fi
 }
 
 DISTROS="
@@ -63,212 +63,212 @@ if [ -z "$recovery_variant" ]; then
 fi
 
 function get_platform_info {
-	# try to get distribution version from path
-	if [ "x$DISTRIBUTION" == "x" ]; then
-		for i in ${DISTROS}; do
-			if [ `echo $BUILD_TOP | grep -o $i | wc -c` -gt 1 ]; then
-				DISTRIBUTION=`echo $BUILD_TOP | grep -o $i`
-				ver=`echo $BUILD_TOP |grep $i | cut -d '-' -f 2`
-				logr "Guessed distribution is ${DISTRIBUTION} ${ver}"
-			fi
-		done
-	fi
+    # try to get distribution version from path
+    if [ "x$DISTRIBUTION" == "x" ]; then
+        for i in ${DISTROS}; do
+            if [ `echo $BUILD_TOP | grep -o $i | wc -c` -gt 1 ]; then
+                DISTRIBUTION=`echo $BUILD_TOP | grep -o $i`
+                ver=`echo $BUILD_TOP |grep $i | cut -d '-' -f 2`
+                logr "Guessed distribution is ${DISTRIBUTION} ${ver}"
+            fi
+        done
+    fi
 
-	if [ "x$DISTRIBUTION" == "x" ] || [ "x$ver" == "x" ]; then
-		logr "Error: Cannot automatically initialise distribution repo - no distribution specified"
-		exit_error 1
-	fi
+    if [ "x$DISTRIBUTION" == "x" ] || [ "x$ver" == "x" ]; then
+        logr "Error: Cannot automatically initialise distribution repo - no distribution specified"
+        exit_error 1
+    fi
 
-	if ! [ -d "$BUILD_TOP" ] || ! [ -d "$BUILD_TOP/.repo" ]; then
+    if ! [ -d "$BUILD_TOP" ] || ! [ -d "$BUILD_TOP/.repo" ]; then
 
-		mkdir $BUILD_TOP
+        mkdir $BUILD_TOP
 
-		cd $BUILD_TOP
+        cd $BUILD_TOP
 
-		echo "Initialising distribution source repo..."
-		if [ "x$DISTRIBUTION" == "xlineage" ]; then
-			 exit_on_failure repo init -u git://github.com/LineageOS/android.git -b lineage-${ver} --depth=1
-		elif [ "x$DISTRIBUTION" == "xrr" ]; then
-			 exit_on_failure repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b ${ver} --depth=1
-		fi
+        echo "Initialising distribution source repo..."
+        if [ "x$DISTRIBUTION" == "xlineage" ]; then
+             exit_on_failure repo init -u git://github.com/LineageOS/android.git -b lineage-${ver} --depth=1
+        elif [ "x$DISTRIBUTION" == "xrr" ]; then
+             exit_on_failure repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b ${ver} --depth=1
+        fi
 
-		sync_manifests
+        sync_manifests
 
-		sync_all_old=$SYNC_ALL
+        sync_all_old=$SYNC_ALL
 
-		SYNC_ALL=1
+        SYNC_ALL=1
 
-		sync_all_trees
+        sync_all_trees
 
-		if [ "x$sync_all_old" == "x" ]; then
-			SYNC_ALL=
-		else
-			SYNC_ALL=$sync_all_old
-		fi
-	fi
+        if [ "x$sync_all_old" == "x" ]; then
+            SYNC_ALL=
+        else
+            SYNC_ALL=$sync_all_old
+        fi
+    fi
 
-	#move into the build dir
-	cd $BUILD_TOP
+    #move into the build dir
+    cd $BUILD_TOP
 
-	#get the platform version
-	default_plat_version=$(grep 'DEFAULT_PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk|cut -d'=' -f 2 | sed s'/ //'g)
-	platform_version=$(grep "PLATFORM_VERSION.${default_plat_version}[ ]*:" build/core/version_defaults.mk|cut -d'=' -f 2)
+    #get the platform version
+    default_plat_version=$(grep 'DEFAULT_PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk|cut -d'=' -f 2 | sed s'/ //'g)
+    platform_version=$(grep "PLATFORM_VERSION.${default_plat_version}[ ]*:" build/core/version_defaults.mk|cut -d'=' -f 2)
 
-	if [ "x$platform_version" == "x" ]; then
-		platform_version=$(grep 'PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk  | cut -d '=' -f 2)
-	fi
+    if [ "x$platform_version" == "x" ]; then
+        platform_version=$(grep 'PLATFORM_VERSION[ ]*:' build/core/version_defaults.mk  | cut -d '=' -f 2)
+    fi
 
-	export WITH_SU
+    export WITH_SU
 
-	if [ "`echo $platform_version | grep -o "8.1"`" == "8.1" ]; then
-		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
-		if [ "x$DISTRIBUTION" == "xlineage" ]; then
-			ver="15.1"
-			distroTxt="LineageOS"
-		elif [ "x$DISTRIBUTION" == "xrr" ]; then
-			ver="oreo"
-			distroTxt="ResurrectionRemix"
-		fi
-	elif [ "`echo $platform_version | grep -o "8.0"`" == "8.0" ]; then
-		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
-		if [ "x$DISTRIBUTION" == "xlineage" ]; then
-			ver="15.0"
-			distroTxt="LineageOS"
-		elif [ "x$DISTRIBUTION" == "xrr" ]; then
-			ver="oreo"
-			distroTxt="ResurrectionRemix"
-		fi
-	elif [ "`echo $platform_version | grep -o "7.1"`" == "7.1" ]; then
-		export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
-		if [ "x$DISTRIBUTION" == "xlineage" ]; then
-			ver="14.1"
-			distroTxt="LineageOS"
-		elif [ "x$DISTRIBUTION" == "xrr" ]; then
-			ver="5.8"
-			distroTxt="ResurrectionRemix"
-		elif [ "x$DISTRIBUTION" == "xcm" ]; then
-			ver="14.1"
-			distroTxt="CyanogenMod"
-		elif [ "x$DISTRIBUTION" == "xomni" ]; then
-			ver="7.1"
-			distroTxt="Omni"
-		fi
-	elif [ "`echo $platform_version | grep -o "6.0"`" == "6.0" ]; then
-		if [ "x$DISTRIBUTION" == "xlineage" ]; then
-			ver="13.0"
-			distroTxt="LineageOS"
-		elif [ "x$DISTRIBUTION" == "xcm" ]; then
-			ver="13.0"
-			distroTxt="CyanogenMod"
-		elif [ "x$DISTRIBUTION" == "xomni" ]; then
-			ver="6.0"
-			distroTxt="Omni"
-		fi
-	elif [ "`echo $platform_version | grep -o "5.1"`" == "5.1" ]; then
-		if [ "x$DISTRIBUTION" == "xcm" ]; then
-			ver="12.1"
-			distroTxt="CyanogenMod"
-		elif [ "x$DISTRIBUTION" == "xRR" ]; then
-			ver="5.6"
-			distroTxt="ResurrectionRemix"
-		elif [ "x$DISTRIBUTION" == "xomni" ]; then
-			ver="5.1"
-			distroTxt="Omni"
-		fi
-	elif [ "`echo $platform_version | grep -o "5.0"`" == "5.0" ]; then
-		if [ "x$DISTRIBUTION" == "xcm" ]; then
-			ver="12.0"
-			distroTxt="CyanogenMod"
-		elif [ "x$DISTRIBUTION" == "xomni" ]; then
-			ver="5.0"
-			distroTxt="Omni"
-		fi
+    if [ "`echo $platform_version | grep -o "8.1"`" == "8.1" ]; then
+        export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
+        if [ "x$DISTRIBUTION" == "xlineage" ]; then
+            ver="15.1"
+            distroTxt="LineageOS"
+        elif [ "x$DISTRIBUTION" == "xrr" ]; then
+            ver="oreo"
+            distroTxt="ResurrectionRemix"
+        fi
+    elif [ "`echo $platform_version | grep -o "8.0"`" == "8.0" ]; then
+        export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
+        if [ "x$DISTRIBUTION" == "xlineage" ]; then
+            ver="15.0"
+            distroTxt="LineageOS"
+        elif [ "x$DISTRIBUTION" == "xrr" ]; then
+            ver="oreo"
+            distroTxt="ResurrectionRemix"
+        fi
+    elif [ "`echo $platform_version | grep -o "7.1"`" == "7.1" ]; then
+        export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
+        if [ "x$DISTRIBUTION" == "xlineage" ]; then
+            ver="14.1"
+            distroTxt="LineageOS"
+        elif [ "x$DISTRIBUTION" == "xrr" ]; then
+            ver="5.8"
+            distroTxt="ResurrectionRemix"
+        elif [ "x$DISTRIBUTION" == "xcm" ]; then
+            ver="14.1"
+            distroTxt="CyanogenMod"
+        elif [ "x$DISTRIBUTION" == "xomni" ]; then
+            ver="7.1"
+            distroTxt="Omni"
+        fi
+    elif [ "`echo $platform_version | grep -o "6.0"`" == "6.0" ]; then
+        if [ "x$DISTRIBUTION" == "xlineage" ]; then
+            ver="13.0"
+            distroTxt="LineageOS"
+        elif [ "x$DISTRIBUTION" == "xcm" ]; then
+            ver="13.0"
+            distroTxt="CyanogenMod"
+        elif [ "x$DISTRIBUTION" == "xomni" ]; then
+            ver="6.0"
+            distroTxt="Omni"
+        fi
+    elif [ "`echo $platform_version | grep -o "5.1"`" == "5.1" ]; then
+        if [ "x$DISTRIBUTION" == "xcm" ]; then
+            ver="12.1"
+            distroTxt="CyanogenMod"
+        elif [ "x$DISTRIBUTION" == "xRR" ]; then
+            ver="5.6"
+            distroTxt="ResurrectionRemix"
+        elif [ "x$DISTRIBUTION" == "xomni" ]; then
+            ver="5.1"
+            distroTxt="Omni"
+        fi
+    elif [ "`echo $platform_version | grep -o "5.0"`" == "5.0" ]; then
+        if [ "x$DISTRIBUTION" == "xcm" ]; then
+            ver="12.0"
+            distroTxt="CyanogenMod"
+        elif [ "x$DISTRIBUTION" == "xomni" ]; then
+            ver="5.0"
+            distroTxt="Omni"
+        fi
 
-	fi
+    fi
 
-	# print the distribution and platform
-	logb "Distro is: ${distroTxt}/${DISTRIBUTION}-${ver} on platform ${platform_version}"
+    # print the distribution and platform
+    logb "Distro is: ${distroTxt}/${DISTRIBUTION}-${ver} on platform ${platform_version}"
 
-	#set the recovery type
-	if [ -z "$recovery_variant" ] && [ -n "$RECOVERY_VARIANT" ]; then
-		recovery_variant=$RECOVERY_VARIANT
-	fi
-	if [ -z "$recovery_variant" ]; then
-		recovery_variant=$(grep 'RECOVERY_VARIANT[ ]*:=[ ]*' ${platform_common_dir}/BoardConfigCommon.mk 2>/dev/null | grep -v '#' | sed s'/ //'g |cut -d':' -f2)
-	fi
-	if [ -z "$recovery_variant" ]; then
-		recovery_variant=$(grep 'RECOVERY_VARIANT[ ]*:=[ ]*' ${platform_common_dir}/board/*.mk | grep -v '#' | grep -o 'twrp')
-	fi
-	# get the release type
-	if [ "x${release_type}" == "x" ]; then
-		release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${DISTRIBUTION}.mk 2>/dev/null | cut -d'=' -f2 | sed s'/ //'g)
-	fi
+    #set the recovery type
+    if [ -z "$recovery_variant" ] && [ -n "$RECOVERY_VARIANT" ]; then
+        recovery_variant=$RECOVERY_VARIANT
+    fi
+    if [ -z "$recovery_variant" ]; then
+        recovery_variant=$(grep 'RECOVERY_VARIANT[ ]*:=[ ]*' ${platform_common_dir}/BoardConfigCommon.mk 2>/dev/null | grep -v '#' | sed s'/ //'g |cut -d':' -f2)
+    fi
+    if [ -z "$recovery_variant" ]; then
+        recovery_variant=$(grep 'RECOVERY_VARIANT[ ]*:=[ ]*' ${platform_common_dir}/board/*.mk | grep -v '#' | grep -o 'twrp')
+    fi
+    # get the release type
+    if [ "x${release_type}" == "x" ]; then
+        release_type=$(grep "CM_BUILDTYPE" ${common_dir}/${DISTRIBUTION}.mk 2>/dev/null | cut -d'=' -f2 | sed s'/ //'g)
+    fi
 
-	# check if it was succesfully set, and set it to the default if not
-	if [ "x${release_type}" == "x" ]; then
-		release_type="NIGHTLY"
-	fi
+    # check if it was succesfully set, and set it to the default if not
+    if [ "x${release_type}" == "x" ]; then
+        release_type="NIGHTLY"
+    fi
 
-	# get the recovery type
-	if [ "$recovery_variant" == "twrp" ] && [ -d "${BUILD_TOP}/bootable/recovery-twrp" ]; then
-		export RECOVERY_VARIANT=twrp
-		[ -e "${BUILD_TOP}/bootable/recovery/variables.h" ] && TWRP_VAR_FILE="${BUILD_TOP}/bootable/recovery/variables.h"
-		[ -e "${BUILD_TOP}/bootable/recovery-twrp/variables.h" ] && TWRP_VAR_FILE="${BUILD_TOP}/bootable/recovery-twrp/variables.h"
+    # get the recovery type
+    if [ "$recovery_variant" == "twrp" ] && [ -d "${BUILD_TOP}/bootable/recovery-twrp" ]; then
+        export RECOVERY_VARIANT=twrp
+        [ -e "${BUILD_TOP}/bootable/recovery/variables.h" ] && TWRP_VAR_FILE="${BUILD_TOP}/bootable/recovery/variables.h"
+        [ -e "${BUILD_TOP}/bootable/recovery-twrp/variables.h" ] && TWRP_VAR_FILE="${BUILD_TOP}/bootable/recovery-twrp/variables.h"
 
-		if [ "x${TWRP_VAR_FILE}" != "x" ]; then
-			recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_VERSION_STR' | grep '"' | cut -d '"' -f 2`
-			if [ -z "$recovery_ver" ]; then
-				recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_MAIN_VERSION_STR' | grep '"' | cut -d '"' -f 2`
-			fi
-			recovery_flavour="TWRP-${recovery_ver}"
-		elif [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
-			recovery_flavour="TWRP-3.1.x"
-		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
-			recovery_flavour="TWRP-3.0.x"
-		else
-			recovery_flavour="TWRP-2.8.7.0"
-		fi
-	elif [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xrr" ]; then
-		recovery_flavour="LineageOSRecovery"
-	elif [ "x$DISTRIBUTION" == "xcm" ]; then
-		recovery_flavour="CyanogenModRecovery"
-	elif [ "x$DISTRIBUTION" == "xomni" ]; then
-		if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
-			recovery_flavour="TWRP-3.1.x"
-		elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
-			recovery_flavour="TWRP-3.0.x"
-		else
-			recovery_flavour="TWRP-2.8.7.0"
-		fi
-	fi
+        if [ "x${TWRP_VAR_FILE}" != "x" ]; then
+            recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_VERSION_STR' | grep '"' | cut -d '"' -f 2`
+            if [ -z "$recovery_ver" ]; then
+                recovery_ver=`cat ${TWRP_VAR_FILE} | grep 'define TW_MAIN_VERSION_STR' | grep '"' | cut -d '"' -f 2`
+            fi
+            recovery_flavour="TWRP-${recovery_ver}"
+        elif [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
+            recovery_flavour="TWRP-3.1.x"
+        elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
+            recovery_flavour="TWRP-3.0.x"
+        else
+            recovery_flavour="TWRP-2.8.7.0"
+        fi
+    elif [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xrr" ]; then
+        recovery_flavour="LineageOSRecovery"
+    elif [ "x$DISTRIBUTION" == "xcm" ]; then
+        recovery_flavour="CyanogenModRecovery"
+    elif [ "x$DISTRIBUTION" == "xomni" ]; then
+        if [ "`echo $ver | grep -o "7.1"`" == "7.1" ]; then
+            recovery_flavour="TWRP-3.1.x"
+        elif [ "`echo $ver | grep -o "6.0"`" == "6.0" ]; then
+            recovery_flavour="TWRP-3.0.x"
+        else
+            recovery_flavour="TWRP-2.8.7.0"
+        fi
+    fi
 }
 
 function setup_env {
 
-	#move into the build dir
-	cd $BUILD_TOP
+    #move into the build dir
+    cd $BUILD_TOP
 
-	BUILD_TYPE=2
+    BUILD_TYPE=2
 
-	#set up the environment
-	if [ "x$DISTRIBUTION" == "xrr" ]; then
-		echo -e "${BUILD_TYPE}\n${CHANGELOG_DAYS}" | . build/envsetup.sh
-	else
-		. build/envsetup.sh
-	fi
+    #set up the environment
+    if [ "x$DISTRIBUTION" == "xrr" ]; then
+        echo -e "${BUILD_TYPE}\n${CHANGELOG_DAYS}" | . build/envsetup.sh
+    else
+        . build/envsetup.sh
+    fi
 
-	# remove duplicate crypt_fs.
-	if [ -d ${BUILD_TOP}/device/qcom-common/cryptfs_hw ] && [ -d ${BUILD_TOP}/vendor/qcom/opensource/cryptfs_hw ]; then
-		rm -r ${BUILD_TOP}/vendor/qcom/opensource/cryptfs_hw
-	fi
+    # remove duplicate crypt_fs.
+    if [ -d ${BUILD_TOP}/device/qcom-common/cryptfs_hw ] && [ -d ${BUILD_TOP}/vendor/qcom/opensource/cryptfs_hw ]; then
+        rm -r ${BUILD_TOP}/vendor/qcom/opensource/cryptfs_hw
+    fi
 
-	#select the device
-	lunch ${DISTRIBUTION}_${DEVICE_NAME}-${BUILD_VARIANT}
+    #select the device
+    lunch ${DISTRIBUTION}_${DEVICE_NAME}-${BUILD_VARIANT}
 
-	# exit if there was an error
-	exit_error $?
+    # exit if there was an error
+    exit_error $?
 
-	# make the artifact dir
-	exit_on_failure mkdir -p $ARTIFACT_OUT_DIR
-	exit_on_failure mkdir -p ${SAVED_BUILD_JOBS_DIR}
+    # make the artifact dir
+    exit_on_failure mkdir -p $ARTIFACT_OUT_DIR
+    exit_on_failure mkdir -p ${SAVED_BUILD_JOBS_DIR}
 }

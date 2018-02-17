@@ -30,9 +30,9 @@ A_SCRIPT_F
 
 
 if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xrr" ]; then
-	kern_base="CAF"
+    kern_base="CAF"
 else
-	kern_base="AOSP"
+    kern_base="AOSP"
 fi
 dist_str="$kern_base $ver kernel only guaranteed to boot on $kern_base $ver based systems"
 plat_short=`echo $platform_version|cut -c -3`
@@ -89,82 +89,82 @@ plat=\`echo \$display_id | grep -o $plat_short\`
 umount_fs system
 
 if [ -n "\$dist" ] && [ -n "\$plat" ]; then
-	ui_print
-	ui_print "Detected android distribution ${distroTxt}/${DISTRIBUTION}-${ver} on platform ${platform_version}"
-	ui_print
-	ui_print "Flashing boot image without repacking..."
-	dd if=\$BOOT_IMG of=\$BOOT_PARTITION
-	if [ \$? != 0 ]; then
-	    ui_print
-	    ui_print "Failed to back up boot image."
-	    ui_print
-	    exit 1
-	fi
+    ui_print
+    ui_print "Detected android distribution ${distroTxt}/${DISTRIBUTION}-${ver} on platform ${platform_version}"
+    ui_print
+    ui_print "Flashing boot image without repacking..."
+    dd if=\$BOOT_IMG of=\$BOOT_PARTITION
+    if [ \$? != 0 ]; then
+        ui_print
+        ui_print "Failed to back up boot image."
+        ui_print
+        exit 1
+    fi
 else
-	ui_print "Unpacking \$BOOT_PARTITION..."
-	\$BIN_PATH/unpackbootimg -i \$BOOT_PARTITION -o \$BOOT_PARTITION_TMPDIR/
+    ui_print "Unpacking \$BOOT_PARTITION..."
+    \$BIN_PATH/unpackbootimg -i \$BOOT_PARTITION -o \$BOOT_PARTITION_TMPDIR/
 
-	if [ \$? != 0 ]; then
-	    ui_print \$error_msg
-	    ui_print ""
-	    exit 1
-	fi
+    if [ \$? != 0 ]; then
+        ui_print \$error_msg
+        ui_print ""
+        exit 1
+    fi
 
-	ui_print "Unpacking \$BOOT_IMG..."
-	\$BIN_PATH/unpackbootimg -i \$BOOT_IMG -o \$BOOT_IMG_TMPDIR/
+    ui_print "Unpacking \$BOOT_IMG..."
+    \$BIN_PATH/unpackbootimg -i \$BOOT_IMG -o \$BOOT_IMG_TMPDIR/
 
-	if [ \$? != 0 ]; then
-	    ui_print \$error_msg
-	    ui_print ""
-	    exit 1
-	fi
+    if [ \$? != 0 ]; then
+        ui_print \$error_msg
+        ui_print ""
+        exit 1
+    fi
 
-	ui_print "Replacing kernel..."
-	rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
-	cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-zImage \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
+    ui_print "Replacing kernel..."
+    rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
+    cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-zImage \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
 
-	ui_print "Replacing dt..."
-	rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
-	cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-dt \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
+    ui_print "Replacing dt..."
+    rm \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
+    cp \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-dt \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
 
-	if [ \$? != 0 ]; then
-	    ui_print \$error_msg
-	    ui_print ""
-	    exit 1
-	fi
+    if [ \$? != 0 ]; then
+        ui_print \$error_msg
+        ui_print ""
+        exit 1
+    fi
 
-	base=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-base\`
-	ramdisk_offset=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk_offset\`
-	pagesize=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-pagesize\`
-	#cmdline="\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-cmdline\`"
-	cmdline="\`cat \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-cmdline\`"
-	zImage=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
-	ramdisk=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk.gz
-	dt=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
-	file_out=\$BOOT_PARTITION_TMPDIR/boot.img
+    base=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-base\`
+    ramdisk_offset=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk_offset\`
+    pagesize=\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-pagesize\`
+    #cmdline="\`cat \$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-cmdline\`"
+    cmdline="\`cat \$BOOT_IMG_TMPDIR/\${BOOT_IMG_BASENAME}-cmdline\`"
+    zImage=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-zImage
+    ramdisk=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-ramdisk.gz
+    dt=\$BOOT_PARTITION_TMPDIR/\${BOOT_PARTITION_BASENAME}-dt
+    file_out=\$BOOT_PARTITION_TMPDIR/boot.img
 
-	ui_print "Repacking boot image..."
-	\$BIN_PATH/mkbootimg --kernel \$zImage --ramdisk \$ramdisk --cmdline "\$cmdline" \\
-		--base \$base --pagesize \$pagesize --ramdisk_offset \$ramdisk_offset \\
-		--dt \$dt -o \$file_out
+    ui_print "Repacking boot image..."
+    \$BIN_PATH/mkbootimg --kernel \$zImage --ramdisk \$ramdisk --cmdline "\$cmdline" \\
+        --base \$base --pagesize \$pagesize --ramdisk_offset \$ramdisk_offset \\
+        --dt \$dt -o \$file_out
 
-	if [ \$? != 0 ]; then
-	    ui_print \$error_msg
-	    ui_print ""
-	    exit 1
-	fi
+    if [ \$? != 0 ]; then
+        ui_print \$error_msg
+        ui_print ""
+        exit 1
+    fi
 
-	ui_print "Making bootimage SEAndroid enforcing..."
-	echo -n "SEANDROIDENFORCE" >> \${file_out}
+    ui_print "Making bootimage SEAndroid enforcing..."
+    echo -n "SEANDROIDENFORCE" >> \${file_out}
 
-	ui_print "Flashing boot image..."
-	dd if=\$file_out of=\$BOOT_PARTITION
+    ui_print "Flashing boot image..."
+    dd if=\$file_out of=\$BOOT_PARTITION
 
-	if [ \$? != 0 ]; then
-	    ui_print \$error_msg
-	    ui_print ""
-	    exit 1
-	fi
+    if [ \$? != 0 ]; then
+        ui_print \$error_msg
+        ui_print ""
+        exit 1
+    fi
 fi
 
 ui_print "Cleaning up..."
@@ -179,19 +179,19 @@ SWAP_K_F
 cat <<A_INSTALL_F > ${boot_pkg_dir}/${install_target_dir}/installend/update_wifi_module.sh
 #!/sbin/sh
 if [ -e /tmp/blobs/wlan.ko ]; then
-	mount_fs system
+    mount_fs system
 
-	if [ -e /system/lib/modules/wlan.ko ]; then
-		ui_print "Backing up previous wlan module..."
-		ui_print ""
-		mv /system/lib/modules/wlan.ko /system/lib/modules/wlan.ko.old
-	fi
-	ui_print "Copying new wlan module..."
-	ui_print ""
-	cp /tmp/blobs/wlan.ko /system/lib/modules/wlan.ko
-	chmod 0644 /system/lib/modules/wlan.ko
+    if [ -e /system/lib/modules/wlan.ko ]; then
+        ui_print "Backing up previous wlan module..."
+        ui_print ""
+        mv /system/lib/modules/wlan.ko /system/lib/modules/wlan.ko.old
+    fi
+    ui_print "Copying new wlan module..."
+    ui_print ""
+    cp /tmp/blobs/wlan.ko /system/lib/modules/wlan.ko
+    chmod 0644 /system/lib/modules/wlan.ko
 
-	umount_fs system
+    umount_fs system
 fi
 A_INSTALL_F
 
@@ -200,19 +200,19 @@ cat <<B_INSTALL_F > ${revert_pkg_dir}/${install_target_dir}/installbegin/revert_
 mount_fs system
 BOOT_PARTITION=/dev/block/bootdevice/by-name/boot
 if [ -e /system/boot.img.bak ]; then
-	ui_print "Restoring boot image..."
-	ui_print ""
-	dd if=/system/boot.img.bak of=\$BOOT_PARTITION
+    ui_print "Restoring boot image..."
+    ui_print ""
+    dd if=/system/boot.img.bak of=\$BOOT_PARTITION
 
-	if [ \$? != 0 ]; then
-	    ui_print "Failed to restore boot image."
-	    ui_print ""
-	    exit 1
-	fi
-	rm /system/boot.img.bak
+    if [ \$? != 0 ]; then
+        ui_print "Failed to restore boot image."
+        ui_print ""
+        exit 1
+    fi
+    rm /system/boot.img.bak
 else
-	    ui_print "No backup boot image found."
-	    ui_print ""
+        ui_print "No backup boot image found."
+        ui_print ""
 fi
 umount_fs system
 B_INSTALL_F
@@ -221,16 +221,16 @@ cat <<B_INSTALL_F > ${revert_pkg_dir}/${install_target_dir}/installbegin/revert_
 #!/sbin/sh
 mount_fs system
 if [ -e /system/lib/modules/pronto/pronto_wlan.ko.old ]; then
-	ui_print "Restoring previous pronto wlan module..."
-	ui_print ""
-	rm /system/lib/modules/pronto/pronto_wlan.ko
-	mv /system/lib/modules/pronto/pronto_wlan.ko.old /system/lib/modules/pronto/pronto_wlan.ko
+    ui_print "Restoring previous pronto wlan module..."
+    ui_print ""
+    rm /system/lib/modules/pronto/pronto_wlan.ko
+    mv /system/lib/modules/pronto/pronto_wlan.ko.old /system/lib/modules/pronto/pronto_wlan.ko
 fi
 if [ -e /system/lib/modules/wlan.ko.old ]; then
-	ui_print "Restoring previous wlan module..."
-	ui_print ""
-	rm /system/lib/modules/wlan.ko
-	mv /system/lib/modules/wlan.ko.old /system/lib/modules/wlan.ko
+    ui_print "Restoring previous wlan module..."
+    ui_print ""
+    rm /system/lib/modules/wlan.ko
+    mv /system/lib/modules/wlan.ko.old /system/lib/modules/wlan.ko
 fi
 umount_fs system
 B_INSTALL_F
@@ -245,20 +245,20 @@ mount_fs system
 
 if [ -d \$BLOBBASE ]; then
 
-	cd \$BLOBBASE
+    cd \$BLOBBASE
 
-	# copy all the blobs
-	for FILE in \`find . -type f | cut -c 3-\` ; do
-		mkdir -p \`dirname /system/\$FILE\`
-		ui_print "Copying \$FILE to /system/\$FILE ..."
-		cp \$FILE /system/\$FILE
-	done
+    # copy all the blobs
+    for FILE in \`find . -type f | cut -c 3-\` ; do
+        mkdir -p \`dirname /system/\$FILE\`
+        ui_print "Copying \$FILE to /system/\$FILE ..."
+        cp \$FILE /system/\$FILE
+    done
 
-	# set permissions on binary files
-	for FILE in \`find bin -type f | cut -c 3-\`; do
-		ui_print "Setting /system/\$FILE executable ..."
-		chmod 755 /system/\$FILE
-	done
+    # set permissions on binary files
+    for FILE in \`find bin -type f | cut -c 3-\`; do
+        ui_print "Setting /system/\$FILE executable ..."
+        chmod 755 /system/\$FILE
+    done
 umount_fs system
 fi
 CP_VARIANT_F
@@ -273,9 +273,9 @@ exit_on_failure mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
 exit_on_failure mkdir -p ${revert_pkg_dir}/${proprietary_dir}/etc/
 ${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
 if [ "$EXPERIMENTAL_KERNEL"  == "y" ]; then
-	${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
+    ${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
 else
-	cp ${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh ${boot_pkg_dir}/${proprietary_dir}/etc/
+    cp ${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh ${boot_pkg_dir}/${proprietary_dir}/etc/
 fi
 
 cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_pkg_dir}/${install_target_dir}/run_scripts.sh

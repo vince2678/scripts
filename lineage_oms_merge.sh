@@ -72,10 +72,10 @@ function sync_substratum() {
         # SHIFT TO PROPER FOLDER
         cd ${BUILD_TOP}
 
-	#nuke everything in the dir just to be safe
-	rm -r ${FOLDER}/ -f
+    #nuke everything in the dir just to be safe
+    rm -r ${FOLDER}/ -f
 
-	#sync
+    #sync
         repo sync ${FOLDER} -d
 
         # SHIFT TO PROPER FOLDER
@@ -87,13 +87,13 @@ function sync_substratum() {
         BRANCH=cm-14.1
 
         # FETCH THE REPO
-	if [ -n "$(echo $LOCAL_SUBS_REPOS | grep -o $FOLDER)" ]; then
-		git fetch https://github.com/Galaxy-MSM8916/${URL} ${BRANCH}
-		COMMITTER="Zvikaramba"
-	else
-		git fetch https://github.com/LineageOMS/${URL} ${BRANCH}
-		COMMITTER="Nathan Chancellor"
-	fi
+    if [ -n "$(echo $LOCAL_SUBS_REPOS | grep -o $FOLDER)" ]; then
+        git fetch https://github.com/Galaxy-MSM8916/${URL} ${BRANCH}
+        COMMITTER="Zvikaramba"
+    else
+        git fetch https://github.com/LineageOMS/${URL} ${BRANCH}
+        COMMITTER="Nathan Chancellor"
+    fi
 
         # GIT GYMNASTICS (GETS MESSY, BEWARE)
         # FIRST HASH WILL ALWAYS BE THE FETCH HEAD
@@ -160,10 +160,10 @@ function unsync_substratum() {
         # SHIFT TO PROPER FOLDER
         cd ${BUILD_TOP}
 
-	#nuke everything in the dir just to be safe
-	rm -r ${FOLDER}/ -f
+    #nuke everything in the dir just to be safe
+    rm -r ${FOLDER}/ -f
 
-	#sync
+    #sync
         repo sync ${FOLDER} -d
 
         # ADD TO RESULT STRING
