@@ -67,7 +67,7 @@ if [ -n "$SYNC_ALL" ]; then
 		14*)
 			sync_substratum;
 		;;
-		15*)
+		15* | oreo )
 			REPOPICK_FILE=${BUILD_TEMP}/repopicks-${ver}.sh
 			wget https://msm8916.com/~vincent/repopicks-${ver}.sh -O $REPOPICK_FILE
 			if [ "$?" -eq 0 ]; then

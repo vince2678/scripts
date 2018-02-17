@@ -29,7 +29,7 @@ assert(run_program("/tmp/install/bin/run_scripts.sh", "postvalidate") == 0);
 A_SCRIPT_F
 
 
-if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xRR" ]; then
+if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xrr" ]; then
 	kern_base="CAF"
 else
 	kern_base="AOSP"
