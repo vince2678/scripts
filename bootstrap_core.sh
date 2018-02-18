@@ -64,7 +64,7 @@ fi
 
 function get_platform_info {
     # try to get distribution version from path
-    if [ "x$DISTRIBUTION" == "x" ]; then
+    if [ "x$DISTRIBUTION" == "x" ] || [ "x$ver" == "x" ]; then
         for i in ${DISTROS}; do
             if [ `echo $BUILD_TOP | grep -o $i | wc -c` -gt 1 ]; then
                 DISTRIBUTION=`echo $BUILD_TOP | grep -o $i`
