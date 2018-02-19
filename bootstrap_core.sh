@@ -256,14 +256,8 @@ function setup_env {
     #move into the build dir
     cd $BUILD_TOP
 
-    BUILD_TYPE=2
-
     #set up the environment
-    if [ "x$DISTRIBUTION" == "xrr" ]; then
-        echo -e "${BUILD_TYPE}\n${CHANGELOG_DAYS}" | . build/envsetup.sh
-    else
-        . build/envsetup.sh
-    fi
+    . build/envsetup.sh
 
     # remove duplicate crypt_fs.
     if [ -d ${BUILD_TOP}/device/qcom-common/cryptfs_hw ] && [ -d ${BUILD_TOP}/vendor/qcom/opensource/cryptfs_hw ]; then
