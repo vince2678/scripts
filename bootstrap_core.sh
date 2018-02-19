@@ -56,7 +56,8 @@ DISTROS="
 omni
 lineage
 cm
-rr"
+rr
+dotOS"
 
 if [ -z "$recovery_variant" ]; then
     recovery_variant=$(echo $@ | grep -o 'RECOVERY_VARIANT[ ]*:=[ ]*[A-Za-z0-9]*' | sed s'/ //'g |cut -d':' -f2)
@@ -90,6 +91,8 @@ function get_platform_info {
              exit_on_failure repo init -u git://github.com/LineageOS/android.git -b lineage-${ver} --depth=1
         elif [ "x$DISTRIBUTION" == "xrr" ]; then
              exit_on_failure repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b ${ver} --depth=1
+        elif [ "x$DISTRIBUTION" == "xdotOS" ]; then
+             exit_on_failure repo init -u git://github.com/DotOS/manifest.git -b dot-${ver} --depth=1
         fi
 
         sync_manifests
@@ -137,6 +140,9 @@ function get_platform_info {
         elif [ "x$DISTRIBUTION" == "xrr" ]; then
             ver="oreo"
             distroTxt="ResurrectionRemix"
+        elif [ "x$DISTRIBUTION" == "xdotOS" ]; then
+            ver="o"
+            distroTxt="dotOS"
         fi
     elif [ "`echo $platform_version | grep -o "7.1"`" == "7.1" ]; then
         export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
@@ -230,6 +236,8 @@ function get_platform_info {
         fi
     elif [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xrr" ]; then
         recovery_flavour="LineageOSRecovery"
+    elif [ "x$DISTRIBUTION" == "xdotOS" ]; then
+        recovery_flavour="dotOSRecovery"
     elif [ "x$DISTRIBUTION" == "xcm" ]; then
         recovery_flavour="CyanogenModRecovery"
     elif [ "x$DISTRIBUTION" == "xomni" ]; then
