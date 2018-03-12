@@ -31,4 +31,4 @@ DEVICES=gtelwifiue:SM-T560NU,
 DEVICES+=gtesqltespr:SM-T377P
 
 # extra commands to pass to build script
-SHELL_COMMANDS_EXTRA="--clean"
+#SHELL_COMMANDS_EXTRA="--clean"
