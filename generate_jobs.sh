@@ -284,7 +284,7 @@ for file in $JOB_DESC_FILES; do
 
 			if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
 
-				CAN_ROAM=false
+				CAN_ROAM=true
 
 				SHELL_COMMANDS="JOB_URL=https://${HOST_NAME}/job/$(echo ${JOB_DIR_PROPER} | sed s/jobs/job/g)\${JOB_BASE_NAME}/\${BUILD_NUMBER}"
 				SHELL_COMMANDS+=${NEWLINE}
@@ -305,7 +305,7 @@ for file in $JOB_DESC_FILES; do
 				SHELL_COMMANDS+="--host ${HOST_USER}@${HOST_NAME} ${SHELL_COMMANDS_EXTRA} \$EXTRA_ARGS"
 
 			elif [ "$BUILD_TARGET" == "promote" ]; then
-				CAN_ROAM=true
+				CAN_ROAM=false
 
 				if [ "$DIST_VERSION" == "13.0" ]; then
 					OTA_VER=13
@@ -352,7 +352,7 @@ for file in $JOB_DESC_FILES; do
 
 			elif [ "$BUILD_TARGET" == "demote" ]; then
 
-				CAN_ROAM=true
+				CAN_ROAM=false
 
 				if [ "$DIST_VERSION" == "13.0" ]; then
 					OTA_VER=13
