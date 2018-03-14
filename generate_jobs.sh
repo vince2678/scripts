@@ -83,6 +83,10 @@ if [ "x$CONFIG_PATH" != "x" ]; then
 	display_extra+="(${DEVICE_EXTRA_DESC}) "
   fi
 
+  if [ -n "$ASSIGNED_NODE" ]; then
+  FIX_NODE="<assignedNode>${ASSIGNED_NODE}</assignedNode>"
+  fi
+
   cat <<CONFIG_FILE_F > ${CONFIG_PATH}
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
@@ -116,7 +120,7 @@ if [ "x$CONFIG_PATH" != "x" ]; then
     </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
-  <assignedNode>${ASSIGNED_NODE}</assignedNode>
+  ${FIX_NODE}
   <canRoam>${CAN_ROAM}</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
