@@ -34,4 +34,4 @@ DEVICES=j5lte:SM-J500F,
 DEVICES+=j5nlte:SM-J500FN
 
 # extra commands to pass to build script
-SHELL_COMMANDS_EXTRA="--branch-map=kernel/samsung/msm8916:lineage-15.1-dyneteve --branch-map=device/samsung/msm8916-common:lineage-15.1-dyneteve --silent"
+SHELL_COMMANDS_EXTRA="--silent"
