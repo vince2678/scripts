@@ -31,7 +31,8 @@ BUILD_DIR=lineage-##{DIST_VERSION}
 # format: DEVICE_CODENAME:DEVICE_MODEL:DESCRIPTION
 # Use '_' to denote a space.
 DEVICES=j5lte:SM-J500F,
-DEVICES+=j5nlte:SM-J500FN
+DEVICES+=j5nlte:SM-J500FN,
+DEVICES+=j5xnlte:SM-J510FN
 
 # extra commands to pass to build script
 SHELL_COMMANDS_EXTRA="--silent"
