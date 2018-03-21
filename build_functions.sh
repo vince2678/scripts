@@ -16,11 +16,11 @@
 function make_targets {
     #start building
     if [ "x$ver" == "x13.0" ]; then
-        MAKE_ARGS+="CM_UPDATER_OTA_URI='cm.updater.uri=https://ota13.msm8916.com/api' CM_BUILDTYPE=NIGHTLY"
+        MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota13.msm8916.com/api CM_BUILDTYPE=NIGHTLY"
     elif [ "x$ver" == "x14.1" ]; then
-        MAKE_ARGS+="CM_UPDATER_OTA_URI='cm.updater.uri=https://ota14.msm8916.com/api' CM_BUILDTYPE=NIGHTLY"
+        MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota14.msm8916.com/api CM_BUILDTYPE=NIGHTLY"
     elif [ "x$ver" == "x15.0" ] || [ "x$ver" == "x15.1" ]; then
-        MAKE_ARGS+="CM_UPDATER_OTA_URI='lineage.updater.uri=https://ota15.msm8916.com/api' LINEAGE_BUILDTYPE=NIGHTLY"
+        MAKE_ARGS+="CM_UPDATER_OTA_URI=lineage.updater.uri=https://ota15.msm8916.com/api LINEAGE_BUILDTYPE=NIGHTLY"
     else
         MAKE_ARGS+="LINEAGE_BUILDTYPE=NIGHTLY"
     fi
