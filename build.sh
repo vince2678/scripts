@@ -345,6 +345,8 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
     restore_saved_build_state
     # get the platform info
     get_platform_info
+    # clean build top
+    clean_out
     # sync manifests
     sync_manifests
     # sync the repos
@@ -356,8 +358,6 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
         apply_repo_map
         # setup the build environment
         setup_env "$@"
-        # clean build top
-        clean_out
         # apply repopicks
         apply_repopicks
         # print the build start text

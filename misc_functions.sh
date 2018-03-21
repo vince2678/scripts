@@ -113,7 +113,7 @@ function restore_saved_build_state {
 }
 
 function clean_out {
-    cd ${ANDROID_BUILD_TOP}/
+    cd $BUILD_TOP/
     if [ "x${CLEAN_TARGET_OUT}" != "x" ] && [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
         echoText "Cleaning build dir..."
         rm -rf out
