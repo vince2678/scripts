@@ -19,9 +19,9 @@ function make_targets {
         MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota13.msm8916.com/api CM_BUILDTYPE=NIGHTLY"
     elif [ "x$ver" == "x14.1" ]; then
         MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota14.msm8916.com/api CM_BUILDTYPE=NIGHTLY"
-    elif [ "x$ver" == "x15.0" ] || [ "x$ver" == "x15.1" ]; then
+    elif [ "x$ver" == "x15.0" ]; then
         MAKE_ARGS+="CM_UPDATER_OTA_URI=lineage.updater.uri=https://ota15.msm8916.com/api LINEAGE_BUILDTYPE=NIGHTLY"
-    else
+    elif [ "x$ver" == "x15.1" ]; then
         MAKE_ARGS+="LINEAGE_BUILDTYPE=NIGHTLY"
     fi
     exit_on_failure make -j${JOB_NUMBER} $BUILD_TARGET $MAKE_ARGS
