@@ -81,8 +81,7 @@ function print_end_build {
             boot_tar_name=bootimage_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.tar
 
             if [ "$BUILD_TARGET" == "recoveryimage" ]; then
-                #str_rec="%0A%0ARecovery: ${link}/builds/${rec_name}.tar"
-                true
+                str_rec="%0A%0ARecovery: ${link}/builds/${rec_name}.tar"
             elif [ "$BUILD_TARGET" == "bootimage" ]; then
                 #str_boot1="%0A%0ABoot zip package: ${link}/builds/${bimg_name}.zip"
                 #str_boot2="%0A%0ABoot (ODIN package): ${link}/builds/${boot_tar_name}"
