@@ -49,6 +49,7 @@ DEVICES+=j5nlte:SM-J500FN,
 DEVICES+=j5xnlte:SM-J510FN,
 DEVICES+=j7ltespr:SM-J700P,
 DEVICES+=j7ltechn:SM-J7008,
+DEVICES+=o7prolte:SM-G600FY,
 DEVICES+=serranovelte:SM-I9195I
 
 SHELL_COMMANDS_EXTRA=" --pick-topic twrp"
