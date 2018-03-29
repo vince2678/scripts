@@ -33,7 +33,8 @@ BUILD_DIR=lineage-##{DIST_VERSION}
 DEVICES=j5lte:SM-J500F,
 DEVICES+=j53gxx:SM-J500H,
 DEVICES+=j5nlte:SM-J500FN,
-DEVICES+=j5xnlte:SM-J510FN
+DEVICES+=j5xnlte:SM-J510FN,
+DEVICES+=o7prolte:SM-G600FY
 
 # extra commands to pass to build script
 SHELL_COMMANDS_EXTRA="--silent"
