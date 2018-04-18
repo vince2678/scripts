@@ -28,7 +28,9 @@ BUILD_TARGET=otapackage
 # format: DEVICE_CODENAME:DEVICE_MODEL:DESCRIPTION
 # Use '_' to denote a space.
 DEVICES=gtelwifiue:SM-T560NU,
-DEVICES+=gtesqltespr:SM-T377P
+DEVICES+=gtesqltespr:SM-T377P,
+DEVICES+=gt58wifi:SM-T350,
+DEVICES+=gt510wifi:SM-T550
 
 # extra commands to pass to build script
 #SHELL_COMMANDS_EXTRA="--clean"
