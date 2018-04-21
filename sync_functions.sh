@@ -44,7 +44,7 @@ if [ -n "$SYNC_VENDOR" ]; then
         targets="device vendor kernel"
         for dir in ${targets}; do
             if ! [ -d ${dir}/${vendor} ]; then continue; fi
-            repo sync ${dir}/${vendor}/* --force-sync --prune
+            repo sync ${dir}/${vendor}/* --force-sync --no-tags --no-clone-bundle --prune
         done
     done
 fi
@@ -60,7 +60,7 @@ if [ -n "$SYNC_ALL" ]; then
         unsync_substratum
     fi
 
-    repo sync --force-sync --prune
+    repo sync --force-sync --no-tags --no-clone-bundle --prune
 
     # sync substratum if we're on LOS 14.1
     case $ver in
@@ -103,7 +103,7 @@ function apply_repo_map {
             local GIT="git -C ${BUILD_TOP}/$repo"
 
             echoTextBlue "Repo is $repo. Reverting..."
-            cd ${BUILD_TOP} && repo sync $repo -d
+            cd ${BUILD_TOP} && repo sync $repo --no-tags --no-clone-bundle -d
 
             echoTextBlue "Deleting branch $ref."
             ${GIT} branch -D $ref 2>/dev/null
@@ -136,7 +136,7 @@ function reverse_repo_map {
             local GIT="git -C ${BUILD_TOP}/$repo"
 
             echoTextBlue "Repo is $repo.\n Reverting..."
-            cd ${BUILD_TOP} && repo sync $repo -d
+            cd ${BUILD_TOP} && repo sync $repo --no-tags --no-clone-bundle -d
 
             echoTextBlue "Deleting branch $ref."
             ${GIT} branch -D $ref 2>/dev/null
