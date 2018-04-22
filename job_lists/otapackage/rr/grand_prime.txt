@@ -31,7 +31,10 @@ DEVICES=gprimelte:SM-G530T/T1/W:Unified_Builds,
 DEVICES+=gprimeltexx:SM-G530FZ,
 DEVICES+=gprimeltezt:SM-G530MU,
 DEVICES+=gprimeltespr:SM-G530P,
-DEVICES+=gprimeltetfnvzw:SM-S920L
+DEVICES+=gprimeltetfnvzw:SM-S920L,
+DEVICES+=fortuna3g:SM-G530H:XX_Variant,
+DEVICES+=fortunalteub:SM-G530M,
+DEVICES+=fortunave3g:SM-G530H:XC_Variant
 
 
 # extra commands to pass to build script
