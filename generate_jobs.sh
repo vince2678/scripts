@@ -83,6 +83,20 @@ if [ "x$CONFIG_PATH" != "x" ]; then
 	display_extra+="(${DEVICE_EXTRA_DESC}) "
   fi
 
+  args_extra=
+
+  if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
+    args_extra="   <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>EXTRA_ARGS</name>
+          <description>Extra arguments to pass to the build script.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>"
+  fi
+
   if [ -n "$ASSIGNED_NODE" ]; then
   FIX_NODE="<assignedNode>${ASSIGNED_NODE}</assignedNode>"
   fi
@@ -109,15 +123,7 @@ if [ "x$CONFIG_PATH" != "x" ]; then
         <artifactNumToKeep>${BUILDS_TO_KEEP}</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>EXTRA_ARGS</name>
-          <description>Extra arguments to pass to the build script.</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
+${args_extra}
   </properties>
   <scm class="hudson.scm.NullSCM"/>
   ${FIX_NODE}
