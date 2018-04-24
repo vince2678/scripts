@@ -84,7 +84,7 @@ if [ "x$CONFIG_PATH" != "x" ]; then
   fi
 
   args_extra=
-  build_trigger="  <publishers/>"
+  gen_torrents=
 
   if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
     args_extra="   <hudson.model.ParametersDefinitionProperty>
@@ -96,17 +96,9 @@ if [ "x$CONFIG_PATH" != "x" ]; then
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>"
-    build_trigger="  <publishers>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>administrative/server_admin/add_create_torrents</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-        <completeBuild>true</completeBuild>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
-  </publishers>"
+    gen_torrents="    <hudson.tasks.Shell>
+      <command>ssh jenkins@msm8916.com &quot;~/bin/add_create_torrents.sh&quot;</command>
+    </hudson.tasks.Shell>"
   fi
 
   if [ -n "$ASSIGNED_NODE" ]; then
@@ -150,8 +142,8 @@ ${args_extra}
     <hudson.tasks.Shell>
       <command>${SHELL_COMMANDS}</command>
     </hudson.tasks.Shell>
+${gen_torrents}
   </builders>
-${build_trigger}
   <buildWrappers>
     <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.0">
