@@ -99,6 +99,16 @@ if [ "x$CONFIG_PATH" != "x" ]; then
     gen_torrents="    <hudson.tasks.Shell>
       <command>ssh jenkins@msm8916.com &quot;~/bin/add_create_torrents.sh&quot;</command>
     </hudson.tasks.Shell>"
+  elif [ "$BUILD_TARGET" == "promote" ]; then
+    args_extra="   <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>JOB_NUM</name>
+          <description>Job number to promote.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>"
   fi
 
   if [ -n "$ASSIGNED_NODE" ]; then
@@ -292,6 +302,16 @@ for file in $JOB_DESC_FILES; do
 
 			mkdir -p $JOB_DIR_PATH
 
+			if [ "$DIST_VERSION" == "13.0" ]; then
+				OTA_VER=13
+			elif [ "$DIST_VERSION" == "14.1" ]; then
+				OTA_VER=14
+			elif [ "$DIST_VERSION" == "15.0" ] || [ "$DIST_VERSION" == "15.1" ]; then
+				OTA_VER=15
+			else
+				OTA_VER=
+			fi
+
 			if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
 
 				CAN_ROAM=true
@@ -317,67 +337,14 @@ for file in $JOB_DESC_FILES; do
 			elif [ "$BUILD_TARGET" == "promote" ]; then
 				CAN_ROAM=false
 
-				if [ "$DIST_VERSION" == "13.0" ]; then
-					OTA_VER=13
-				elif [ "$DIST_VERSION" == "14.1" ]; then
-					OTA_VER=14
-				elif [ "$DIST_VERSION" == "15.0" ] || [ "$DIST_VERSION" == "15.1" ]; then
-					OTA_VER=15
-				else
-					OTA_VER=
-				fi
-
-				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
+				SHELL_COMMANDS="~/bin/ota.sh -t ${BUILD_TARGET} -d ${DEVICE_CODENAME} -v ${OTA_VER} -j \$JOB_NUM"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="JOB_DIR=\`${SSH} ${HOST_USER}@${HOST_NAME} &quot;find ${JENKINS_JOB_DIR} -name ${JOB_BASE_NAME} -type d | grep -i -v Promote | grep -i -v Demote&quot;\`"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/full -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip.prop&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*zip&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*txt&apos; -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/ -name &apos;*md5&apos; -type f -execdir cp &apos;{}&apos; \${htmlroot}/builds/full/ \;&quot; || true"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/full/boot*zip&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${htmlroot}/builds/full/ -type f -execdir rename s&apos;/_/-/&apos;g &apos;{}&apos; \;&quot; || true"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/changelog-//&apos;g \${htmlroot}/builds/full/*&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rename s&apos;/zip\.md5/md5sum/&apos;g  \${htmlroot}/builds/full/*&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;sed -i s&apos;/_j[0-9]*_/-/&apos;g \${htmlroot}/builds/full/*md5sum&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;sed -i s&apos;/_/-/&apos;g \${htmlroot}/builds/full/*md5sum&quot;"
-				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;find \${JOB_DIR}/lastStable/archive/builds/odin -type f -execdir ln &apos;{}&apos; \${htmlroot}/builds/odin/ \;&quot; || true"
-
 			elif [ "$BUILD_TARGET" == "demote" ]; then
 
 				CAN_ROAM=false
 
-				if [ "$DIST_VERSION" == "13.0" ]; then
-					OTA_VER=13
-				elif [ "$DIST_VERSION" == "14.1" ]; then
-					OTA_VER=14
-				elif [ "$DIST_VERSION" == "15.0" ] || [ "$DIST_VERSION" == "15.1" ]; then
-					OTA_VER=15
-				else
-					OTA_VER=
-				fi
-
-				SHELL_COMMANDS="htmlroot=/var/www/ota${OTA_VER}.msm8916.com/public_html/"
+				SHELL_COMMANDS="~/bin/ota.sh -t ${BUILD_TARGET} -d ${DEVICE_CODENAME} -v ${OTA_VER}"
 				SHELL_COMMANDS+=${NEWLINE}
-				SHELL_COMMANDS+="${SSH} ${HOST_USER}@${HOST_NAME} &quot;rm -f \${htmlroot}/builds/full/*${DIST_VERSION}*${DEVICE_CODENAME}.*&quot;"
-
 			fi
 
 			echo "Generating job \"$JOB_EXTENDED_DESCRIPTION\"..."
