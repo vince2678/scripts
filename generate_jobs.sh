@@ -302,14 +302,10 @@ for file in $JOB_DESC_FILES; do
 
 			mkdir -p $JOB_DIR_PATH
 
-			if [ "$DIST_VERSION" == "13.0" ]; then
-				OTA_VER=13
-			elif [ "$DIST_VERSION" == "14.1" ]; then
+			if [ "$DIST_VERSION" == "14.1" ]; then
 				OTA_VER=14
-			elif [ "$DIST_VERSION" == "15.0" ] || [ "$DIST_VERSION" == "15.1" ]; then
+			elif [ "$DIST_VERSION" == "15.1" ]; then
 				OTA_VER=15
-			else
-				OTA_VER=
 			fi
 
 			if [ "$BUILD_TARGET" == "otapackage" ] || [ "$BUILD_TARGET" == "bootimage" ] || [ "$BUILD_TARGET" == "recoveryimage" ]; then
