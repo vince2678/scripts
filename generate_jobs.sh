@@ -107,6 +107,21 @@ if [ "x$CONFIG_PATH" != "x" ]; then
           <description>Job number to promote.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>GO</name>
+          <description>Promote GO build. Set 1 to promote GO, 0 otherwise.</description>
+          <defaultValue>0</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>"
+  elif [ "$BUILD_TARGET" == "demote" ]; then
+    args_extra="   <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>GO</name>
+          <description>Demote GO build. Set 1 to demote GO, 0 otherwise.</description>
+          <defaultValue>0</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>"
   fi
