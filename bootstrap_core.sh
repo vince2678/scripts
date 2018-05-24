@@ -284,6 +284,13 @@ function setup_env {
     #select the device
     lunch ${DISTRIBUTION}_${DEVICE_NAME}-${BUILD_VARIANT}
 
+    if [ "$?" -ne 0 ]; then
+	# try lunch as lineage
+        if [ "x$DISTRIBUTION" != "xlineage" ] && [ "x$DISTRIBUTION" != "xrr" ]; then
+            lunch lineage_${DEVICE_NAME}-${BUILD_VARIANT}
+        fi
+    fi
+
     # exit if there was an error
     exit_error $?
 
