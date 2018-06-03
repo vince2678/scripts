@@ -15,7 +15,7 @@ SEPARATOR=,
 #ASSIGNED_NODE=!master
 BLOCKING_JOBS=administrative/block_all_jobs
 
-DIST=lineage
+DIST=lineage-go
 DIST_LONG=LineageOS
 DIST_VERSION=15.1
 JOB_DIR=${DIST_LONG}_GO_Builds/Samsung_Galaxy_O7
