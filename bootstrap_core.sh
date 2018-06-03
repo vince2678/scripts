@@ -63,6 +63,7 @@ function bootstrap {
 DISTROS="
 omni
 lineage
+lineage-go
 cm
 rr
 AOSPA
@@ -96,7 +97,7 @@ function get_platform_info {
         cd $BUILD_TOP
 
         echo "Initialising distribution source repo..."
-        if [ "x$DISTRIBUTION" == "xlineage" ]; then
+        if [ "x$DISTRIBUTION" == "xlineage" ] ||  [ "x$DISTRIBUTION" == "xlineage-go" ]; then
              exit_on_failure repo init -u git://github.com/LineageOS/android.git -b lineage-${ver} --depth=1
         elif [ "x$DISTRIBUTION" == "xrr" ]; then
              exit_on_failure repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b ${ver} --depth=1
@@ -136,7 +137,7 @@ function get_platform_info {
 
     if [ "`echo $platform_version | grep -o "8.1"`" == "8.1" ]; then
         export JACK_SERVER_VM_ARGUMENTS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
-        if [ "x$DISTRIBUTION" == "xlineage" ]; then
+        if [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xlineage-go" ]; then
             ver="15.1"
             distroTxt="LineageOS"
         elif [ "x$DISTRIBUTION" == "xrr" ]; then
@@ -251,7 +252,7 @@ function get_platform_info {
         else
             recovery_flavour="TWRP-2.8.7.0"
         fi
-    elif [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xrr" ] || [ "x$DISTRIBUTION" == "xAOSPA" ]; then
+    elif [ "x$DISTRIBUTION" == "xlineage" ] || [ "x$DISTRIBUTION" == "xlineage-go" ] || [ "x$DISTRIBUTION" == "xrr" ] || [ "x$DISTRIBUTION" == "xAOSPA" ]; then
         recovery_flavour="LineageOSRecovery"
     elif [ "x$DISTRIBUTION" == "xdotOS" ]; then
         recovery_flavour="dotOSRecovery"
