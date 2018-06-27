@@ -176,25 +176,6 @@ ui_print "Successfully flashed new boot image."
 ui_print ""
 SWAP_K_F
 
-cat <<A_INSTALL_F > ${boot_pkg_dir}/${install_target_dir}/installend/update_wifi_module.sh
-#!/sbin/sh
-if [ -e /tmp/blobs/wlan.ko ]; then
-    mount_fs system
-
-    if [ -e /system/lib/modules/wlan.ko ]; then
-        ui_print "Backing up previous wlan module..."
-        ui_print ""
-        mv /system/lib/modules/wlan.ko /system/lib/modules/wlan.ko.old
-    fi
-    ui_print "Copying new wlan module..."
-    ui_print ""
-    cp /tmp/blobs/wlan.ko /system/lib/modules/wlan.ko
-    chmod 0644 /system/lib/modules/wlan.ko
-
-    umount_fs system
-fi
-A_INSTALL_F
-
 cat <<B_INSTALL_F > ${revert_pkg_dir}/${install_target_dir}/installbegin/revert_boot_img.sh
 #!/sbin/sh
 mount_fs system
@@ -213,24 +194,6 @@ if [ -e /system/boot.img.bak ]; then
 else
         ui_print "No backup boot image found."
         ui_print ""
-fi
-umount_fs system
-B_INSTALL_F
-
-cat <<B_INSTALL_F > ${revert_pkg_dir}/${install_target_dir}/installbegin/revert_wifi_module.sh
-#!/sbin/sh
-mount_fs system
-if [ -e /system/lib/modules/pronto/pronto_wlan.ko.old ]; then
-    ui_print "Restoring previous pronto wlan module..."
-    ui_print ""
-    rm /system/lib/modules/pronto/pronto_wlan.ko
-    mv /system/lib/modules/pronto/pronto_wlan.ko.old /system/lib/modules/pronto/pronto_wlan.ko
-fi
-if [ -e /system/lib/modules/wlan.ko.old ]; then
-    ui_print "Restoring previous wlan module..."
-    ui_print ""
-    rm /system/lib/modules/wlan.ko
-    mv /system/lib/modules/wlan.ko.old /system/lib/modules/wlan.ko
 fi
 umount_fs system
 B_INSTALL_F
@@ -268,15 +231,6 @@ common_url="https://raw.githubusercontent.com/Galaxy-MSM8916/android_device_sams
 
 ${CURL} ${common_url}/releasetools/functions.sh 1>${boot_pkg_dir}/${install_target_dir}/functions.sh 2>/dev/null
 ${CURL} ${common_url}/releasetools/run_scripts.sh 1>${boot_pkg_dir}/${install_target_dir}/run_scripts.sh 2>/dev/null
-
-exit_on_failure mkdir -p ${boot_pkg_dir}/${proprietary_dir}/etc/
-exit_on_failure mkdir -p ${revert_pkg_dir}/${proprietary_dir}/etc/
-${CURL} ${common_url}/rootdir/etc/init.qcom.post_boot.sh 1>${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
-if [ "$EXPERIMENTAL_KERNEL"  == "y" ]; then
-    ${CURL} ${common_url}-experimental/rootdir/etc/init.qcom.post_boot.sh 1>${boot_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh 2>/dev/null
-else
-    cp ${revert_pkg_dir}/${proprietary_dir}/etc/init.qcom.post_boot.sh ${boot_pkg_dir}/${proprietary_dir}/etc/
-fi
 
 cp ${boot_pkg_dir}/${install_target_dir}/run_scripts.sh ${revert_pkg_dir}/${install_target_dir}/run_scripts.sh
 cp ${boot_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh ${revert_pkg_dir}/${install_target_dir}/postvalidate/copy_variant_blobs.sh

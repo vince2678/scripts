@@ -94,10 +94,6 @@ function copy_bootimage {
         echoTextBlue "Fetching unpackbootimg..."
         ${CURL} ${SCRIPT_REPO_URL}/bootimg-tools/unpackbootimg 1>${BUILD_TEMP}/unpackbootimg 2>/dev/null
 
-        if [ -e ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ]; then
-            echoTextBlue "Copying wifi module..."
-            cp ${ANDROID_PRODUCT_OUT}/system/lib/modules/wlan.ko ${boot_pkg_dir}/${blob_dir}/wlan.ko
-        fi
 
         cp ${ANDROID_PRODUCT_OUT}/boot.img ${boot_pkg_dir}/${blob_dir}
         cp ${BUILD_TEMP}/update-binary ${boot_pkg_dir}/${binary_target_dir}
@@ -167,41 +163,9 @@ function copy_otapackage {
     fi
 }
 
-function copy_odin_package {
-    if [ "x$MAKE_ODIN_PACKAGE" == "x1" ]; then
-        #define some variables
-        if [ "x${JOB_BUILD_NUMBER}" == "x" ]; then
-            arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
-        else
-            arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
-        fi
-
-        cd ${ANDROID_PRODUCT_OUT}
-
-        # rename the system image
-        ln system.img system.img.ext4
-
-        #pack the image
-        tar -H ustar -c boot.img recovery.img system.img.ext4 -f ${ARTIFACT_OUT_DIR}/${arc_name}.tar
-
-        # remove the system image
-        rm system.img.ext4
-
-        cd ${ARTIFACT_OUT_DIR}
-        #calculate the md5sum
-        md5sum -t ${arc_name}.tar >> ${ARTIFACT_OUT_DIR}/${arc_name}.tar
-        mv -f  ${ARTIFACT_OUT_DIR}/${arc_name}.tar ${ARTIFACT_OUT_DIR}/${arc_name}.tar.md5
-
-        logb "\n\t\tCompressing ODIN-flashable image..."
-        #compress the image
-        exit_on_failure 7z a ${arc_name}.tar.md5.7z ${arc_name}.tar.md5
-    fi
-}
-
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_bootimage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_recoveryimage")
 COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_otapackage")
-COPY_FUNCTIONS=("${COPY_FUNCTIONS[@]}" "copy_odin_package")
 
 function copy_files {
     for ix in `seq 0 $((${#COPY_FUNCTIONS[@]}-1))`; do

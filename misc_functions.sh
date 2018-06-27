@@ -45,86 +45,12 @@ function remove_build_lock {
     exec 200>&-
 }
 
-function save_build_state {
-    # save build state in the event a build terminates and another is enqueued
-    if [ -n "${JOB_NAME}" ] && [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
-        BUILD_STATE_FILE=$(mktemp -p ${SAVED_BUILD_JOBS_DIR})
-        echoTextBlue "Saving build job name: \n${JOB_NAME}"
-
-        # saves a file with the exact arguments used to launch the build
-        echo ${JOB_NAME} > ${BUILD_STATE_FILE}
-    fi
-}
-
-function restore_saved_build_state {
-    local SSH="ssh ${SYNC_HOST} -p 53801 -o StrictHostKeyChecking=no"
-    build_error=0
-    if [ -z "${RESTORED_BUILD_STATE}" ] && [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ]; then
-        seen_job_names=${JOB_NAME}
-        for state_file in `find ${SAVED_BUILD_JOBS_DIR} -type f 2>/dev/null`; do
-            launch_count=1
-            target_job_name=$(cat $state_file)
-
-            while [ -f "$state_file" ] && [ $launch_count -le $BUILD_RETRY_COUNT ]; do
-                matched=0
-                for i in $seen_job_names; do
-                    if [ "$i" == "$target_job_name" ]; then
-                        echoText "Job $target_job_name previously run or same as current job."
-                        rm -f $state_file
-                        matched=1
-                        break
-                    fi
-                done
-                if [ "$matched" -eq 0 ]; then
-                    remove_build_lock
-                    echoText "[${launch_count}/${BUILD_RETRY_COUNT}] Starting previously terminated build from saved build info.."
-                    ${SSH} build ${target_job_name} -s -v \
-                       -p "\"EXTRA_ARGS=--restored-state --node=$NODE_NAME\"" 1>/dev/null && rm -f $state_file
-                    acquire_build_lock
-                fi
-                build_error=$?
-
-                # increment counter
-                launch_count=$((launch_count+1))
-            done
-
-            seen_job_names+=" $target_job_name"
-
-            if [ "$build_error" -gt 0 ]; then
-                echoTextRed "Failed to launch terminated build."
-            fi
-            rm -f $state_file
-        done
-    fi
-
-    if [ -n "$TARGET_NODE" ] && [ "$TARGET_NODE" != "$NODE_NAME" ]; then
-        if [ -n "$NODE_UNAVAILABLE_COUNT" ] && [ "$NODE_UNAVAILABLE_COUNT" -lt $BUILD_RETRY_COUNT ]; then
-            echoTextRed "Build not running on same node as it was originally. Relaunching..."
-            ${SSH} build ${JOB_NAME} -w \
-                 -p "\"EXTRA_ARGS=--restored-state --node-unavail-count=$((NODE_UNAVAILABLE_COUNT+1)) --node=$TARGET_NODE\"" && rm -f $BUILD_STATE_FILE
-            ${SSH} set-build-description ${JOB_NAME} $JOB_BUILD_NUMBER "\"Cancelled build to try running on node $TARGET_NODE.\""
-            ${SSH} set-build-description ${JOB_NAME} $((JOB_BUILD_NUMBER+1)) "\"Cancelled build  #${JOB_BUILD_NUMBER} to try running on node $TARGET_NODE.\""
-            remove_temp_dir
-            exit 1
-        else
-            echoTextRed "Build failed to run on target node. Using current node..."
-        fi
-    fi
-}
-
 function clean_out {
     cd $BUILD_TOP/
     if [ "x${CLEAN_TARGET_OUT}" != "x" ] && [ ${CLEAN_TARGET_OUT} -eq 1 ]; then
         echoText "Cleaning build dir..."
         rm -rf out
     fi
-}
-
-function clean_state {
-    echoText "Removing saved build state info.."
-    rm -f ${BUILD_STATE_FILE}
-    rmdir --ignore-fail-on-non-empty ${SAVED_BUILD_JOBS_DIR}
-
 }
 
 function remove_temp_dir {

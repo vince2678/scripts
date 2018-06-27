@@ -91,67 +91,6 @@ function sync_script {
     logb "Done."
 }
 
-function apply_repo_map {
-    echoTextBold "Applying custom repository branch maps.."
-    count=0
-    for ix in `seq 0 $((${#REPO_REF_MAP[@]}-1))`; do
-        count=$((count+1))
-        repo=`echo ${REPO_REF_MAP[$ix]} | cut -d ':' -f 1`
-        ref=`echo ${REPO_REF_MAP[$ix]} | cut -d ':' -f 2`
-
-        if [ -d "${BUILD_TOP}/$repo" ]; then
-            local GIT="git -C ${BUILD_TOP}/$repo"
-
-            echoTextBlue "Repo is $repo. Reverting..."
-            cd ${BUILD_TOP} && repo sync $repo --no-tags --no-clone-bundle -d
-
-            echoTextBlue "Deleting branch $ref."
-            ${GIT} branch -D $ref 2>/dev/null
-
-            echoTextBlue "Removing rogue patches in $repo..."
-            ${GIT} diff | patch -Rp1
-            echoTextBlue "Fetching and checking out ref $ref..."
-            ${GIT} fetch $($GIT remote show|head -1) $ref:$ref && ${GIT} checkout $ref || exit_error $?
-        else
-            echoTextRed "Directory $repo does not exist!!"
-            exit_error 1
-        fi
-        echo
-    done
-
-    if [ $count -eq 0 ]; then
-        echoTextBold "No branch maps to apply."
-    fi
-}
-
-function reverse_repo_map {
-    echoTextBold "Reversing custom repository branch maps.."
-    count=0
-    for ix in `seq 0 $((${#REPO_REF_MAP[@]}-1))`; do
-        count=$((count+1))
-        repo=`echo ${REPO_REF_MAP[$ix]} | cut -d ':' -f 1`
-        ref=`echo ${REPO_REF_MAP[$ix]} | cut -d ':' -f 2`
-
-        if [ -d "${BUILD_TOP}/$repo" ]; then
-            local GIT="git -C ${BUILD_TOP}/$repo"
-
-            echoTextBlue "Repo is $repo.\n Reverting..."
-            cd ${BUILD_TOP} && repo sync $repo --no-tags --no-clone-bundle -d
-
-            echoTextBlue "Deleting branch $ref."
-            ${GIT} branch -D $ref 2>/dev/null
-
-            echoTextBlue "Removing rogue patches in $repo..."
-            ${GIT} diff | patch -Rp1
-        fi
-        echo
-    done
-
-    if [ $count -eq 0 ]; then
-        echoTextBold "No branch maps to apply."
-    fi
-}
-
 function apply_repopicks {
     cd ${BUILD_TOP}
     gerrit_url="https://review.msm8916.com"

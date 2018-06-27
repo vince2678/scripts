@@ -27,8 +27,7 @@ NC='\033[0m' # No Color
 RED="\033[01;31m"
 RESTORE=$NC
 
-# file transfer/build retry count
-BUILD_RETRY_COUNT=0
+# file transfer retry count
 UPLOAD_RETRY_COUNT=3
 
 # create a temprary working dir
@@ -105,13 +104,10 @@ function print_help {
                 log "              \tChanges can be comma separated, or the flag";
                 log "              \tcan be called repeatedly with each change. ";
                 log "  -s, --silent\tdon't publish to Telegram";
-                log "  -c, --odin\tbuild compressed (ODIN) images";
                 log "  --days\tNumber of days of changelogs to generate";
                 log "  -r, --clean\tclean build directory on completion";
                 log "  --make-args\tArguments to pass to make at build time.";
                 log "  -N, --no-pack-bootimage\tDon't pack the bootimage into a zip.\n";
-                log "  -R, --retry\tRetry build this many times upon failure before giving up.";
-                log "              \tDefault is 0 ";
                 log "  -U, --upload-retry\tRetry file upload this many times upon failure before giving up.";
                 log "              \tDefault is 3 ";
                 log "  -a, --sync_all\tSync entire build tree";
@@ -143,10 +139,6 @@ while [ "$1" != "" ]; do
             ;;
         -b )
             JOB_BUILD_NUMBER=$next_arg
-            ;;
-        --branch-map | --ref-map )
-            logb "\t\tRef map $next_arg specified"
-            REPO_REF_MAP=("${REPO_REF_MAP[@]}" "$next_arg")
             ;;
         --clean )
             CLEAN_TARGET_OUT=1
@@ -191,17 +183,8 @@ while [ "$1" != "" ]; do
         -N | --no-pack-bootimage)
             NO_PACK_BOOTIMAGE=1
             ;;
-        --node)
-            TARGET_NODE=$next_arg
-            ;;
-        --node-unavail-count)
-            NODE_UNAVAILABLE_COUNT=$next_arg
-            ;;
         -o | --output )
             OUTPUT_DIR=$next_arg
-            ;;
-        --odin)
-            MAKE_ODIN_PACKAGE=1
             ;;
         -p | --path )
             BUILD_TOP=`realpath $next_arg`
@@ -227,13 +210,8 @@ while [ "$1" != "" ]; do
             ;;
         --print-via-proxy ) PRINT_VIA_PROXY=y
             ;;
-        -R | --retry )
-            BUILD_RETRY_COUNT=$next_arg
-            ;;
         -r)
             CLEAN_TARGET_OUT=1
-            ;;
-        --restored-state ) RESTORED_BUILD_STATE=1
             ;;
         -s | --silent )
             SILENT=1
@@ -341,8 +319,6 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
     bootstrap "$@"
     # check if any other builds are running
     acquire_build_lock
-    # restore a terminated build
-    restore_saved_build_state
     # get the platform info
     get_platform_info
     # clean build top
@@ -354,26 +330,18 @@ if [ "x$UPDATE_SCRIPT" == "x" ]; then
     sync_all_trees "$@"
 
     if [ "x${BUILD_TARGET}" != "x" ] && [ "x${BUILD_VARIANT}" != "x" ] && [ "x${DEVICE_NAME}" != "x" ]; then
-        # apply custom repo-branch maps
-        apply_repo_map
         # setup the build environment
         setup_env "$@"
         # apply repopicks
         apply_repopicks
         # print the build start text
         print_start_build
-        #save build state
-        save_build_state "$@"
         # make the targets
         make_targets
         # copy the files
         copy_files
         # generate the changes
         generate_changes
-        # reverse repo maps
-        reverse_repo_map
-        # clean build state
-        clean_state
         # sync the build script
         sync_script "$@"
         # remove lock
