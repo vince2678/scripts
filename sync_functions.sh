@@ -49,7 +49,7 @@ if [ -n "$SYNC_VENDOR" ]; then
     logb "Syncing vendor trees..."
     cd ${BUILD_TOP}
 
-    repos=`cat ${local_manifest} |grep -o 'path="[a-z0-9\-\_\/]*"' | cut -d '=' -f 2 | sed s'/"//'g`
+    repos=`cat ${local_manifest} |grep -o 'path="[a-z0-9\_\/\-]*"' | cut -d '=' -f 2 | sed s'/"//'g`
 
     repo sync $repos --force-sync --no-tags --no-clone-bundle --prune
 fi
