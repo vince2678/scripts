@@ -226,16 +226,15 @@ function generate_device_list() {
 }
 
 function find_arch() {
-    device=$1
 
     [ -z $devices ] && generate_device_list
 
-    arch=`echo $devices|grep -o $device:'[a-zA-Z0-9]*'|uniq|cut -d':' -f2`
+    arch=`echo $devices|grep -o ${DEVICE_NAME}:'[a-zA-Z0-9]*'|uniq|cut -d':' -f2`
 
     # default to msm8916
-    [ -z $device ] && arch=msm8916
+    [ -z ${DEVICE_NAME} ] && arch=msm8916
     [ -z $arch ] && arch=msm8916
 
-    echo $arch && (>&2 echo "Arch of device $device is: $arch")
+    echo $arch && (>&2 echo -e "Arch of device ${DEVICE_NAME} is: $arch\n\nArch map is: $devices\n\n")
 }
 
