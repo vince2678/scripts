@@ -48,13 +48,10 @@ function sync_vendor_trees {
 if [ -n "$SYNC_VENDOR" ]; then
     logb "Syncing vendor trees..."
     cd ${BUILD_TOP}
-    for vendor in ${vendors[*]}; do
-        targets="device vendor kernel"
-        for dir in ${targets}; do
-            if ! [ -d ${dir}/${vendor} ]; then continue; fi
-            repo sync ${dir}/${vendor}/* --force-sync --no-tags --no-clone-bundle --prune
-        done
-    done
+
+    repos=`cat ${local_manifest} |grep -o 'path="[a-z0-9\-\_\/]*"' | cut -d '=' -f 2 | sed s'/"//'g`
+
+    repo sync $repos --force-sync --no-tags --no-clone-bundle --prune
 fi
 }
 
