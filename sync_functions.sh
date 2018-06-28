@@ -20,6 +20,8 @@ function sync_manifests {
     manifest_dir=${BUILD_TOP}/.repo/local_manifests
     manifest_url="https://git.msm8916.com/Galaxy-MSM8916/local_manifests.git/plain"
 
+    logr "Manifest URL is: ${manifest_url}/${MANIFEST_NAME}"
+
     mkdir -p ${manifest_dir}
     logb "Removing old manifests..."
     rm ${manifest_dir}/*xml
