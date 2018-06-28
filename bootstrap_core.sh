@@ -23,13 +23,14 @@ platform_common_dir=""
 common_dir=""
 recovery_flavour=""
 
-kernel_name="msm8916"
+arch=`find_arch $DEVICE_NAME`
+
 vendors[0]="samsung"
 vendors[1]="qcom"
 
 function bootstrap {
     # set the common dir
-    platform_common_dir="$BUILD_TOP/device/${vendors[0]}/msm8916-common/"
+    platform_common_dir="$BUILD_TOP/device/${vendors[0]}/${arch}-common/"
     case $DEVICE_NAME in
         a3*)    common_dir="$BUILD_TOP/device/${vendors[0]}/a3-common/"
                 ;;

@@ -16,11 +16,11 @@
 function make_targets {
     #start building
     if [ "x$ver" == "x13.0" ]; then
-        MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota13.msm8916.com/api CM_BUILDTYPE=NIGHTLY"
+        MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota13.${arch}.com/api CM_BUILDTYPE=NIGHTLY"
     elif [ "x$ver" == "x14.1" ]; then
-        MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota14.msm8916.com/api CM_BUILDTYPE=NIGHTLY"
+        MAKE_ARGS+="CM_UPDATER_OTA_URI=cm.updater.uri=https://ota14.${arch}.com/api CM_BUILDTYPE=NIGHTLY"
     elif [ "x$ver" == "x15.0" ]; then
-        MAKE_ARGS+="CM_UPDATER_OTA_URI=lineage.updater.uri=https://ota15.msm8916.com/api LINEAGE_BUILDTYPE=NIGHTLY"
+        MAKE_ARGS+="CM_UPDATER_OTA_URI=lineage.updater.uri=https://ota15.${arch}.com/api LINEAGE_BUILDTYPE=NIGHTLY"
     elif [ "x$ver" == "x15.1" ]; then
         MAKE_ARGS+="LINEAGE_BUILDTYPE=NIGHTLY"
     fi
@@ -48,11 +48,11 @@ function generate_changes {
 
     changelog_name=changelog-${arc_name}.txt
 
-    echo -e "\nMSM8916-COMMON\n---------\n" > ${ARTIFACT_OUT_DIR}/${changelog_name}
+    echo -e "\n${arch^^}-COMMON\n---------\n" > ${ARTIFACT_OUT_DIR}/${changelog_name}
     generate_log ${platform_common_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
 
     echo -e "\nKERNEL\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}
-    kernel_dir=${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${kernel_name}
+    kernel_dir=${ANDROID_BUILD_TOP}/kernel/${vendors[0]}/${arch}
     generate_log ${kernel_dir} >> ${ARTIFACT_OUT_DIR}/${changelog_name}
 
     echo -e "\nDEVICE\n---------\n" >> ${ARTIFACT_OUT_DIR}/${changelog_name}

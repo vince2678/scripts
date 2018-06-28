@@ -18,7 +18,7 @@ function sync_manifests {
         MANIFEST_NAME=${DISTRIBUTION}-${ver}.xml
     fi
     manifest_dir=${BUILD_TOP}/.repo/local_manifests
-    manifest_url="https://git.msm8916.com/Galaxy-MSM8916/local_manifests.git/plain"
+    manifest_url="https://git.${arch}.com/Galaxy-${arch^^}/local_manifests.git/plain"
 
     logr "Manifest URL is: ${manifest_url}/${MANIFEST_NAME}"
 
@@ -71,7 +71,7 @@ if [ -n "$SYNC_ALL" ]; then
         ;;
         15* | oreo )
             REPOPICK_FILE=${BUILD_TEMP}/repopicks-${ver}.sh
-            wget https://raw.githubusercontent.com/Galaxy-MSM8916/repopicks/master/repopicks-${ver}.sh -O $REPOPICK_FILE
+            wget https://raw.githubusercontent.com/Galaxy-${arch^^}/repopicks/master/repopicks-${ver}.sh -O $REPOPICK_FILE
             if [ "$?" -eq 0 ]; then
                 echoText "Picking Lineage gerrit changes..."
                 . $REPOPICK_FILE
@@ -95,7 +95,7 @@ function sync_script {
 
 function apply_repopicks {
     cd ${BUILD_TOP}
-    gerrit_url="https://review.msm8916.com"
+    gerrit_url="https://review.${arch}.com"
 
     #pick local gerrit changes
     [ -n "$LOCAL_REPO_PICKS" ] && repopick -g $gerrit_url -r $LOCAL_REPO_PICKS
