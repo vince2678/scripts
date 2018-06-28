@@ -99,7 +99,11 @@ function get_platform_info {
 
         echo "Initialising distribution source repo..."
         if [ "x$DISTRIBUTION" == "xlineage" ] ||  [ "x$DISTRIBUTION" == "xlineage-go" ]; then
-             exit_on_failure repo init -u git://github.com/LineageOS/android.git -b lineage-${ver} --depth=1
+             if [ "x$ver" == "x14.1" ]; then
+                 exit_on_failure repo init -u git://github.com/LineageOS/android.git -b cm-${ver} --depth=1
+             else
+                 exit_on_failure repo init -u git://github.com/LineageOS/android.git -b lineage-${ver} --depth=1
+             fi
         elif [ "x$DISTRIBUTION" == "xrr" ]; then
              exit_on_failure repo init -u https://github.com/ResurrectionRemix/platform_manifest.git -b ${ver} --depth=1
         elif [ "x$DISTRIBUTION" == "xdotOS" ]; then
