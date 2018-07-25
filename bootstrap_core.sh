@@ -278,6 +278,11 @@ function get_platform_info {
         fi
     fi
 
+    # hack for lineage go naming
+    if [ "x`echo ${OUTPUT_DIR} | grep -o 'los-go'`" == "xlos-go" ]; then
+        DISTRIBUTION="lineage-go"
+    fi
+
      #define archive naming variables
     if [ "x${JOB_BUILD_NUMBER}" == "x" ]; then
         arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
