@@ -85,7 +85,8 @@ function print_end_build {
                 str_rec="%0A%0A Recovery: ${link}/builds/${rec_name}.tar"
             fi
             str_changelog="%0A%0AChangelog: ${link}/builds/changelog-${arc_name}.txt"
-            str_blurb="%0A%0AYou can flash boot/recovery images using ODIN or you can extract them using 7zip on Windows or tar under Linux and flash using TWRP."
+            str_blurb="%0A%0ANote: Large artifact links are password protected, and restricted to testers only for faster access. %0AYou can still use the download server to download artifacts otherwise."
+            str_blurb+="%0A%0AYou can flash boot/recovery images using ODIN or you can extract them using 7zip on Windows or tar under Linux and flash using TWRP."
         fi
 
         if [ "x$JOB_DESCRIPTION" != "x" ]; then
