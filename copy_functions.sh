@@ -139,13 +139,6 @@ function copy_otapackage {
         else
             echoTextBlue "Found ota package $OTA_FILE"
 
-            #define some variables
-            if [ "x${JOB_BUILD_NUMBER}" == "x" ]; then
-                arc_name=${DISTRIBUTION}-${ver}-$(date +%Y%m%d)-${release_type}-${DEVICE_NAME}
-            else
-                arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
-            fi
-
             #copy the zip in the background
             logb "\n\t\tCopying zip image..."
             cp ${OTA_FILE} ${ARTIFACT_OUT_DIR}/${arc_name}.zip

@@ -21,7 +21,6 @@ function print_start_build {
         logb "Release type: ${release_type} \n"
         logb "Start time: ${dateStr}\n"
         logb "Build host: ${USER}@${HOSTNAME}\n"
-        arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
         logb "Archive prefix is: ${arc_name} \n"
         logb "Output Directory: ${OUTPUT_DIR}\n"
         logb "============================================================\n"
@@ -74,12 +73,7 @@ function print_end_build {
 
 
         if [ "x$BUILD_URL" != "x" ]; then
-            arc_name=${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${release_type}-${DEVICE_NAME}
-            rec_name=${recovery_flavour}-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
-            bimg_name=bootimage-${DISTRIBUTION}-${ver}_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)_${DEVICE_NAME}
-            #bimg_name=boot_caf-based_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}
-            boot_tar_name=bootimage_j${JOB_BUILD_NUMBER}_$(date +%Y%m%d)-${DEVICE_NAME}.tar
-
+           
             if [ "$BUILD_TARGET" == "recoveryimage" ]; then
                 str_rec="%0A%0ARecovery: ${link}/builds/${rec_name}.tar"
             elif [ "$BUILD_TARGET" == "bootimage" ]; then
