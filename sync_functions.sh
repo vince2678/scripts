@@ -31,8 +31,14 @@ function sync_manifests {
     logb "Syncing manifests..."
     ${CURL} ${remote_manifest} | tee ${local_manifest} > /dev/null
 
+    if [ "${arch}" == "msm8916" ]; then
+        gerrit_port=29418
+    elif [ "${arch}" == "msm8953" ]; then
+        gerrit_port=29419
+    fi
+
     if [ `hostname` == "msm8916.com" ]; then
-        sed -i s/fetch=\"https:\\/\\/github.com\"/fetch=\"https:\\/\\/review.${arch}.com\"/g ${local_manifest}
+        sed -i s/fetch=\"https:\\/\\/github.com\"/fetch=\"ssh:\\/\\/jenkins@review.${arch}.com:${gerrit_port}\"/g ${local_manifest}
     fi
 
     # Sync the substratum manifest
